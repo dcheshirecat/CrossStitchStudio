@@ -36,7 +36,7 @@ button:disabled{opacity:.4;cursor:default}
 </style></head><body>
 <div id="home" class="scr">
 <div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
-<style>#hub .hc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:12px}#hub .hi{font-size:34px;width:44px;text-align:center}#hub .ht{flex:1}#hub .ht b{font-size:17px;display:block}#hub .ht small{display:block;color:var(--mut);margin-top:3px;font-size:13px}#hub .ar{color:var(--mut);font-size:20px}.hero{text-align:center;margin:18px 0 8px}.hero div{font-size:56px}.hero h1{color:var(--ac);font-size:28px;margin:4px 0}.hero p{color:var(--mut);margin:0}</style>
+<style>.hc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:12px}.hi{font-size:34px;width:44px;text-align:center}.ht{flex:1}.ht b{font-size:17px;display:block}.ht small{display:block;color:var(--mut);margin-top:3px;font-size:13px}.ar{color:var(--mut);font-size:20px}.hero{text-align:center;margin:18px 0 8px}.hero div{font-size:56px}.hero h1{color:var(--ac);font-size:28px;margin:4px 0}.hero p{color:var(--mut);margin:0}</style>
 <div class="hero"><div>🧵</div><h1>Cross Stitch Studio</h1><p>Turn photos into cross-stitch charts, or import patterns you already have.</p></div>
 <div id="hub">
 <button class="hc" data-go="prj"><span class="hi">📋</span><span class="ht"><b>My Projects</b><small>Open a saved pattern and keep stitching.</small></span><span class="ar">→</span></button>
@@ -47,7 +47,7 @@ button:disabled{opacity:.4;cursor:default}
 </div>
 </div>
 <div id="make" class="scr" hidden>
-<div class="bar"><button class="s" data-go="home">‹ Back</button><b>New pattern</b></div>
+<div class="bar"><button class="s" id="mk" data-go="home">‹ Back</button><b>Pattern editor</b></div>
 <div class="card">
 <label class="btn">Choose photo<input type="file" id="f" accept="image/*" hidden></label> <button class="s" id="ep" hidden style="margin-left:8px;padding:9px 14px">✂ Edit photo</button>
 <div class="row">
@@ -67,12 +67,12 @@ button:disabled{opacity:.4;cursor:default}
 <div class="row"><label>Sharpen: <b id="bsv">40</b><input type="range" id="bws" min="0" max="100" value="40"></label><label id="bwlw" hidden>Threshold: <b id="blv">0</b><input type="range" id="bwl" min="-50" max="50" value="0"></label></div>
 </div>
 <div class="row"><label>Project name<input type="text" id="nm" placeholder="e.g. Sunset"></label></div>
-<div class="row"><button id="sv">Save &amp; start stitching</button></div>
+<div class="row"><button id="sv">Save project</button></div>
 </div>
 <div id="mslot"></div>
 </div>
 <div id="work" class="scr" hidden>
-<div class="bar"><button class="s" data-go="home">‹ Home</button><b id="wt"></b><button class="s" id="ed">Edit pattern</button></div>
+<div class="bar"><button class="s" data-go="proj">‹ Project</button><b id="wt"></b><button class="s" id="ed" hidden>Edit pattern</button></div>
 <div id="tb" class="card"></div>
 <div id="wslot"></div>
 <div class="row"><button id="pd">Export PDF</button></div>
@@ -81,6 +81,21 @@ button:disabled{opacity:.4;cursor:default}
 <div id="imp" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Import PDF pattern</b></div><div class="card"><label class="btn">Choose Stitch Fiddle PDF<input type="file" id="pf" accept="application/pdf" hidden></label><div class="m" id="pmsg" style="margin-top:8px">Pick a PDF exported from Stitch Fiddle. The chart is read straight from the file, with exact DMC colours.</div></div></div>
 <div id="inv" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Thread inventory</b></div><div class="card"><input type="text" id="iq" placeholder="Search DMC number or name"><div id="il"></div></div></div>
 <div id="bak" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Backup &amp; restore</b></div><div class="card"><div class="row"><button id="bx">Export all projects &amp; inventory</button><label class="btn">Import backup<input type="file" id="bf" accept=".json,application/json" hidden></label></div><div class="m" id="bm" style="margin-top:8px"></div></div></div>
+<div id="proj" class="scr" hidden><div class="bar"><button class="s" data-go="prj">‹ Projects</button><b>Project</b></div><div class="hero"><h1 id="pt"></h1><p id="pi"></p></div><div id="pm" class="m" style="text-align:center"></div>
+<button class="hc" data-go="work"><span class="hi">📊</span><span class="ht"><b>Chart</b><small>Open the stitch tracker and pattern chart.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="make"><span class="hi">✏️</span><span class="ht"><b>Edit Pattern</b><small>Colours, merging, gradients and background.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="shop"><span class="hi">🛒</span><span class="ht"><b>Shopping List</b><small>DMC threads needed for this project.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="stats"><span class="hi">📈</span><span class="ht"><b>Progress</b><small>Per-colour progress and time left.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="exp"><span class="hi">🖨️</span><span class="ht"><b>Export</b><small>PDF, PNG, CSV or shopping list.</small></span><span class="ar">→</span></button>
+<button class="hc" id="pdup"><span class="hi">📑</span><span class="ht"><b>Duplicate Project</b><small>Try a variation without losing this one.</small></span><span class="ar">→</span></button>
+</div>
+<div id="shop" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Shopping list</b></div><div class="card"><div class="m" id="ss"></div><div class="row"><button class="s" id="sf1">To buy</button><button class="s" id="sf2">All threads</button><button class="s" id="ssv">Save as text</button></div><div class="m" style="margin-top:6px">Tick the threads you already own. Skeins are estimates (2 strands, 20% waste).</div><div id="sl"></div></div></div>
+<div id="stats" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Progress</b></div><div class="card"><b id="st1"></b><div style="height:10px;background:var(--bd);border-radius:5px;margin:8px 0"><div id="sbar" style="height:10px;width:0;background:var(--ac);border-radius:5px"></div></div><div class="m" id="ps"></div><div class="row"><label>Your speed (stitches per hour)<input type="number" id="spd"></label></div></div><div class="card"><b>By colour</b><div id="sc"></div></div></div>
+<div id="exp" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Export</b></div><button class="hc" id="xpdf"><span class="hi">📄</span><span class="ht"><b>PDF pattern</b><small>Chart pages, legend and thread list.</small></span><span class="ar">→</span></button>
+<button class="hc" data-x="png"><span class="hi">🖼️</span><span class="ht"><b>Chart image (PNG)</b><small>Save the whole chart as a picture.</small></span><span class="ar">→</span></button>
+<button class="hc" data-x="csv"><span class="hi">📋</span><span class="ht"><b>CSV</b><small>DMC code per stitch, for other software.</small></span><span class="ar">→</span></button>
+<button class="hc" data-x="shop"><span class="hi">🛒</span><span class="ht"><b>Shopping list (text)</b><small>Threads and skeins, have/buy.</small></span><span class="ar">→</span></button>
+</div>
 <div id="set" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Settings</b></div><div class="card"><b>Appearance</b><div class="row"><label>Theme<select id="th"><option value="system">Match device</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div></div></div>
 <div id="hold" hidden></div>
 <div id="ph" hidden>
@@ -110,8 +125,9 @@ button:disabled{opacity:.4;cursor:default}
 <div id="wrap"><p>Your chart will appear here. Drag to scroll, pinch to zoom.</p><div id="sp"><canvas id="cv" hidden></canvas></div></div>
 </div>
 <div class="card"><b>Thread legend</b><div id="leg" class="m">—</div></div>
-<div class="card"><b>Colours</b><div class="m">Tap a thread in the legend to change its colour or symbol, or to delete all its stitches. Use Hide to preview the pattern without a colour.</div>
-<div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="ca">Auto symbols</button></div>
+</div>
+<div id="ce"><div class="card"><b>Colours</b><div class="m">Tap a thread in the legend to change its colour or symbol, or to delete all its stitches. Use Hide to preview the pattern without a colour.</div>
+<div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="mg2">Merge similar colours</button><button class="s" id="t_er2">Eraser (background)</button><button class="s" id="ca">Auto symbols</button></div>
 <div class="row"><label>Hue shift: <b id="hv">0</b>°<input type="range" id="hs" min="-180" max="180" value="0"></label><button class="s" id="hb">Apply</button></div></div>
 <div class="card"><b>Gradients &amp; palettes</b><div class="row" style="margin-top:6px"><label>Apply to<select id="gt"><option value="p">Pattern colours (each thread takes a gradient/palette colour)</option><option value="i">Whole image (recolours the photo, then rebuilds the pattern)</option></select></label></div>
 <div class="m" style="margin-top:6px">Pattern: “Reset colours” above undoes it. Image: use Remove from image, or Undo.</div><div class="row"><button class="s" id="gri" hidden>Remove from image</button></div>
@@ -253,11 +269,11 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 $('nw').onclick=()=>{IM=null;G=null;S.name='';S.img='';SRC=null;S.src='';S.ed=null;S.ig=null;$('nm').value='';$('br').value=0;$('co').value=100;$('bw').checked=false;$('bwm').value='g';$('bwa').checked=true;$('bws').value=40;$('bwl').value=0;S.sym={};$('cv').hidden=true;const p=document.querySelector('#wrap p');if(p)p.hidden=false;$('info').textContent='Choose a photo to generate a pattern.';$('leg').innerHTML='';OPS=[];UNDO=[];unb();view('make')};
 $('ed').onclick=()=>{view('make');msg('Your edits are kept when you change settings. Use Undo to step back.')};
 $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a photo first.');return}if(!n){msg('Give your project a name.');return}
- S.name=n;if(!ST.set('xs:'+n,snap())){msg('Couldn’t save (storage full or unavailable).');return}$('pg').checked=false;view('work')};
+ S.name=n;if(!ST.set('xs:'+n,snap())){msg('Couldn’t save (storage full or unavailable).');return}$('pg').checked=false;view('proj')};
 function plist(){const ks=ST.keys();$('pl').innerHTML=ks.length?ks.map(k=>{const n=k.slice(3);let j={};try{j=JSON.parse(ST.get(k))||{}}catch(x){}const dd=j.done||'',dl=j.del||'';let t=0,dn=0;for(let q=0;q<dd.length;q++)if(dl[q]!=='1'){t++;if(dd[q]==='1')dn++}const pc=t?Math.round(dn*100/t):0,en=encodeURIComponent(n);
 return`<div class="pc" data-l="${en}"><img alt="" src="${j.img||''}"><div><b>${n.replace(/</g,'&lt;')}</b><div class="m">${j.w||'?'} stitches wide · ${j.k||'?'} colours · ${pc}% stitched</div></div><button class="s" data-d="${en}">Delete</button></div>`}).join(''):'<p class="m">No projects yet. Tap “New pattern” to start one.</p>'}
 function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;rd();
- SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('work')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
+ SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('proj')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
 $('pl').onclick=e=>{const d=e.target.closest('[data-d]'),l=e.target.closest('[data-l]');
  if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
  if(l)openP(decodeURIComponent(l.dataset.l))};
@@ -501,8 +517,12 @@ const $=id=>document.getElementById(id),J=(k,d)=>{try{return JSON.parse(ST.get(k
 $('f').addEventListener('change',()=>{S.imp=null;S.imd=null});
 Object.assign(S,{park:-1,last:-1,hl:null,hf:0,mode:'',lock:0,ka:0,rr:-1,rc:-1});
 $('prj').appendChild($('pl'));
-const EX=['prj','imp','inv','bak','set'],v0=view,hold=()=>$('hold').appendChild($('cp'));hold();
-view=function(v){EX.forEach(i=>$(i).hidden=true);if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;hold();if(v==='prj')plist();if(v==='inv')invL();scrollTo(0,0);return}v0(v);if(v==='home')hold();if(v==='work')tb()};
+const EX=['prj','imp','inv','bak','set','proj','shop','stats','exp'],v0=view,hold=()=>{$('hold').appendChild($('cp'));$('hold').appendChild($('ce'))};hold();
+view=function(v){EX.forEach(i=>$(i).hidden=true);if(v!=='make')S.mode='';
+ if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;hold();if(v==='prj')plist();if(v==='inv')invL();if(v==='proj')projL();if(v==='shop')shopL();if(v==='stats')statL();scrollTo(0,0);return}
+ v0(v);if(v==='home')hold();if(v==='work')tb();$(v==='make'?'mslot':'hold').appendChild($('ce'));
+ if(v==='make')$('mk').dataset.go=S.name&&ST.get('xs:'+S.name)?'proj':'home'};
+window.goBack=()=>{if(typeof E!=='undefined'&&E){edClose();return true}if(cur==='home')return false;const o=S.name&&ST.get('xs:'+S.name);view(cur==='proj'?'prj':['work','shop','stats','exp'].includes(cur)?'proj':cur==='make'?(o?'proj':'home'):'home');return true};
 const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+'}'};
 const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.hl=null;S.rr=S.rc=-1};
 $('nw').addEventListener('click',()=>{S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
@@ -524,7 +544,7 @@ stats=function(){s0();if(!G)return;const pc={},iv=INV();let tot=0,dn=0;
   const b=document.createElement('button');b.className='s';b.dataset.h=1;b.textContent=S.hl===p.c?'◎ on':'◎';r.appendChild(b)});
  const h=(tot-dn)/spd(),e=$('ps');if(e)e.textContent=(tot-dn)+' stitches left · ≈ '+(h<1?Math.round(h*60)+' min':h.toFixed(1)+' h')+' at '+spd()+' st/h'};
 $('leg').addEventListener('click',e=>{const b=e.target.closest('[data-h]');if(b){e.stopPropagation();const c=P[+b.closest('.lg').dataset.i].c;S.hl=S.hl===c?null:c;draw()}},true);
-function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_er','Eraser (background)'],['t_mg','Merge colours'],['t_ka','Keep awake'],['t_lk','Lock'],['t_png','PNG'],['t_shop','Shopping list'],['t_csv','CSV'],['t_dp','Duplicate']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:8px"><span id="ps"></span> · speed <input type="number" id="spd" style="width:70px;display:inline-block;padding:4px"> st/h</div><div class="m">Highlight a colour with ◎ in the legend.</div>';$('spd').value=spd();upd()}
+function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_ka','Keep awake'],['t_lk','Lock']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:6px">Highlight a colour with ◎ in the legend.</div>';upd()}
 function upd(){const o={t_hf:S.hf,t_rl:S.mode==='rule',t_pk:S.mode==='park',t_er:S.mode==='erase',t_ka:S.ka,t_lk:S.lock};for(const k in o){const b=$(k);if(b)b.style.outline=o[k]?'2px solid var(--ac)':''}$('wrap').classList.toggle('mk',!!S.mode||!!S.prog)}
 const cellAt=e=>{const b=$('cv').getBoundingClientRect(),w=$('wrap'),px=e.clientX-b.left,py=e.clientY-b.top;if(px<24||py<24)return -1;const x=Math.floor((px+w.scrollLeft-24)/S.z),y=Math.floor((py+w.scrollTop-24)/S.z);return x<0||y<0||x>=S.w||y>=S.h?-1:y*S.w+x};
 const jump=i=>{if(i<0||!G){msg('Nothing there yet.');return}const w=$('wrap');w.scrollLeft=Math.max(0,(i%S.w)*S.z-w.clientWidth/2+24);w.scrollTop=Math.max(0,Math.floor(i/S.w)*S.z-w.clientHeight/2+24);redraw()};
@@ -554,13 +574,28 @@ const T={t_hf:()=>{S.hf^=1;draw()},t_rl:()=>{S.mode=S.mode==='rule'?'':'rule'},t
  t_csv:()=>{const o=[];for(let r=0;r<S.h;r++){const a=[];for(let c=0;c<S.w;c++){const i=r*S.w+c;a.push(DEL[i]?'':P[G[i]].c)}o.push(a.join(','))}save(o.join('\n'),fn()+'.csv','text/csv',1)},
  t_dp:()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n)){msg('Save the project first.');return}let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));msg('Duplicated as “'+m+'”.')}};
 $('tb').onclick=e=>{const f=T[e.target.id];if(f&&G){f();upd()}};
-$('tb').onchange=e=>{if(e.target.id==='spd'){ST.set('xi:spd',String(Math.max(10,+e.target.value||150)));stats()}};
 // inventory
 function invL(){const q=$('iq').value.toLowerCase(),iv=INV();$('il').innerHTML=DM.filter(m=>!q||(m.c+' '+m.n).toLowerCase().includes(q)).slice(0,120).map(m=>`<label class="lg"><input type="checkbox" data-c="${m.c}" ${iv[m.c]?'checked':''}><span class="sw" style="background:${m.h}"></span><span>DMC ${m.c} · ${m.n}</span></label>`).join('')}
 $('iq').oninput=invL;$('il').onchange=e=>{const c=e.target.dataset.c;if(!c)return;const iv=INV();if(e.target.checked)iv[c]=1;else delete iv[c];ST.set('xi:inv',JSON.stringify(iv))};
 // backup
 $('bx').onclick=()=>{const o={};Object.keys(localStorage).filter(k=>k.startsWith('xs:')||k.startsWith('xi:')).forEach(k=>o[k]=localStorage.getItem(k));save(JSON.stringify(o),'cross-stitch-backup.json','application/json',1)};
 $('bf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);let n=0;for(const k in o)if(/^x[si]:/.test(k)&&ST.set(k,o[k]))n++;$('bm').textContent='Restored '+n+' items.'}catch(x){$('bm').textContent='That isn’t a valid backup file.'}};r.readAsText(f)};
+function tot(){let t=0,d=0;const pc={};for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]);o[1]++;t++;if(D[i]){o[0]++;d++}}return{t,d,pc}}
+function projL(){if(!G)return;const s=tot();$('pt').textContent=S.name;$('pi').textContent=S.w+'×'+S.h+' stitches · '+P.length+' colours · '+(s.t?Math.round(s.d*100/s.t):0)+'% stitched'}
+let SF='buy';
+function shopL(){if(!G)return;const iv=INV();let n=0,k=0;P.forEach(p=>{if(!iv[p.c]){n++;k+=sk(p.q)}});$('ss').textContent=n+' of '+P.length+' threads to buy · about '+k+' skeins';
+ $('sl').innerHTML=P.filter(p=>SF==='all'||!iv[p.c]).map(p=>`<label class="lg"><input type="checkbox" data-c="${p.c}" ${iv[p.c]?'checked':''}><span class="sw" style="background:${p.h}">${p.s}</span><span>DMC ${p.c} · ${p.n}</span><span class="m">${p.q} st · ~${sk(p.q)} skein${sk(p.q)>1?'s':''}</span></label>`).join('')||'<div class="m">You already have every thread.</div>'}
+$('sf1').onclick=()=>{SF='buy';shopL()};$('sf2').onclick=()=>{SF='all';shopL()};$('ssv').onclick=()=>T.t_shop();
+$('sl').onchange=e=>{const c=e.target.dataset.c;if(!c)return;const iv=INV();if(e.target.checked)iv[c]=1;else delete iv[c];ST.set('xi:inv',JSON.stringify(iv));shopL()};
+function statL(){if(!G)return;const s=tot(),pct=s.t?Math.round(s.d*100/s.t):0,h=(s.t-s.d)/spd();$('st1').textContent=s.d+' of '+s.t+' stitched ('+pct+'%)';$('sbar').style.width=pct+'%';
+ $('ps').textContent=(s.t-s.d)+' stitches left · about '+(h<1?Math.round(h*60)+' min':h.toFixed(1)+' h')+' at '+spd()+' st/h';$('spd').value=spd();
+ $('sc').innerHTML=P.map(p=>{const o=s.pc[p.c]||[0,0],q=o[1]?Math.round(o[0]*100/o[1]):0;return `<div class="lg"><span class="sw" style="background:${p.h}">${p.s}</span><span>DMC ${p.c}</span><span class="m">${o[0]}/${o[1]} · ${q}%</span></div><div style="height:5px;background:var(--bd);border-radius:3px;margin-bottom:4px"><div style="height:5px;width:${q}%;background:var(--ac);border-radius:3px"></div></div>`}).join('')}
+$('spd').onchange=()=>{ST.set('xi:spd',String(Math.max(10,+$('spd').value||150)));statL()};
+$('exp').onclick=e=>{if(!G)return;if(e.target.closest('#xpdf')){$('pd').click();return}const b=e.target.closest('[data-x]');if(b)T['t_'+b.dataset.x]()};
+$('pd').parentElement.hidden=true;
+$('pdup').onclick=()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n))return;let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));$('pm').textContent='Duplicated as “'+m+'”.'};
+$('mg2').onclick=()=>{if(G)merge()};
+$('t_er2').onclick=e=>{if(!G)return;T.t_er();e.target.style.outline=S.mode==='erase'?'2px solid var(--ac)':''};
 const u8s=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return s};
 async function infl(b){const ds=new DecompressionStream('deflate'),w=ds.writable.getWriter();w.write(b).catch(()=>{});w.close().catch(()=>{});return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer())}
 async function pdfTexts(buf){const b=new Uint8Array(buf),s=u8s(b),re=/stream\r?\n/g,o=[];let m;

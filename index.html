@@ -18,34 +18,54 @@ button.s{background:var(--bd);color:var(--fg);padding:5px 10px}
 .lg{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);font-size:13px}
 .sw{width:22px;height:22px;border-radius:4px;border:1px solid #888;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;color:#000;background:#fff}
 .lg span:nth-child(3){flex:1}.m{color:var(--mut);font-size:13px}#msg{color:var(--ac);font-size:13px;min-height:18px}
+[hidden]{display:none!important}#wrap{touch-action:pan-x pan-y}#wrap.mk{touch-action:none}#nw{width:100%;padding:14px;font-size:16px}
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}.bar b{flex:1;text-align:center}
+.pc{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px;margin-top:10px;cursor:pointer}
+.pc img{width:64px;height:64px;object-fit:cover;border-radius:8px;background:#fff}.pc>div{flex:1}
 </style></head><body>
+<div id="home" class="scr">
 <h1>Cross Stitch Studio</h1>
+<button id="nw">+ New pattern</button>
+<div id="pl"></div>
+</div>
+<div id="make" class="scr" hidden>
+<div class="bar"><button class="s" data-go="home">‹ Back</button><b>New pattern</b></div>
 <div class="card">
 <label class="btn">Choose photo<input type="file" id="f" accept="image/*" hidden></label>
 <div class="row">
-<label>Width (stitches)<input type="number" id="w" min="20" max="200" value="80"></label>
+<label>Detail: <b id="wv">80</b> stitches wide<input type="range" id="w" min="20" max="400" value="80"></label>
+<label>Max colours: <b id="kv">20</b><input type="range" id="k" min="2" max="60" value="20"></label>
 <label>Fabric count<select id="ct"><option>11</option><option selected>14</option><option>16</option><option>18</option><option>22</option></select></label>
-<label>Max colours: <b id="kv">20</b><input type="range" id="k" min="2" max="40" value="20"></label>
 </div>
 <div class="row">
 <label class="ck"><input type="checkbox" id="dt">Dither</label>
 <label class="ck"><input type="checkbox" id="cl" checked>Clean stray stitches</label>
 <label class="ck"><input type="checkbox" id="ol">Backstitch outline</label>
-</div></div>
+</div>
+<div class="row"><label>Brightness: <b id="bv">0</b><input type="range" id="br" min="-100" max="100" value="0"></label><label>Contrast: <b id="cnv">100</b>%<input type="range" id="co" min="50" max="200" value="100"></label></div>
+<div class="row"><label>Project name<input type="text" id="nm" placeholder="e.g. Sunset"></label></div>
+<div class="row"><button id="sv">Save &amp; start stitching</button></div>
+</div>
+<div id="mslot"></div>
+</div>
+<div id="work" class="scr" hidden>
+<div class="bar"><button class="s" data-go="home">‹ Home</button><b id="wt"></b><button class="s" id="ed">Edit pattern</button></div>
+<div id="wslot"></div>
+<div class="row"><button id="pd">Export PDF</button></div>
+</div>
+<div id="cp">
+<div id="msg"></div>
 <div class="card">
 <div class="m" id="info">Choose a photo to generate a pattern.</div>
 <div class="row">
 <label>View<select id="vm"><option value="sym">Symbols</option><option value="col">Colours</option></select></label>
 <label>Zoom<input type="range" id="z" min="4" max="30" value="14"></label>
-<label class="ck"><input type="checkbox" id="pg">Stitching mode (tap to mark done)</label>
+<label class="ck" id="pgl" hidden><input type="checkbox" id="pg">Stitching mode (tap or slide to mark done)</label>
 </div>
-<div id="wrap"><p>Your chart will appear here.</p><canvas id="cv" hidden></canvas></div>
+<div id="wrap"><p>Your chart will appear here. Drag to scroll, pinch to zoom.</p><canvas id="cv" hidden></canvas></div>
 </div>
 <div class="card"><b>Thread legend</b><div id="leg" class="m">—</div></div>
-<div class="card"><b>Projects</b>
-<div class="row"><label>Project name<input type="text" id="nm" placeholder="e.g. Sunset"></label></div>
-<div class="row" style="align-items:center"><button id="sv">Save project</button><button id="pd">Export PDF</button></div>
-<div id="msg"></div><div id="pl"></div></div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -65,7 +85,7 @@ function rd(){S.w=Math.min(200,Math.max(20,+$('w').value||80));S.count=+$('ct').
 function build(done){
  const w=S.w,h=Math.max(1,Math.round(w*IM.height/IM.width)),n=w*h;S.h=h;
  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(IM,0,0,w,h);
- const d=x.getImageData(0,0,w,h).data,f=new Float32Array(n*3),px=[];
+ const d=x.getImageData(0,0,w,h).data,f=new Float32Array(n*3),px=[];for(let i=0;i<d.length;i+=4)for(let t=0;t<3;t++)d[i+t]=(d[i+t]-128)*S.con+128+S.bri;
  for(let i=0;i<n;i++){f[i*3]=d[i*4];f[i*3+1]=d[i*4+1];f[i*3+2]=d[i*4+2];px.push([d[i*4],d[i*4+1],d[i*4+2]])}
  const k=Math.min(S.k,n),ord=px.map((p,i)=>i).sort((a,b)=>px[a][0]+px[a][1]+px[a][2]-px[b][0]-px[b][1]-px[b][2]);
  let C=[];for(let j=0;j<k;j++)C.push(px[ord[Math.floor((j+.5)*n/k)]].slice());
@@ -111,7 +131,7 @@ $('f').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileRea
 ['ol','vm','pg'].forEach(i=>$(i).onchange=()=>{rd();draw()});$('z').oninput=()=>{rd();draw()};$('ct').onchange=()=>{rd();stats()};
 $('cv').onclick=e=>{if(!S.prog||!G)return;const b=$('cv').getBoundingClientRect(),s=$('cv').width/b.width,c=Math.floor(((e.clientX-b.left)*s-24)/S.z),r=Math.floor(((e.clientY-b.top)*s-24)/S.z);
  if(c<0||r<0||c>=S.w||r>=S.h)return;D[r*S.w+c]^=1;draw();persist()};
-function snap(){return JSON.stringify({w:S.w,count:S.count,k:S.k,dither:S.dither,clean:S.clean,outline:S.outline,m:S.m,img:S.img,done:G?Array.from(D).join(''):''})}
+function snap(){return JSON.stringify({w:S.w,count:S.count,k:S.k,dither:S.dither,clean:S.clean,outline:S.outline,m:S.m,img:S.img,bri:S.bri,con:S.con,done:G?Array.from(D).join(''):''})}
 function persist(){if(S.name&&ST.get('xs:'+S.name))ST.set('xs:'+S.name,snap())}
 $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Create a pattern first.');return}if(!n){msg('Give your project a name.');return}
  S.name=n;msg(ST.set('xs:'+n,snap())?'Saved on this device.':'Couldn’t save (storage full or unavailable).');plist()};
@@ -135,4 +155,44 @@ $('pd').onclick=()=>{if(!G){msg('Create a pattern first.');return}const J=window
   d.addPage();d.addImage(T.toDataURL('image/png'),'PNG',13,10,T.width*.15,T.height*.15);d.setFontSize(9);d.text(`Page ${a*tc+b+1} of ${tc*tr} - columns ${c0+1}-${c1}, rows ${r0+1}-${r1}`,13,291)}
  const fn=(nm.replace(/[^\w\- ]+/g,'').trim()||'cross-stitch-pattern')+'.pdf';if(window.Android&&Android.savePdf){Android.savePdf(d.output('datauristring').split(',')[1],fn);msg('Saved to Downloads.')}else{d.save(fn);msg('PDF created.')}};
 plist();
+</script>
+<script>SY.push(...Array.from("0123456789ΩΨΦΣΠΔΛΘ"));
+let cur='home';
+function rd(){S.w=Math.min(400,Math.max(20,+$('w').value||80));S.count=+$('ct').value;S.k=+$('k').value;S.dither=$('dt').checked;S.clean=$('cl').checked;S.outline=$('ol').checked;S.m=$('vm').value;S.z=+$('z').value;S.prog=$('pg').checked;$('kv').textContent=S.k;$('wv').textContent=S.w;S.bri=+$('br').value;S.con=+$('co').value/100;$('bv').textContent=S.bri;$('cnv').textContent=$('co').value;$('wrap').classList.toggle('mk',S.prog)}
+function zmax(){return Math.max(6,Math.min(40,Math.floor(4000/Math.max(S.w,S.h||S.w))))}
+function redraw(){drawChart($('cv'),0,0,S.w,S.h,S.z,S.m,1)}
+function draw(){if(!G)return;const z=$('z');z.max=zmax();S.z=Math.min(S.z,zmax());z.value=S.z;$('cv').hidden=false;const p=document.querySelector('#wrap p');if(p)p.hidden=true;redraw();stats()}
+function go(){if(!IM)return;msg('Working…');setTimeout(()=>{rd();build();draw();msg('')},30)}
+['w','k','dt','cl'].forEach(i=>$(i).onchange=go);
+$('w').oninput=()=>$('wv').textContent=$('w').value;['br','co'].forEach(i=>{$(i).onchange=go;$(i).oninput=rd});
+(function(){const w=$('wrap');let d0=0,z0,fx,fy,mx,my;
+const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+w.addEventListener('touchstart',e=>{if(e.touches.length===2&&G){const r=w.getBoundingClientRect(),t=e.touches;mx=(t[0].clientX+t[1].clientX)/2-r.left;my=(t[0].clientY+t[1].clientY)/2-r.top;d0=dist(t);z0=S.z;fx=(w.scrollLeft+mx-24)/S.z;fy=(w.scrollTop+my-24)/S.z}},{passive:true});
+w.addEventListener('touchmove',e=>{if(e.touches.length!==2||!d0)return;const t=e.touches,r=w.getBoundingClientRect(),nz=Math.max(4,Math.min(zmax(),Math.round(z0*dist(t)/d0)));mx=(t[0].clientX+t[1].clientX)/2-r.left;my=(t[0].clientY+t[1].clientY)/2-r.top;if(nz!==S.z){S.z=nz;w._ch=1}cancelAnimationFrame(w._r);w._r=requestAnimationFrame(()=>{if(w._ch){redraw();w._ch=0;$('z').value=S.z}w.scrollLeft=fx*S.z+24-mx;w.scrollTop=fy*S.z+24-my})},{passive:true});
+w.addEventListener('touchend',e=>{if(e.touches.length<2)d0=0},{passive:true})})();
+function view(v){['home','make','work'].forEach(i=>$(i).hidden=i!==v);cur=v;
+ if(v==='home')plist();else{const w=v==='work';$(w?'wslot':'mslot').appendChild($('cp'));$('pgl').hidden=!w;if(!w)$('pg').checked=false;$('wt').textContent=S.name;rd();draw()}
+ msg('');scrollTo(0,0)}
+window.goBack=()=>{if(cur==='home')return false;view('home');return true};
+document.addEventListener('click',e=>{const g=e.target.dataset&&e.target.dataset.go;if(g)view(g)});
+$('nw').onclick=()=>{IM=null;G=null;S.name='';S.img='';$('nm').value='';$('br').value=0;$('co').value=100;$('cv').hidden=true;const p=document.querySelector('#wrap p');if(p)p.hidden=false;$('info').textContent='Choose a photo to generate a pattern.';$('leg').innerHTML='';view('make')};
+$('ed').onclick=()=>{view('make');msg('Changing detail or colours resets your stitching progress.')};
+$('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a photo first.');return}if(!n){msg('Give your project a name.');return}
+ S.name=n;if(!ST.set('xs:'+n,snap())){msg('Couldn’t save (storage full or unavailable).');return}$('pg').checked=true;view('work')};
+function plist(){const ks=ST.keys();$('pl').innerHTML=ks.length?ks.map(k=>{const n=k.slice(3);let j={};try{j=JSON.parse(ST.get(k))||{}}catch(x){}const t=(j.done||'').length,pc=t?Math.round((j.done.match(/1/g)||[]).length*100/t):0,en=encodeURIComponent(n);
+return`<div class="pc" data-l="${en}"><img alt="" src="${j.img||''}"><div><b>${n.replace(/</g,'&lt;')}</b><div class="m">${j.w||'?'} stitches wide · ${j.k||'?'} colours · ${pc}% stitched</div></div><button class="s" data-d="${en}">Delete</button></div>`}).join(''):'<p class="m">No projects yet. Tap “New pattern” to start one.</p>'}
+function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;rd();
+ IM=new Image();IM.onload=()=>{build(j.done);$('pg').checked=true;view('work')};IM.src=j.img}catch(x){alert('Couldn’t open that project.')}}
+$('pl').onclick=e=>{const d=e.target.closest('[data-d]'),l=e.target.closest('[data-l]');
+ if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
+ if(l)openP(decodeURIComponent(l.dataset.l))};
+(function(){const c=$('cv');let mk=-1,pn=new Set(),f0=-1,pv=0,mv=0,rq=0;
+const sched=()=>{if(!rq)rq=requestAnimationFrame(()=>{rq=0;redraw()})};
+const cell=e=>{const b=c.getBoundingClientRect(),x=Math.floor((e.clientX-b.left-24)/S.z),y=Math.floor((e.clientY-b.top-24)/S.z);return x<0||y<0||x>=S.w||y>=S.h?-1:y*S.w+x};
+c.onclick=null;
+c.addEventListener('pointerdown',e=>{pn.add(e.pointerId);if(pn.size>1){if(mk>=0&&!mv&&f0>=0){D[f0]=pv;sched()}mk=-1;return}if(!S.prog||!G)return;const i=cell(e);if(i<0)return;f0=i;pv=D[i];mv=0;mk=pv?0:1;D[i]=mk;sched()});
+c.addEventListener('pointermove',e=>{if(mk<0||pn.size>1)return;const i=cell(e);if(i>=0&&D[i]!==mk){D[i]=mk;if(i!==f0)mv=1;sched()}});
+const up=e=>{pn.delete(e.pointerId);mk=-1;if(!pn.size&&S.prog&&G){stats();persist()}};
+c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up)})();
+view('home');
 </script></body></html>

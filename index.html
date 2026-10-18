@@ -31,16 +31,18 @@ button.s{background:var(--bd);color:var(--fg);padding:5px 10px}
 .sn{display:flex;gap:8px;align-items:center}.sn input[type=range]{flex:1;min-width:0}.sn input[type=number]{width:72px;flex:none;padding:6px}
 button:disabled{opacity:.4;cursor:default}
 #sp{position:relative}#cv{position:sticky;top:0;left:0}
+#ph{position:fixed;inset:0;background:var(--bg);z-index:10;overflow:auto;padding:12px}#ph>*{max-width:900px;margin-left:auto;margin-right:auto}
+#ew{display:flex;justify-content:center;margin:8px 0}#ec{touch-action:none;background:#fff;border-radius:4px}#ph .row{justify-content:center}
 </style></head><body>
 <div id="home" class="scr">
 <h1>Cross Stitch Studio</h1>
-<button id="nw">+ New pattern</button>
-<div id="pl"></div>
+<style>#hub{display:grid;grid-template-columns:1fr 1fr;gap:10px}#hub button{padding:26px 8px;font-size:16px;width:100%}#tb .row button{padding:7px 9px}</style>
+<div id="hub"><button data-go="prj">📂 My projects</button><button id="nw">🎨 Pattern creator<br><small>from a photo</small></button><button data-go="imp">📄 Import Stitch Fiddle PDF</button><button data-go="inv">🧵 Thread inventory</button><button data-go="bak">💾 Backup &amp; restore</button></div>
 </div>
 <div id="make" class="scr" hidden>
 <div class="bar"><button class="s" data-go="home">‹ Back</button><b>New pattern</b></div>
 <div class="card">
-<label class="btn">Choose photo<input type="file" id="f" accept="image/*" hidden></label>
+<label class="btn">Choose photo<input type="file" id="f" accept="image/*" hidden></label> <button class="s" id="ep" hidden style="margin-left:8px;padding:9px 14px">✂ Edit photo</button>
 <div class="row">
 <label>Detail: <b id="wv">80</b> stitches wide<input type="range" id="w" min="20" max="400" value="80"></label>
 <label>Max colours: <b id="kv">20</b><input type="range" id="k" min="2" max="60" value="20"></label>
@@ -64,8 +66,21 @@ button:disabled{opacity:.4;cursor:default}
 </div>
 <div id="work" class="scr" hidden>
 <div class="bar"><button class="s" data-go="home">‹ Home</button><b id="wt"></b><button class="s" id="ed">Edit pattern</button></div>
+<div id="tb" class="card"></div>
 <div id="wslot"></div>
 <div class="row"><button id="pd">Export PDF</button></div>
+</div>
+<div id="prj" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>My projects</b></div></div>
+<div id="imp" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Import PDF pattern</b></div><div class="card"><label class="btn">Choose PDF<input type="file" id="pf" accept="application/pdf" hidden></label><div class="row"><label>Page<input type="number" id="pp2" value="1" min="1"></label><label>Columns<input type="number" id="pcn"></label><label>Rows<input type="number" id="prn"></label></div><div class="row"><button class="s" id="pgo">Load page</button><button id="pim">Import</button></div><div class="m" id="pmsg" style="margin-top:8px">Choose a Stitch Fiddle PDF with a colour chart page.</div><canvas id="pcv" style="width:100%;margin-top:8px;background:#fff"></canvas></div></div>
+<div id="inv" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Thread inventory</b></div><div class="card"><input type="text" id="iq" placeholder="Search DMC number or name"><div id="il"></div></div></div>
+<div id="bak" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Backup &amp; restore</b></div><div class="card"><div class="row"><button id="bx">Export all projects &amp; inventory</button><label class="btn">Import backup<input type="file" id="bf" accept=".json,application/json" hidden></label></div><div class="m" id="bm" style="margin-top:8px"></div></div></div>
+<div id="ph" hidden>
+<div class="bar"><button class="s" id="ex">Cancel</button><b>Edit photo</b><button id="ea">Apply</button></div>
+<div id="ew"><canvas id="ec"></canvas></div>
+<div class="row"><button class="s" id="rl">↺ Rotate left</button><button class="s" id="rr">↻ Rotate right</button><button class="s" id="fh">⇋ Flip H</button><button class="s" id="fv">⇵ Flip V</button></div>
+<div class="row"><label>Straighten: <b id="egv">0</b>°<input type="range" id="eg" min="-45" max="45" step="0.5" value="0"></label><label>Crop shape<select id="eas"><option value="f">Free</option><option value="1:1">1:1 square</option><option value="4:3">4:3</option><option value="3:4">3:4</option><option value="3:2">3:2</option><option value="2:3">2:3</option><option value="16:9">16:9</option><option value="9:16">9:16</option></select></label></div>
+<div class="row"><button class="s" id="er">Reset all</button></div>
+<div class="m" style="text-align:center;margin-top:8px">Drag inside the box to move it. Drag its corners or edges to resize.</div>
 </div>
 <div id="dlg" hidden><div class="card"><b id="dt2"></b>
 <div class="row" style="align-items:center"><canvas id="wh" width="180" height="180"></canvas><div><div id="pv" class="sw" style="width:60px;height:60px"></div><div id="pn" class="m"></div></div></div>
@@ -89,7 +104,8 @@ button:disabled{opacity:.4;cursor:default}
 <div class="card"><b>Colours</b><div class="m">Tap a thread in the legend to change its colour or symbol, or to delete all its stitches. Use Hide to preview the pattern without a colour.</div>
 <div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="ca">Auto symbols</button></div>
 <div class="row"><label>Hue shift: <b id="hv">0</b>°<input type="range" id="hs" min="-180" max="180" value="0"></label><button class="s" id="hb">Apply</button></div></div>
-<div class="card"><b>Gradients &amp; palettes</b><div class="m">Apply to the whole pattern. “Reset colours” above undoes it.</div>
+<div class="card"><b>Gradients &amp; palettes</b><div class="row" style="margin-top:6px"><label>Apply to<select id="gt"><option value="p">Pattern colours (each thread takes a gradient/palette colour)</option><option value="i">Whole image (recolours the photo, then rebuilds the pattern)</option></select></label></div>
+<div class="m" style="margin-top:6px">Pattern: “Reset colours” above undoes it. Image: use Remove from image, or Undo.</div><div class="row"><button class="s" id="gri" hidden>Remove from image</button></div>
 <div class="m" style="margin-top:10px">Preset gradients (dark → light)</div><div class="chips" id="gp"></div>
 <div class="m" style="margin-top:10px">Preset palettes</div><div class="chips" id="pp"></div>
 <div class="row"><label>Palette matching<select id="pm"><option value="n">Closest colour</option><option value="b">By brightness</option></select></label><label class="ck"><input type="checkbox" id="gr">Reverse gradient</label></div>
@@ -98,6 +114,7 @@ button:disabled{opacity:.4;cursor:default}
 <div class="chips" id="gs"></div>
 <div class="row"><button class="s" id="ga">+ Add colour</button><button id="gok">Apply gradient</button></div></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -121,13 +138,14 @@ function build(done,del){
  if(S.bw)bwApply(d,w,h);
  for(let i=0;i<d.length;i+=4)for(let t=0;t<3;t++)d[i+t]=(d[i+t]-128)*S.con+128+S.bri;
  if(S.bw&&S.bwm==='2')bwLevels(d,n);
+ if(S.ig)imgMap(d,n);
  for(let i=0;i<n;i++){f[i*3]=d[i*4];f[i*3+1]=d[i*4+1];f[i*3+2]=d[i*4+2];px.push([d[i*4],d[i*4+1],d[i*4+2]])}
  const k=Math.min(S.bw&&S.bwm==='2'?2:S.k,n),ord=px.map((p,i)=>i).sort((a,b)=>px[a][0]+px[a][1]+px[a][2]-px[b][0]-px[b][1]-px[b][2]);
  let C=[];for(let j=0;j<k;j++)C.push(px[ord[Math.floor((j+.5)*n/k)]].slice());
  for(let it=0;it<8;it++){const s=C.map(()=>[0,0,0,0]);
   for(let i=0;i<n;i++){let b=0,bd=1e9;const p=px[i];for(let j=0;j<k;j++){const q=C[j],dd=(p[0]-q[0])**2+(p[1]-q[1])**2+(p[2]-q[2])**2;if(dd<bd){bd=dd;b=j}}const t=s[b];t[0]+=p[0];t[1]+=p[1];t[2]+=p[2];t[3]++}
   C=C.map((q,j)=>s[j][3]?[s[j][0]/s[j][3],s[j][1]/s[j][3],s[j][2]/s[j][3]]:q)}
- const pool=S.bw?(S.bwm==='2'?[IBK,IWH]:NG):null,PLB=(pool||DM.map((m,i)=>i)).map(i=>DM[i].l),used=[];C.forEach(q=>{const j=near(lab(...q),PLB),i=pool?pool[j]:j;if(!used.includes(i))used.push(i)});
+ const pool=S.bw&&!S.ig?(S.bwm==='2'?[IBK,IWH]:NG):null,PLB=(pool||DM.map((m,i)=>i)).map(i=>DM[i].l),used=[];C.forEach(q=>{const j=near(lab(...q),PLB),i=pool?pool[j]:j;if(!used.includes(i))used.push(i)});
  const Q=used.map(i=>DM[i]),QL=Q.map(q=>q.l),g=new Uint16Array(n),cl=v=>Math.min(255,Math.max(0,v));
  for(let y=0;y<h;y++)for(let xx=0;xx<w;xx++){const i=y*w+xx,r=cl(f[i*3]),gg=cl(f[i*3+1]),b=cl(f[i*3+2]),j=near(lab(r,gg,b),QL);g[i]=j;
   if(S.dither){const q=hx(Q[j].h),e=[r-q[0],gg-q[1],b-q[2]];
@@ -140,7 +158,7 @@ function build(done,del){
  G=g.map(v=>mp[v]);P=order.map((o,j)=>({...Q[o],s:SY[j],q:cnt[o]}));P0=P.map(p=>({...p}));G0=G.slice();S.o0=P0.map(o=>o.c);DEL=new Uint8Array(n);if(del&&del.length===n)for(let i=0;i<n;i++)DEL[i]=del[i]==='1'?1:0;HID.clear();derive();
  D=new Uint8Array(n);if(done&&done.length===n)for(let i=0;i<n;i++)D[i]=done[i]==='1'?1:0;
  for(let i=0;i<n;i++)if(DEL[i])D[i]=0;
- BS={w:S.w,k:S.k,dither:S.dither,clean:S.clean,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl};
+ BS={w:S.w,k:S.k,dither:S.dither,clean:S.clean,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ig:S.ig};
 }
 const sk=q=>Math.max(1,Math.ceil(q*2.4*(25.4/S.count)*2*1.2/8000));
 function drawChart(cv,c0,r0,c1,r1,z,m,sd,hf,vp){
@@ -171,12 +189,12 @@ function stats(){if(!G)return;const T=S.w*S.h,cm=v=>(v/S.count*2.54).toFixed(1);
  $('info').textContent=`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm on ${S.count}-count · ${P.length} colours · ${dn} of ${n} stitched (${n?Math.round(dn/n*100):0}%)`+(HID.size?` · ${HID.size} hidden`:'');
  $('leg').innerHTML=P.map((p,i)=>{const hd=HID.has(p.c);return`<div class="lg" data-i="${i}" style="cursor:pointer${hd?';opacity:.5':''}"><span class="sw" style="background:${p.h}"></span><span class="sw">${p.s}</span><span>DMC ${p.c} · ${p.n}</span><span>${p.q} st · ~${sk(p.q)} skein${sk(p.q)>1?'s':''}</span><button class="s" data-e="${i}" style="flex:none">${hd?'Show':'Hide'}</button></div>`}).join('')+(HID.size?'<div style="margin-top:6px"><button class="s" data-all="1">Show all colours</button></div>':'')+'<div class="m" style="margin-top:6px">Skein counts are estimates (2 strands, 20% waste). Tap a thread to edit or delete it. Hide only previews the chart without a colour.</div>';unb()}
 function go(){if(!IM)return;rd();build();draw()}
-$('f').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);S.img=c.toDataURL('image/jpeg',.85);IM=new Image();IM.onload=go;IM.src=S.img};im.src=r.result};r.readAsDataURL(fl)};
+$('f').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality='high';x.drawImage(im,0,0,c.width,c.height);S.src=c.toDataURL('image/jpeg',.85);SRC=c;S.ed=defEd();S.ig=null;NEWPHOTO=1;IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);go()};im.src=r.result};r.readAsDataURL(fl)};
 ['w','k','dt','cl','bw','bwm','bwa'].forEach(i=>$(i).onchange=go);$('k').oninput=()=>$('kv').textContent=$('k').value;
 ['ol','vm','pg'].forEach(i=>$(i).onchange=()=>{rd();draw()});$('z').oninput=()=>{rd();draw()};$('ct').onchange=()=>{rd();stats()};
 $('cv').onclick=e=>{if(!S.prog||!G)return;const b=$('cv').getBoundingClientRect(),s=$('cv').width/b.width,c=Math.floor(((e.clientX-b.left)*s-24)/S.z),r=Math.floor(((e.clientY-b.top)*s-24)/S.z);
  if(c<0||r<0||c>=S.w||r>=S.h)return;D[r*S.w+c]^=1;draw();persist()};
-function snap(){return JSON.stringify({w:S.w,count:S.count,k:S.k,dither:S.dither,clean:S.clean,outline:S.outline,m:S.m,img:S.img,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ov:P0.map(o=>o.c),sym:S.sym,done:G?Array.from(D).join(''):'',del:G&&DEL&&DEL.some(v=>v)?Array.from(DEL).join(''):'',ops:OPS})}
+function snap(){return JSON.stringify({w:S.w,count:S.count,k:S.k,dither:S.dither,clean:S.clean,outline:S.outline,m:S.m,img:S.img,src:S.src,ed:S.ed,ig:S.ig,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ov:P0.map(o=>o.c),sym:S.sym,done:G?Array.from(D).join(''):'',del:G&&DEL&&DEL.some(v=>v)?Array.from(DEL).join(''):'',ops:OPS})}
 function persist(){if(S.name&&ST.get('xs:'+S.name))ST.set('xs:'+S.name,snap())}
 $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Create a pattern first.');return}if(!n){msg('Give your project a name.');return}
  S.name=n;msg(ST.set('xs:'+n,snap())?'Saved on this device.':'Couldn’t save (storage full or unavailable).');plist()};
@@ -205,8 +223,9 @@ plist();
 let cur='home';
 function rd(){S.w=Math.min(400,Math.max(20,+$('w').value||80));S.count=+$('ct').value;S.k=+$('k').value;S.dither=$('dt').checked;S.clean=$('cl').checked;S.outline=$('ol').checked;S.m=$('vm').value;S.z=+$('z').value;S.prog=$('pg').checked;$('kv').textContent=S.k;$('wv').textContent=S.w;S.bri=+$('br').value;S.con=+$('co').value/100;$('bv').textContent=S.bri;$('cnv').textContent=$('co').value;S.bw=$('bw').checked;S.bwm=$('bwm').value;S.bwa=$('bwa').checked;S.bws=+$('bws').value;S.bwl=+$('bwl').value;$('bsv').textContent=S.bws;$('blv').textContent=S.bwl;$('bwx').hidden=!S.bw;$('bwlw').hidden=S.bwm!=='2';$('wrap').classList.toggle('mk',S.prog);if(window.syncNums)syncNums()}
 function zmax(){return 100}
+function zmin(){const w=$('wrap'),cw=w.clientWidth;if(!G||!cw)return .5;return Math.max(.25,Math.floor(Math.min((cw-26)/S.w,(innerHeight*.7-26)/S.h)*4)/4)}
 function redraw(){drawChart($('cv'),0,0,S.w,S.h,S.z,S.m,1,1)}
-function draw(){if(!G)return;const z=$('z');z.max=zmax();S.z=Math.max(.5,Math.min(S.z,zmax()));z.value=S.z;if(window.syncNums)syncNums();$('cv').hidden=false;const p=document.querySelector('#wrap p');if(p)p.hidden=true;redraw();stats()}
+function draw(){$('ep').hidden=!SRC;$('gri').hidden=!S.ig;if(!G)return;const z=$('z');z.max=zmax();z.min=zmin();S.z=Math.max(zmin(),Math.min(S.z,zmax()));z.value=S.z;if(window.syncNums)syncNums();$('cv').hidden=false;const p=document.querySelector('#wrap p');if(p)p.hidden=true;redraw();stats()}
 function go(){if(!IM)return;msg('Working…');setTimeout(()=>{rd();
  if(G&&BS&&!NEWPHOTO){carryBuild();persist()}else{NEWPHOTO=0;OPS=[];UNDO=[];build()}
  draw();msg('');unb()},30)}
@@ -215,7 +234,7 @@ $('w').oninput=()=>$('wv').textContent=$('w').value;['br','co','bws','bwl'].forE
 (function(){const w=$('wrap');let d0=0,z0,fx,fy,mx,my;
 const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY),q=v=>v<4?Math.round(v*4)/4:v<10?Math.round(v*2)/2:Math.round(v);
 w.addEventListener('touchstart',e=>{if(e.touches.length===2&&G){const r=w.getBoundingClientRect(),t=e.touches;mx=(t[0].clientX+t[1].clientX)/2-r.left;my=(t[0].clientY+t[1].clientY)/2-r.top;d0=dist(t);z0=S.z;fx=(w.scrollLeft+mx-24)/S.z;fy=(w.scrollTop+my-24)/S.z}},{passive:true});
-w.addEventListener('touchmove',e=>{if(e.touches.length!==2||!d0)return;const t=e.touches,r=w.getBoundingClientRect(),nz=Math.max(.5,Math.min(zmax(),q(z0*dist(t)/d0)));mx=(t[0].clientX+t[1].clientX)/2-r.left;my=(t[0].clientY+t[1].clientY)/2-r.top;if(nz!==S.z){S.z=nz;w._ch=1}
+w.addEventListener('touchmove',e=>{if(e.touches.length!==2||!d0)return;const t=e.touches,r=w.getBoundingClientRect(),nz=Math.max(zmin(),Math.min(zmax(),q(z0*dist(t)/d0)));mx=(t[0].clientX+t[1].clientX)/2-r.left;my=(t[0].clientY+t[1].clientY)/2-r.top;if(nz!==S.z){S.z=nz;w._ch=1}
  cancelAnimationFrame(w._r);w._r=requestAnimationFrame(()=>{if(w._ch){w._ch=0;layout();$('z').value=S.z;if(window.syncNums)syncNums()}w.scrollLeft=fx*S.z+24-mx;w.scrollTop=fy*S.z+24-my;redraw()})},{passive:true});
 w.addEventListener('touchend',e=>{if(e.touches.length<2)d0=0},{passive:true})})();
 function view(v){['home','make','work'].forEach(i=>$(i).hidden=i!==v);cur=v;
@@ -223,14 +242,14 @@ function view(v){['home','make','work'].forEach(i=>$(i).hidden=i!==v);cur=v;
  msg('');scrollTo(0,0)}
 window.goBack=()=>{if(cur==='home')return false;view('home');return true};
 document.addEventListener('click',e=>{const g=e.target.dataset&&e.target.dataset.go;if(g)view(g)});
-$('nw').onclick=()=>{IM=null;G=null;S.name='';S.img='';$('nm').value='';$('br').value=0;$('co').value=100;$('bw').checked=false;$('bwm').value='g';$('bwa').checked=true;$('bws').value=40;$('bwl').value=0;S.sym={};$('cv').hidden=true;const p=document.querySelector('#wrap p');if(p)p.hidden=false;$('info').textContent='Choose a photo to generate a pattern.';$('leg').innerHTML='';OPS=[];UNDO=[];unb();view('make')};
+$('nw').onclick=()=>{IM=null;G=null;S.name='';S.img='';SRC=null;S.src='';S.ed=null;S.ig=null;$('nm').value='';$('br').value=0;$('co').value=100;$('bw').checked=false;$('bwm').value='g';$('bwa').checked=true;$('bws').value=40;$('bwl').value=0;S.sym={};$('cv').hidden=true;const p=document.querySelector('#wrap p');if(p)p.hidden=false;$('info').textContent='Choose a photo to generate a pattern.';$('leg').innerHTML='';OPS=[];UNDO=[];unb();view('make')};
 $('ed').onclick=()=>{view('make');msg('Your edits are kept when you change settings. Use Undo to step back.')};
 $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a photo first.');return}if(!n){msg('Give your project a name.');return}
  S.name=n;if(!ST.set('xs:'+n,snap())){msg('Couldn’t save (storage full or unavailable).');return}$('pg').checked=false;view('work')};
 function plist(){const ks=ST.keys();$('pl').innerHTML=ks.length?ks.map(k=>{const n=k.slice(3);let j={};try{j=JSON.parse(ST.get(k))||{}}catch(x){}const dd=j.done||'',dl=j.del||'';let t=0,dn=0;for(let q=0;q<dd.length;q++)if(dl[q]!=='1'){t++;if(dd[q]==='1')dn++}const pc=t?Math.round(dn*100/t):0,en=encodeURIComponent(n);
 return`<div class="pc" data-l="${en}"><img alt="" src="${j.img||''}"><div><b>${n.replace(/</g,'&lt;')}</b><div class="m">${j.w||'?'} stitches wide · ${j.k||'?'} colours · ${pc}% stitched</div></div><button class="s" data-d="${en}">Delete</button></div>`}).join(''):'<p class="m">No projects yet. Tap “New pattern” to start one.</p>'}
 function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;rd();
- IM=new Image();IM.onload=()=>{S.sym=j.sym||{};build(j.done,j.del);if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('work')};IM.src=j.img}catch(x){alert('Couldn’t open that project.')}}
+ SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('work')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
 $('pl').onclick=e=>{const d=e.target.closest('[data-d]'),l=e.target.closest('[data-l]');
  if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
  if(l)openP(decodeURIComponent(l.dataset.l))};
@@ -271,7 +290,7 @@ function bwLevels(d,n){const hs=new Uint32Array(256);for(let i=0;i<n;i++)hs[d[i*
 function rs(a,ow,w,h){const oh=a.length/ow,o=new Uint8Array(w*h);if(ow===w&&oh===h){o.set(a);return o}
  for(let y=0;y<h;y++){const sy=Math.min(oh-1,Math.floor((y+.5)*oh/h));for(let x=0;x<w;x++)o[y*w+x]=a[sy*ow+Math.min(ow-1,Math.floor((x+.5)*ow/w))]}return o}
 function state(){return Object.assign({},BS,{ov:P0.map(o=>o.c),sym:Object.assign({},S.sym),ops:OPS.slice(),del:Array.from(DEL).join('')})}
-function setCtl(j){$('w').value=j.w;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0}
+function setCtl(j){$('w').value=j.w;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;S.ig=j.ig||null}
 function pushUndo(st){if(!BS||!G)return;UNDO.push(st||state());if(UNDO.length>30)UNDO.shift();unb()}
 function unb(){const b=$('un');b.disabled=!UNDO.length;b.textContent='↶ Undo'+(UNDO.length?' ('+UNDO.length+')':'')}
 function applyOv(ov){if(ov&&ov.length===P0.length)P0.forEach((o,i)=>{const m=DM.find(d=>d.c===ov[i]);if(m)Object.assign(o,m)})}
@@ -317,7 +336,7 @@ function redraw(){if(!G)return;layout();const w=$('wrap'),z=S.z,CW=24+S.w*z,CH=2
  sl=Math.max(0,w.scrollLeft),st=Math.max(0,w.scrollTop),c0=Math.max(0,Math.min(S.w-1,Math.floor(sl/z))),r0=Math.max(0,Math.min(S.h-1,Math.floor(st/z))),
  ox=sl-c0*z,oy=st-r0*z,c1=Math.min(S.w,c0+Math.ceil((vw-24+ox)/z)+1),r1=Math.min(S.h,r0+Math.ceil((vh-24+oy)/z)+1);
  K=Math.max(1,Math.min(window.devicePixelRatio||1,3));drawChart($('cv'),c0,r0,c1,r1,z,S.m,1,1,{vw,vh,ox,oy})}
-function zoomTo(nz,mx,my){const w=$('wrap'),z0=S.z;if(mx===undefined){mx=Math.min(w.clientWidth,24+S.w*z0)/2;my=Math.min(w.clientHeight,24+S.h*z0)/2}
+function zoomTo(nz,mx,my){nz=Math.max(zmin(),Math.min(zmax(),nz));const w=$('wrap'),z0=S.z;if(mx===undefined){mx=Math.min(w.clientWidth,24+S.w*z0)/2;my=Math.min(w.clientHeight,24+S.h*z0)/2}
  const fx=(w.scrollLeft+mx-24)/z0,fy=(w.scrollTop+my-24)/z0;S.z=nz;layout();w.scrollLeft=fx*nz+24-mx;w.scrollTop=fy*nz+24-my;redraw()}
 function wheel(){const c=$('wh'),x=c.getContext('2d'),R=90,im=x.createImageData(180,180);
  for(let y=0;y<180;y++)for(let xx=0;xx<180;xx++){const dx=xx-R,dy=y-R,r=Math.hypot(dx,dy);if(r>R)continue;im.data.set([...h2r((Math.atan2(dy,dx)*180/Math.PI+360)%360,r/R,wh.v),255],(y*180+xx)*4)}
@@ -364,8 +383,21 @@ $('gp').innerHTML=GR.map((g,i)=>`<button class="chip" data-g="${i}"><i style="ba
 $('pp').innerHTML=PL.map((g,i)=>`<button class="chip" data-p="${i}"><i style="background:${hard(g.c)}"></i>${g.n.replace('&','&amp;')}</button>`).join('');
 function renderG(){$('gb').style.background=lg(GS);
  $('gs').innerHTML=GS.map((h,i)=>`<span class="gst"><button class="s sb2" data-st="${i}" aria-label="Gradient colour ${i+1}" style="background:${h}"></button>${GS.length>2?`<button class="s" data-rm="${i}" aria-label="Remove colour">✕</button>`:''}</span>`).join('')}
-function gradApply(st){if(!G||!P.length){msg('Create a pattern first.');return}runOp({t:'grad',st:st.slice(),r:$('gr').checked?1:0});msg('Gradient applied.')}
-function palApply(hs){if(!G||!P.length){msg('Create a pattern first.');return}runOp({t:'pal',hs:hs.slice(),m:$('pm').value});msg('Palette applied.')}
+function imgMap(d,n){const o=S.ig,L=new Float32Array(n),hs=new Uint32Array(256);
+ for(let i=0;i<n;i++){const v=Math.max(0,Math.min(255,.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2]));L[i]=v;hs[Math.round(v)]++}
+ let a=0,lo=0,hi=255,mn=0,mx=255,cut=n*.005;for(let i=0;i<256;i++)if(hs[i]){mn=i;break}for(let i=255;i>=0;i--)if(hs[i]){mx=i;break}
+ for(let i=0;i<256;i++){a+=hs[i];if(a>cut){lo=i;break}}a=0;for(let i=255;i>=0;i--){a+=hs[i];if(a>cut){hi=i;break}}
+ if(hi-lo<8){lo=mn;hi=mx}const sp=Math.max(1,hi-lo);let fn;
+ if(o.t==='grad'){const rg=(o.r?o.st.slice().reverse():o.st).map(hx);fn=l=>{const t=Math.max(0,Math.min(1,(l-lo)/sp)),u=t*(rg.length-1),j=Math.min(rg.length-2,Math.floor(u)),f=u-j;return rg[j].map((v,k)=>v+(rg[j+1][k]-v)*f)}}
+ else{const pr=o.hs.map(hx);
+  if(o.m==='b'){const sr=pr.slice().sort((x,y)=>lum(x)-lum(y));fn=l=>sr[Math.min(sr.length-1,Math.max(0,Math.floor((l-lo)/sp*sr.length)))]}
+  else{const pl=pr.map(c=>lab(c[0],c[1],c[2]));fn=(l,i)=>pr[near(lab(d[i*4],d[i*4+1],d[i*4+2]),pl)]}}
+ for(let i=0;i<n;i++){const c=fn(L[i],i);d[i*4]=c[0];d[i*4+1]=c[1];d[i*4+2]=c[2]}}
+function imgApply(o){if(!IM||!G){msg('Choose a photo first.');return}S.ig=o;go()}
+function colApply(o,t){if(!G||!P.length){msg('Create a pattern first.');return}if($('gt').value==='i')imgApply(o);else{runOp(o);msg(t+' applied.')}}
+function gradApply(st){colApply({t:'grad',st:st.slice(),r:$('gr').checked?1:0},'Gradient')}
+function palApply(hs){colApply({t:'pal',hs:hs.slice(),m:$('pm').value},'Palette')}
+$('gri').onclick=()=>{if(!S.ig)return;S.ig=null;go()};
 $('gp').onclick=e=>{const b=e.target.closest('[data-g]');if(b)gradApply(GR[+b.dataset.g].c)};
 $('pp').onclick=e=>{const b=e.target.closest('[data-p]');if(b)palApply(PL[+b.dataset.p].c)};
 $('gs').onclick=e=>{const r=e.target.closest('[data-rm]'),b=e.target.closest('[data-st]');
@@ -376,9 +408,9 @@ function openStopLast(){const b=$('gs').querySelector('[data-st="'+(GS.length-1)
 $('gok').onclick=()=>gradApply(GS);
 renderG();
 $('un').onclick=undo;
-$('z').oninput=()=>zoomTo(Math.max(.5,+$('z').value||S.z));
-$('zf').onclick=()=>{if(!G)return;const w=$('wrap'),nz=Math.max(.5,Math.floor(Math.min((w.clientWidth-26)/S.w,(innerHeight*.7-26)/S.h)*4)/4);$('z').value=nz;zoomTo(nz);if(window.syncNums)syncNums()};
-(function(){const w=$('wrap');let q=0;const f=()=>{if(!q)q=requestAnimationFrame(()=>{q=0;if(G)redraw()})};w.addEventListener('scroll',f,{passive:true});addEventListener('resize',f)})();
+$('z').oninput=()=>zoomTo(+$('z').value||S.z);
+$('zf').onclick=()=>{if(!G)return;const nz=zmin();$('z').value=nz;zoomTo(nz);if(window.syncNums)syncNums()};
+(function(){const w=$('wrap');let q=0;const f=()=>{if(!q)q=requestAnimationFrame(()=>{q=0;if(G){if(S.z<zmin())draw();else redraw()}})};w.addEventListener('scroll',f,{passive:true});addEventListener('resize',f)})();
 $('f').addEventListener('change',()=>{if($('f').files&&$('f').files.length)NEWPHOTO=1});
 const NUMS=['w','k','br','co','bws','bwl','z','hs'].map(id=>{const sl=$(id),n=document.createElement('input');n.type='number';n.step=sl.step&&sl.step!=='any'?sl.step:1;n.setAttribute('aria-label','Type a value');
  const wr=document.createElement('div');wr.className='sn';sl.parentNode.insertBefore(wr,sl);wr.appendChild(sl);wr.appendChild(n);
@@ -386,5 +418,150 @@ const NUMS=['w','k','br','co','bws','bwl','z','hs'].map(id=>{const sl=$(id),n=do
  sl.addEventListener('input',()=>{n.value=sl.value});return[sl,n]});
 function syncNums(){NUMS.forEach(([sl,n])=>{n.min=sl.min;n.max=sl.max;if(document.activeElement!==n)n.value=sl.value})}
 syncNums();
+</script>
+<script>
+/* ---- Photo editor: non-destructive crop / rotate / flip / straighten ---- */
+let SRC=null,E=null;
+const MINC=.04,cl3=(v,a,b)=>Math.max(a,Math.min(b,v)),nq=q=>((q%4)+4)%4;
+function defEd(){return{q:0,a:0,f:0,c:{x:0,y:0,w:1,h:1}}}
+function tf(src,ed,k){const sw=src.width,sh=src.height,t=(ed.q*90+ed.a)*Math.PI/180,c=Math.abs(Math.cos(t)),s=Math.abs(Math.sin(t)),
+ W=Math.max(1,Math.round((sw*c+sh*s)*k)),H=Math.max(1,Math.round((sw*s+sh*c)*k)),cv=document.createElement('canvas');cv.width=W;cv.height=H;
+ const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);x.imageSmoothingQuality='high';x.translate(W/2,H/2);x.rotate(t);x.scale(ed.f?-1:1,1);x.drawImage(src,-sw*k/2,-sh*k/2,sw*k,sh*k);return cv}
+function renderEd(src,ed,md){const t=tf(src,ed,1),c=ed.c,sx=c.x*t.width,sy=c.y*t.height,sw=Math.max(1,c.w*t.width),sh=Math.max(1,c.h*t.height),k=Math.min(1,md/Math.max(sw,sh)),
+ o=document.createElement('canvas');o.width=Math.max(1,Math.round(sw*k));o.height=Math.max(1,Math.round(sh*k));const x=o.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,o.width,o.height);x.imageSmoothingQuality='high';x.drawImage(t,sx,sy,sw,sh,0,0,o.width,o.height);return o}
+function thumb(c){const k=Math.min(1,120/Math.max(c.width,c.height)),t=document.createElement('canvas');t.width=Math.max(1,Math.round(c.width*k));t.height=Math.max(1,Math.round(c.height*k));const x=t.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,t.width,t.height);x.imageSmoothingQuality='high';x.drawImage(c,0,0,t.width,t.height);return t.toDataURL('image/jpeg',.7)}
+function edOpen(){if(!SRC)return;const k=Math.min(1,900/Math.max(SRC.width,SRC.height)),p=document.createElement('canvas');p.width=Math.max(1,Math.round(SRC.width*k));p.height=Math.max(1,Math.round(SRC.height*k));
+ const px=p.getContext('2d');px.imageSmoothingQuality='high';px.drawImage(SRC,0,0,p.width,p.height);
+ E={pv:p,ed:JSON.parse(JSON.stringify(S.ed&&S.ed.c?S.ed:defEd())),asp:0,m:null};$('eas').value='f';$('ea').dataset.s='';$('ea').textContent='Apply';edSync();$('ph').hidden=false;edShow(0)}
+function edClose(){$('ph').hidden=true;E=null}
+function edSync(){$('eg').value=E.ed.a;$('egv').textContent=E.ed.a}
+function fitCrop(){let c={x:0,y:0,w:1,h:1};if(E.asp){const rn=E.asp*E.tc.height/E.tc.width,h=Math.min(1,1/rn),w=h*rn;c={x:(1-w)/2,y:(1-h)/2,w,h}}E.ed.c=c}
+function edShow(rc){if(!E)return;const ph=$('ph'),aw=Math.max(100,ph.clientWidth-24),ah=Math.max(140,innerHeight*.5),t=tf(E.pv,E.ed,1);E.tc=t;
+ const ps=Math.min(aw/t.width,ah/t.height),dw=Math.max(1,Math.round(t.width*ps)),dh=Math.max(1,Math.round(t.height*ps)),dp=Math.min(window.devicePixelRatio||1,2.5),cv=$('ec');
+ E.dw=dw;E.dh=dh;cv.width=Math.round(dw*dp);cv.height=Math.round(dh*dp);cv.style.width=dw+'px';cv.style.height=dh+'px';if(rc)fitCrop();edPaint()}
+function edPaint(){const cv=$('ec'),x=cv.getContext('2d'),dp=cv.width/E.dw,c=E.ed.c,X=c.x*E.dw,Y=c.y*E.dh,W=c.w*E.dw,H=c.h*E.dh;
+ x.setTransform(dp,0,0,dp,0,0);x.clearRect(0,0,E.dw,E.dh);x.drawImage(E.tc,0,0,E.dw,E.dh);
+ x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,0,E.dw,Y);x.fillRect(0,Y+H,E.dw,E.dh-Y-H);x.fillRect(0,Y,X,H);x.fillRect(X+W,Y,E.dw-X-W,H);
+ x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=1;x.beginPath();for(let i=1;i<3;i++){x.moveTo(X+W*i/3,Y);x.lineTo(X+W*i/3,Y+H);x.moveTo(X,Y+H*i/3);x.lineTo(X+W,Y+H*i/3)}x.stroke();
+ x.strokeStyle='#fff';x.lineWidth=2;x.strokeRect(X,Y,W,H);
+ const hd=(px,py)=>{x.fillStyle='#fff';x.strokeStyle='#000';x.lineWidth=1;x.fillRect(px-7,py-7,14,14);x.strokeRect(px-7,py-7,14,14)};
+ [[X,Y],[X+W,Y],[X,Y+H],[X+W,Y+H]].forEach(p=>hd(p[0],p[1]));if(!E.asp)[[X+W/2,Y],[X+W/2,Y+H],[X,Y+H/2],[X+W,Y+H/2]].forEach(p=>hd(p[0],p[1]))}
+function edHit(px,py){const c=E.ed.c,X=c.x*E.dw,Y=c.y*E.dh,W=c.w*E.dw,H=c.h*E.dh,r=Math.min(26,Math.max(12,Math.min(W,H)/3));
+ if(px<X-r||px>X+W+r||py<Y-r||py>Y+H+r)return null;
+ const m={l:Math.abs(px-X)<r,r:Math.abs(px-X-W)<r,t:Math.abs(py-Y)<r,b:Math.abs(py-Y-H)<r};
+ if(m.l&&m.r){m.l=px<X+W/2;m.r=!m.l}if(m.t&&m.b){m.t=py<Y+H/2;m.b=!m.t}
+ const inside=px>X&&px<X+W&&py>Y&&py<Y+H,corner=(m.l||m.r)&&(m.t||m.b);
+ if(corner)return m;if(E.asp)return inside?{mv:1}:null;if(m.l||m.r||m.t||m.b)return m;return inside?{mv:1}:null}
+function edMove(dx,dy){const m=E.m,c0=E.c0;let c;
+ if(m.mv){c={x:cl3(c0.x+dx,0,1-c0.w),y:cl3(c0.y+dy,0,1-c0.h),w:c0.w,h:c0.h}}
+ else if(E.asp){const rn=E.asp*E.tc.height/E.tc.width,ax=m.l?c0.x+c0.w:c0.x,ay=m.t?c0.y+c0.h:c0.y,tx=(m.l?c0.x:c0.x+c0.w)+dx,ty=(m.t?c0.y:c0.y+c0.h)+dy,sx=tx>=ax?1:-1,sy=ty>=ay?1:-1;
+  let w=Math.abs(tx-ax),h=Math.abs(ty-ay);w=(w+h*rn)/2;h=w/rn;const mw=sx>0?1-ax:ax,mh=sy>0?1-ay:ay;
+  if(w>mw){w=mw;h=w/rn}if(h>mh){h=mh;w=h*rn}if(w<MINC){w=MINC;h=w/rn}
+  c={x:cl3(sx>0?ax:ax-w,0,1-w),y:cl3(sy>0?ay:ay-h,0,1-h),w,h}}
+ else{let x1=c0.x,y1=c0.y,x2=c0.x+c0.w,y2=c0.y+c0.h;
+  if(m.l)x1=cl3(c0.x+dx,0,x2-MINC);if(m.r)x2=cl3(x2+dx,x1+MINC,1);if(m.t)y1=cl3(c0.y+dy,0,y2-MINC);if(m.b)y2=cl3(y2+dy,y1+MINC,1);
+  c={x:x1,y:y1,w:x2-x1,h:y2-y1}}
+ E.ed.c=c;edPaint()}
+(function(){const cv=$('ec');let id=null,p0=null;
+ const pt=e=>{const b=cv.getBoundingClientRect();return[(e.clientX-b.left)*(E.dw/b.width),(e.clientY-b.top)*(E.dh/b.height)]};
+ cv.addEventListener('pointerdown',e=>{if(!E)return;const p=pt(e),m=edHit(p[0],p[1]);if(!m)return;E.m=m;E.c0=Object.assign({},E.ed.c);p0=p;id=e.pointerId;try{cv.setPointerCapture(id)}catch(x){}e.preventDefault()});
+ cv.addEventListener('pointermove',e=>{if(!E||!E.m||e.pointerId!==id)return;const p=pt(e);edMove((p[0]-p0[0])/E.dw,(p[1]-p0[1])/E.dh)});
+ const up=e=>{if(E&&e.pointerId===id){E.m=null;id=null}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up)})();
+function edTf(fn){if(!E)return;fn(E.ed);E.ed.q=nq(E.ed.q);edSync();edShow(1)}
+const edFlip=ed=>{ed.f^=1;ed.q=-ed.q;ed.a=-ed.a};
+$('rl').onclick=()=>edTf(ed=>ed.q--);
+$('rr').onclick=()=>edTf(ed=>ed.q++);
+$('fh').onclick=()=>edTf(edFlip);
+$('fv').onclick=()=>edTf(ed=>{edFlip(ed);ed.q+=2});
+$('eg').oninput=()=>{if(!E)return;E.ed.a=+$('eg').value;$('egv').textContent=E.ed.a;edShow(1)};
+$('eas').onchange=()=>{if(!E)return;const v=$('eas').value;E.asp=v==='f'?0:(+v.split(':')[0])/(+v.split(':')[1]);edShow(1)};
+$('er').onclick=()=>{if(!E)return;E.ed=defEd();E.asp=0;$('eas').value='f';edSync();edShow(1)};
+$('ex').onclick=edClose;
+$('ep').onclick=edOpen;
+$('ea').onclick=()=>{if(!E)return;const b=$('ea');
+ if(JSON.stringify(E.ed)===JSON.stringify(S.ed&&S.ed.c?S.ed:defEd())){edClose();return}
+ const work=G&&((D&&D.some(v=>v))||OPS.length||(DEL&&DEL.some(v=>v)));
+ if(work&&!b.dataset.s){b.dataset.s=1;b.textContent='Tap again: restarts progress';return}
+ S.ed=JSON.parse(JSON.stringify(E.ed));IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);edClose();rd();msg('Working…');
+ setTimeout(()=>{OPS=[];UNDO=[];NEWPHOTO=0;build();draw();persist();msg('');unb()},30)};
+addEventListener('resize',()=>{if(E)edShow(0)});
+(function(){const g0=window.goBack;window.goBack=()=>{if(E){edClose();return true}return g0()}})();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id),J=(k,d)=>{try{return JSON.parse(ST.get(k))||d}catch(e){return d}},INV=()=>J('xi:inv',{}),spd=()=>+ST.get('xi:spd')||150;
+Object.assign(S,{park:-1,last:-1,hl:null,hf:0,mode:'',lock:0,ka:0,rr:-1,rc:-1});
+$('prj').appendChild($('pl'));
+const EX=['prj','imp','inv','bak'],v0=view;
+view=function(v){EX.forEach(i=>$(i).hidden=true);if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;if(v==='prj')plist();if(v==='inv')invL();scrollTo(0,0);return}v0(v);if(v==='work')tb()};
+const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+'}'};
+const op0=openP;openP=function(n){op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.hl=null;S.rr=S.rc=-1};
+$('nw').addEventListener('click',()=>{S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
+const dc=drawChart;
+drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(!vp||!G)return;
+ const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
+ for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const i=r*w+c;if(DEL[i])continue;const X=g+(c-c0)*z-vp.ox,Y=g+(r-r0)*z-vp.oy;
+  if(S.hf&&D[i]){x.fillStyle='rgba(255,255,255,.93)';x.fillRect(X,Y,z,z)}
+  else if(S.hl){if(P[G[i]].c!==S.hl){x.fillStyle='rgba(255,255,255,.82)';x.fillRect(X,Y,z,z)}else{x.strokeStyle='#e0f';x.lineWidth=Math.max(1,z*.1);x.strokeRect(X+1,Y+1,z-2,z-2)}}}
+ x.fillStyle='rgba(255,0,0,.2)';x.strokeStyle='#d00';x.lineWidth=2;
+ if(S.rr>=0){const Y=g+(S.rr-r0)*z-vp.oy;x.fillRect(g,Y,vp.vw,z);x.strokeRect(g,Y,vp.vw,z)}
+ if(S.rc>=0){const X=g+(S.rc-c0)*z-vp.ox;x.fillRect(X,g,z,vp.vh);x.strokeRect(X,g,z,vp.vh)}
+ if(S.park>=0){const X=g+(S.park%w-c0)*z-vp.ox,Y=g+(Math.floor(S.park/w)-r0)*z-vp.oy;x.strokeStyle='#00f';x.lineWidth=3;x.strokeRect(X,Y,z,z);x.fillStyle='#00f';x.font='bold '+Math.max(10,z)+'px sans-serif';x.fillText('⚑',X+z/2,Y+z/2)}
+ x.restore()};
+const s0=stats;
+stats=function(){s0();if(!G)return;const pc={},iv=INV();let tot=0,dn=0;
+ for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]);o[1]++;tot++;if(D[i]){o[0]++;dn++}}
+ document.querySelectorAll('#leg .lg').forEach(r=>{const p=P[+r.dataset.i],o=pc[p.c]||[0,0],s=document.createElement('span');s.className='m';s.textContent=o[0]+'/'+o[1]+' done · '+(iv[p.c]?'✔ have':'✘ buy');r.insertBefore(s,r.querySelector('button'));
+  const b=document.createElement('button');b.className='s';b.dataset.h=1;b.textContent=S.hl===p.c?'◎ on':'◎';r.appendChild(b)});
+ const h=(tot-dn)/spd(),e=$('ps');if(e)e.textContent=(tot-dn)+' stitches left · ≈ '+(h<1?Math.round(h*60)+' min':h.toFixed(1)+' h')+' at '+spd()+' st/h'};
+$('leg').addEventListener('click',e=>{const b=e.target.closest('[data-h]');if(b){e.stopPropagation();const c=P[+b.closest('.lg').dataset.i].c;S.hl=S.hl===c?null:c;draw()}},true);
+function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_er','Eraser (background)'],['t_mg','Merge colours'],['t_ka','Keep awake'],['t_lk','Lock'],['t_png','PNG'],['t_shop','Shopping list'],['t_csv','CSV'],['t_dp','Duplicate']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:8px"><span id="ps"></span> · speed <input type="number" id="spd" style="width:70px;display:inline-block;padding:4px"> st/h</div><div class="m">Highlight a colour with ◎ in the legend.</div>';$('spd').value=spd();upd()}
+function upd(){const o={t_hf:S.hf,t_rl:S.mode==='rule',t_pk:S.mode==='park',t_er:S.mode==='erase',t_ka:S.ka,t_lk:S.lock};for(const k in o){const b=$(k);if(b)b.style.outline=o[k]?'2px solid var(--ac)':''}$('wrap').classList.toggle('mk',!!S.mode||!!S.prog)}
+const cellAt=e=>{const b=$('cv').getBoundingClientRect(),w=$('wrap'),px=e.clientX-b.left,py=e.clientY-b.top;if(px<24||py<24)return -1;const x=Math.floor((px+w.scrollLeft-24)/S.z),y=Math.floor((py+w.scrollTop-24)/S.z);return x<0||y<0||x>=S.w||y>=S.h?-1:y*S.w+x};
+const jump=i=>{if(i<0||!G){msg('Nothing there yet.');return}const w=$('wrap');w.scrollLeft=Math.max(0,(i%S.w)*S.z-w.clientWidth/2+24);w.scrollTop=Math.max(0,Math.floor(i/S.w)*S.z-w.clientHeight/2+24);redraw()};
+function er(i){if(i>=0&&!DEL[i]){DEL[i]=1;D[i]=0;derive();redraw()}}
+$('wrap').addEventListener('pointerdown',e=>{if(e.target.id!=='cv'||!G)return;if(S.lock){e.stopPropagation();return}const i=cellAt(e);
+ if(!S.mode){if(S.prog&&i>=0)S.last=i;return}e.stopPropagation();if(i<0)return;
+ if(S.mode==='park'){S.park=i;S.mode='';persist();msg('Parking marker set.');upd();draw()}
+ else if(S.mode==='rule'){S.rr=Math.floor(i/S.w);S.rc=i%S.w;redraw()}
+ else{pushUndo();S.es=1;er(i)}},true);
+$('wrap').addEventListener('pointermove',e=>{if(S.es)er(cellAt(e))},true);
+addEventListener('pointerup',()=>{if(S.es){S.es=0;draw();persist()}});
+$('wrap').addEventListener('touchstart',e=>{if(S.lock&&e.touches.length>1)e.stopImmediatePropagation()},true);
+$('wrap').addEventListener('touchmove',e=>{if(S.lock&&e.touches.length>1)e.stopImmediatePropagation()},true);
+function save(d,n,mi,txt){const b=txt?btoa(unescape(encodeURIComponent(d))):d;if(window.Android&&Android.saveFile)Android.saveFile(b,n,mi);else{const a=document.createElement('a');a.href='data:'+mi+';base64,'+b;a.download=n;a.click();msg('Saved.')}}
+const fn=()=>(S.name||'pattern').replace(/[^\w\- ]+/g,'');
+function merge(){derive();if(P.length<3){msg('Already very few colours.');return}pushUndo();const n0=P.length;let k=Math.max(1,Math.floor(n0*.1));
+ while(k--&&P.length>2){let b=1e18,A,B;for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const d=ld(P[i].l,P[j].l);if(d<b){b=d;A=P[i];B=P[j]}}
+  const s=A.q<B.q?A:B,t=s===A?B:A,o={t:'th',o:s.c,n:t.c};OPS.push(o);thOp(o);derive()}
+ HID.clear();draw();persist();msg(n0+' → '+P.length+' colours. Tap again to merge more, Undo to step back.')}
+const T={t_hf:()=>{S.hf^=1;draw()},t_rl:()=>{S.mode=S.mode==='rule'?'':'rule'},t_rc:()=>{S.rr=S.rc=-1;redraw()},t_pk:()=>{S.mode=S.mode==='park'?'':'park';if(S.mode)msg('Tap the cell where you stopped.')},
+ t_jp:()=>jump(S.park),t_jl:()=>{let i=S.last;if(i<0)for(let q=D.length-1;q>=0;q--)if(D[q]){i=q;break}jump(i)},
+ t_er:()=>{S.mode=S.mode==='erase'?'':'erase';if(S.mode)msg('Drag over stitches to remove them (background stays bare). Undo to restore.')},
+ t_mg:merge,t_ka:()=>{S.ka^=1;if(window.Android&&Android.keepOn)Android.keepOn(!!S.ka);msg(S.ka?'Screen will stay on.':'')},
+ t_lk:()=>{S.lock^=1;$('z').disabled=$('zf').disabled=!!S.lock;if(S.lock)S.mode='';msg(S.lock?'Locked: no zoom or edits.':'')},
+ t_png:()=>{const t=document.createElement('canvas');K=1;drawChart(t,0,0,S.w,S.h,Math.max(8,Math.floor(2000/S.w)),'sym',0);save(t.toDataURL('image/png').split(',')[1],fn()+'.png','image/png');redraw()},
+ t_shop:()=>{const iv=INV();save((S.name||'Pattern')+' – shopping list\n'+P.map(p=>(iv[p.c]?'[have] ':'[BUY]  ')+'DMC '+p.c+' '+p.n+' – '+p.q+' st – ~'+sk(p.q)+' skein(s)').join('\n'),fn()+'-shopping.txt','text/plain',1)},
+ t_csv:()=>{const o=[];for(let r=0;r<S.h;r++){const a=[];for(let c=0;c<S.w;c++){const i=r*S.w+c;a.push(DEL[i]?'':P[G[i]].c)}o.push(a.join(','))}save(o.join('\n'),fn()+'.csv','text/csv',1)},
+ t_dp:()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n)){msg('Save the project first.');return}let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));msg('Duplicated as “'+m+'”.')}};
+$('tb').onclick=e=>{const f=T[e.target.id];if(f&&G){f();upd()}};
+$('tb').onchange=e=>{if(e.target.id==='spd'){ST.set('xi:spd',String(Math.max(10,+e.target.value||150)));stats()}};
+// inventory
+function invL(){const q=$('iq').value.toLowerCase(),iv=INV();$('il').innerHTML=DM.filter(m=>!q||(m.c+' '+m.n).toLowerCase().includes(q)).slice(0,120).map(m=>`<label class="lg"><input type="checkbox" data-c="${m.c}" ${iv[m.c]?'checked':''}><span class="sw" style="background:${m.h}"></span><span>DMC ${m.c} · ${m.n}</span></label>`).join('')}
+$('iq').oninput=invL;$('il').onchange=e=>{const c=e.target.dataset.c;if(!c)return;const iv=INV();if(e.target.checked)iv[c]=1;else delete iv[c];ST.set('xi:inv',JSON.stringify(iv))};
+// backup
+$('bx').onclick=()=>{const o={};Object.keys(localStorage).filter(k=>k.startsWith('xs:')||k.startsWith('xi:')).forEach(k=>o[k]=localStorage.getItem(k));save(JSON.stringify(o),'cross-stitch-backup.json','application/json',1)};
+$('bf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);let n=0;for(const k in o)if(/^x[si]:/.test(k)&&ST.set(k,o[k]))n++;$('bm').textContent='Restored '+n+' items.'}catch(x){$('bm').textContent='That isn’t a valid backup file.'}};r.readAsText(f)};
+// Stitch Fiddle PDF import (samples cell colours from a colour chart page)
+let PD=null,PC=[],PN='Imported';
+$('pf').onchange=e=>{const f=e.target.files[0];if(!f)return;PN=f.name.replace(/\.pdf$/i,'');const r=new FileReader();r.onload=()=>{if(!window.pdfjsLib){$('pmsg').textContent='PDF reader didn’t load.';return}pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';pdfjsLib.getDocument({data:new Uint8Array(r.result)}).promise.then(d=>{PD=d;$('pmsg').textContent=d.numPages+' pages. Pick the colour chart page and tap Load page.';pgo()}).catch(()=>$('pmsg').textContent='Couldn’t read that PDF.')};r.readAsArrayBuffer(f)};
+function pgo(){if(!PD)return;PD.getPage(+$('pp2').value||1).then(p=>{const s=Math.min(3,1800/p.getViewport({scale:1}).width),v=p.getViewport({scale:s}),c=$('pcv');c.width=v.width;c.height=v.height;PC=[];return p.render({canvasContext:c.getContext('2d'),viewport:v}).promise}).then(()=>$('pmsg').textContent='Tap the grid’s top-left corner, then its bottom-right corner, and enter columns and rows.').catch(()=>$('pmsg').textContent='That page doesn’t exist.')}
+$('pgo').onclick=pgo;
+$('pcv').onclick=e=>{const c=$('pcv'),b=c.getBoundingClientRect(),k=c.width/b.width;if(PC.length>=2)PC=[];const p=[(e.clientX-b.left)*k,(e.clientY-b.top)*k];PC.push(p);const x=c.getContext('2d');x.strokeStyle='#f0f';x.lineWidth=4;x.beginPath();x.arc(p[0],p[1],12,0,7);x.stroke()};
+$('pim').onclick=()=>{const c=$('pcv'),cols=+$('pcn').value,rows=+$('prn').value;if(PC.length<2||!(cols>1)||!(rows>1)){$('pmsg').textContent='Tap both corners and enter columns and rows.';return}if(cols>400){$('pmsg').textContent='Max 400 columns.';return}
+ const[a,b]=PC,cw=(b[0]-a[0])/cols,ch=(b[1]-a[1])/rows,x=c.getContext('2d'),o=document.createElement('canvas');o.width=cols;o.height=rows;const ox=o.getContext('2d'),im=ox.createImageData(cols,rows);
+ for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const s=[0,0,0];[[.2,.2],[.8,.2],[.2,.8],[.8,.8]].forEach(([u,v])=>{const d=x.getImageData(Math.round(a[0]+(i+u)*cw),Math.round(a[1]+(j+v)*ch),1,1).data;for(let t=0;t<3;t++)s[t]+=d[t]/4});im.data.set([s[0],s[1],s[2],255],(j*cols+i)*4)}
+ ox.putImageData(im,0,0);$('nw').click();$('nm').value=PN;$('w').value=cols;$('k').value=60;$('dt').checked=false;$('cl').checked=false;SRC=o;S.src=o.toDataURL('image/png');S.ed=defEd();S.ig=null;NEWPHOTO=1;IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);go()};
+})();
 </script>
 </body></html>

@@ -51,7 +51,7 @@ jobs:
           EOF
           cat > app/src/main/AndroidManifest.xml <<'EOF'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-            <application android:label="Cross Stitch Studio" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+            <application android:icon="@mipmap/ic_launcher" android:label="Cross Stitch Studio" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
               <activity android:name=".MainActivity" android:exported="true">
                 <intent-filter>
                   <action android:name="android.intent.action.MAIN"/>
@@ -60,6 +60,24 @@ jobs:
               </activity>
             </application>
           </manifest>
+          EOF
+          mkdir -p app/src/main/res/drawable app/src/main/res/mipmap-anydpi-v26
+          cat > app/src/main/res/drawable/ic_bg.xml <<'EOF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+            <path android:fillColor="#B4453A" android:pathData="M0,0h108v108h-108z"/>
+          </vector>
+          EOF
+          cat > app/src/main/res/drawable/ic_fg.xml <<'EOF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+            <path android:strokeColor="#FAF7F2" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M33,33L53,53M53,33L33,53M55,55L75,75M75,55L55,75"/>
+            <path android:strokeColor="#F2C14E" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M55,33L75,53M75,33L55,53M33,55L53,75M53,55L33,75"/>
+          </vector>
+          EOF
+          cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@drawable/ic_bg"/>
+            <foreground android:drawable="@drawable/ic_fg"/>
+          </adaptive-icon>
           EOF
           cat > app/src/main/java/com/daniel/crossstitch/MainActivity.java <<'EOF'
           package com.daniel.crossstitch;
@@ -123,6 +141,12 @@ jobs:
                 }
               });
               wv.loadUrl("file:///android_asset/index.html");
+            }
+            @Override
+            public void onBackPressed() {
+              wv.evaluateJavascript("(window.goBack&&window.goBack())?'1':'0'", v -> {
+                if (!"\"1\"".equals(v)) finish();
+              });
             }
             @Override
             protected void onActivityResult(int r, int c, Intent i) {

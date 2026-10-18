@@ -34,6 +34,17 @@ button:disabled{opacity:.4;cursor:default}
 #ph{position:fixed;inset:0;background:var(--bg);z-index:10;overflow:auto;padding:12px}#ph>*{max-width:900px;margin-left:auto;margin-right:auto}
 #ew{display:flex;justify-content:center;margin:8px 0}#ec{touch-action:none;background:#fff;border-radius:4px}#ph .row{justify-content:center}
 .tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;padding:9px 4px;background:var(--bd);color:var(--fg);font-size:14px}.tabs button.on{background:var(--ac);color:var(--acf)}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mi{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bd);padding:0;color:var(--fg)}.mi img{width:100%;height:100%;object-fit:cover;display:block}
+.mph{display:flex;align-items:center;justify-content:center;height:100%;font-size:30px}.mpl{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border-radius:10px;font-size:11px;padding:2px 6px}
+.mdt{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;font-size:11px;padding:12px 6px 4px;text-align:left}
+#mv{position:fixed;inset:0;background:#111;z-index:20;display:flex;flex-direction:column;padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+#mvb{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}#mvb img,#mvb video{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.mvt{display:flex;gap:8px;justify-content:space-between;align-items:center;padding:6px 0}#mv .m{color:#ddd;flex:1;text-align:right}
+.tmv{font-size:34px;font-weight:600;font-variant-numeric:tabular-nums;margin:2px 0}#tb .tmv{font-size:22px;display:inline-block;margin:0 10px 0 0}#tb .tmbox .row{justify-content:flex-start;display:inline-flex;margin-top:0;vertical-align:middle}
+.rw{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin-bottom:8px}.rh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.rh .m{flex:1;min-width:120px}
+.rcs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.rc{display:inline-flex;align-items:center;gap:5px;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:3px 8px 3px 3px;font-size:15px;font-weight:600}
+.rc i{font-style:normal;min-width:24px;height:24px;border-radius:5px;border:1px solid #888;display:flex;align-items:center;justify-content:center;font-size:14px}.rc.dn{opacity:.35;text-decoration:line-through}.rc.gp{padding:3px 8px;color:var(--mut);font-weight:400;font-size:13px;border-style:dashed}
+.big{font-size:22px}
 </style></head><body>
 <div id="home" class="scr">
 <div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
@@ -44,6 +55,7 @@ button:disabled{opacity:.4;cursor:default}
 <button class="hc" id="nw"><span class="hi">🖼️</span><span class="ht"><b>Pattern Creator</b><small>Turn any photo into a cross-stitch chart.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="imp"><span class="hi">📄</span><span class="ht"><b>Import Stitch Fiddle PDF</b><small>Bring in a pattern you already have.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="inv"><span class="hi">🧶</span><span class="ht"><b>Thread Inventory</b><small>Mark the DMC colours you own.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="fab"><span class="hi">📏</span><span class="ht"><b>Fabric Calculator</b><small>Work out fabric size in cm and inches.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="bak"><span class="hi">💾</span><span class="ht"><b>Backup &amp; Restore</b><small>Export or import all projects.</small></span><span class="ar">→</span></button>
 </div>
 </div>
@@ -121,6 +133,10 @@ button:disabled{opacity:.4;cursor:default}
 <button class="hc" data-go="make"><span class="hi">✏️</span><span class="ht"><b>Edit Pattern</b><small>Colours, merging, gradients and background.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="shop"><span class="hi">🛒</span><span class="ht"><b>Shopping List</b><small>DMC threads needed for this project.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="stats"><span class="hi">📈</span><span class="ht"><b>Progress</b><small>Per-colour progress and time left.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="runs"><span class="hi">🔢</span><span class="ht"><b>Run Counts</b><small>Row-by-row runs of the same colour.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="sess"><span class="hi">⏱️</span><span class="ht"><b>Session Timer</b><small>Time your stitching and see your pace.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="media"><span class="hi">📷</span><span class="ht"><b>Photos &amp; Videos</b><small>Attach progress shots to this project.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="fab"><span class="hi">📏</span><span class="ht"><b>Fabric Size</b><small>How much fabric you need, in cm and inches.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="exp"><span class="hi">🖨️</span><span class="ht"><b>Export</b><small>PDF, PNG, CSV or shopping list.</small></span><span class="ar">→</span></button>
 <button class="hc" id="pdup"><span class="hi">📑</span><span class="ht"><b>Duplicate Project</b><small>Try a variation without losing this one.</small></span><span class="ar">→</span></button>
 </div>
@@ -131,7 +147,35 @@ button:disabled{opacity:.4;cursor:default}
 <button class="hc" data-x="csv"><span class="hi">📋</span><span class="ht"><b>CSV</b><small>DMC code per stitch, for other software.</small></span><span class="ar">→</span></button>
 <button class="hc" data-x="shop"><span class="hi">🛒</span><span class="ht"><b>Shopping list (text)</b><small>Threads and skeins, have/buy.</small></span><span class="ar">→</span></button>
 </div>
+<div id="runs" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Run counts</b></div>
+<div class="tabs"><button id="rtr" class="on">By row</button><button id="rtc">By colour</button></div>
+<div id="rrow">
+<div class="card"><div class="m" id="rsum"></div>
+<div class="row"><label>Read each row<select id="rdr"><option value="l">Left → right</option><option value="r">Right → left</option><option value="a">Back and forth (alternate)</option></select></label><label>Start from<select id="rod"><option value="t">Top row</option><option value="b">Bottom row</option></select></label></div>
+<div class="row"><label>Show colour<select id="rcf"></select></label><label>Go to row<input type="number" id="rgo" min="1" inputmode="numeric"></label></div>
+<div class="row"><button class="s" id="rnx">Jump to first unfinished row</button></div>
+<div class="m" style="margin-top:6px">Tap a run to mark it done. “✓ Row done” marks the whole row.</div></div>
+<div id="rlist"></div>
+<div class="row" style="justify-content:center;align-items:center"><button class="s" id="rpv">‹ Previous</button><span class="m" id="rpi"></span><button class="s" id="rnn">Next ›</button></div>
+</div>
+<div id="rcol" hidden><div class="card"><div class="m" id="rcs"></div><div id="rcl"></div></div></div>
+</div>
+<div id="sess" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Session timer</b></div>
+<div class="card" style="text-align:center"><div class="tmbox"></div><div class="m" style="margin-top:8px">The timer keeps counting if you leave the app or lock the screen. Use “Keep awake” on the chart screen if you want the display to stay on.</div></div>
+<div class="card"><b>Totals</b><div class="m" id="sts" style="margin-top:4px"></div><div class="row"><button class="s" id="sspd" hidden></button></div></div>
+<div class="card"><b>Saved sessions</b><div id="ssl"></div></div></div>
+<div id="media" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Photos &amp; videos</b></div>
+<div class="card"><label class="btn">Add photos / videos<input type="file" id="mfi" accept="image/*,video/*" multiple hidden></label>
+<div class="m" id="mmsg" style="margin-top:8px"></div><div class="m" id="mcount" style="margin-top:4px"></div></div>
+<div class="mg" id="mgrid"></div></div>
+<div id="fab" class="scr" hidden><div class="bar"><button class="s" id="fabb" data-go="proj">‹ Project</button><b>Fabric size</b></div>
+<div class="card"><div class="row" style="margin-top:0"><label>Stitches wide<input type="number" id="fbw" min="1" inputmode="numeric"></label><label>Stitches high<input type="number" id="fbh" min="1" inputmode="numeric"></label></div>
+<div class="row"><label>Fabric count<select id="fbc"></select></label><label>Stitch over<select id="fbo"><option value="1">1 thread (Aida)</option><option value="2">2 threads (linen / evenweave)</option></select></label></div>
+<div class="row"><label>Margin on each side<input type="number" id="fbm" min="0" step="0.5" inputmode="decimal"></label><label>Margin unit<select id="fbu"><option value="cm">cm</option><option value="in">inches</option></select></label></div></div>
+<div class="card" id="fbr"></div>
+<div class="card"><b>Compare fabric counts</b><div id="fbt"></div></div></div>
 <div id="set" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Settings</b></div><div class="card"><b>Appearance</b><div class="row"><label>Theme<select id="th"><option value="system">Match device</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div></div></div>
+<div id="mv" hidden><div class="mvt"><button class="s" id="mvk">✕ Close</button><span class="m" id="mvi"></span></div><div id="mvb"></div><div class="mvt"><button class="s" id="mvp">‹ Prev</button><button class="s" id="mvx">Delete</button><button class="s" id="mvn">Next ›</button></div></div>
 <div id="hold" hidden></div>
 <div id="ph" hidden>
 <div class="bar"><button class="s" id="ex">Cancel</button><b>Edit photo</b><button id="ea">Apply</button></div>
@@ -162,7 +206,7 @@ button:disabled{opacity:.4;cursor:default}
 <div class="card"><b>Thread legend</b><div id="leg" class="m">—</div></div>
 </div>
 <div id="ce"><div class="card"><b>Colours</b><div class="m">Tap a thread in the legend to change its colour or symbol, or to delete all its stitches. Use Hide to preview the pattern without a colour.</div>
-<div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="mg2">Merge similar colours</button><button class="s" id="t_er2">Eraser (background)</button><button class="s" id="ca">Auto symbols</button></div>
+<div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="mg2">Merge similar colours</button><button class="s" id="ad2">Add more colours</button><button class="s" id="t_er2">Eraser (background)</button><button class="s" id="ca">Auto symbols</button></div>
 <div class="row"><label>Hue shift: <b id="hv">0</b>°<input type="range" id="hs" min="-180" max="180" value="0"></label><button class="s" id="hb">Apply</button></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -260,8 +304,8 @@ function drawChart(cv,c0,r0,c1,r1,z,m,sd,hf,vp){
   x.stroke()}
 }
 function draw(){if(!G)return;const cv=$('cv');cv.hidden=false;document.querySelector('#wrap p').hidden=true;drawChart(cv,0,0,S.w,S.h,S.z,S.m,1);stats()}
-function stats(){if(!G)return;const T=S.w*S.h,cm=v=>(v/S.count*2.54).toFixed(1);let n=0,dn=0,np=0;for(let i=0;i<T;i++)if(!DEL[i]){n++;if(PQ&&PQ[i])np++;if(D[i])dn++}
- $('info').textContent=`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm on ${S.count}-count · ${P.length} colours${np?' · '+np+' partial':''} · ${dn} of ${n} stitched (${n?Math.round(dn/n*100):0}%)`+(HID.size?` · ${HID.size} hidden`:'');
+function stats(){if(!G)return;const T=S.w*S.h,cm=v=>(v/S.count*2.54).toFixed(1),inn=v=>(v/S.count).toFixed(1);let n=0,dn=0,np=0;for(let i=0;i<T;i++)if(!DEL[i]){n++;if(PQ&&PQ[i])np++;if(D[i])dn++}
+ $('info').textContent=`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm (${inn(S.w)}×${inn(S.h)} in) on ${S.count}-count · ${P.length} colours${np?' · '+np+' partial':''} · ${dn} of ${n} stitched (${n?Math.round(dn/n*100):0}%)`+(HID.size?` · ${HID.size} hidden`:'');
  $('leg').innerHTML=P.map((p,i)=>{const hd=HID.has(p.c);return`<div class="lg" data-i="${i}" style="cursor:pointer${hd?';opacity:.5':''}"><span class="sw" style="background:${p.h}"></span><span class="sw">${p.s}</span><span>DMC ${p.c} · ${p.n}</span><span>${p.q} st · ~${sk(p.q)} skein${sk(p.q)>1?'s':''}</span><button class="s" data-e="${i}" style="flex:none">${hd?'Show':'Hide'}</button></div>`}).join('')+(HID.size?'<div style="margin-top:6px"><button class="s" data-all="1">Show all colours</button></div>':'')+'<div class="m" style="margin-top:6px">Skein counts are estimates (2 strands, 20% waste). Tap a thread to edit or delete it. Hide only previews the chart without a colour.</div>';unb()}
 function go(){if(!IM)return;rd();build();draw()}
 $('f').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality='high';x.drawImage(im,0,0,c.width,c.height);S.src=c.toDataURL('image/jpeg',.85);SRC=c;S.ed=defEd();S.ig=null;NEWPHOTO=1;IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);go()};im.src=r.result};r.readAsDataURL(fl)};
@@ -279,9 +323,9 @@ $('pl').onclick=e=>{const l=e.target.dataset.l,d=e.target.dataset.d;
  if(l){const n=decodeURIComponent(l);try{const j=JSON.parse(ST.get('xs:'+n));S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;rd();
   IM=new Image();IM.onload=()=>{build(j.done);draw();msg('Opened “'+n+'”.')};IM.src=j.img}catch(x){msg('Couldn’t open that project.')}}};
 $('pd').onclick=()=>{if(!G){msg('Create a pattern first.');return}K=1;const J=window.jspdf&&window.jspdf.jsPDF;if(!J){msg('PDF library didn’t load. Check your connection.');return}
- const d=new J({unit:'mm',format:'a4'}),nm=$('nm').value.trim()||'Cross stitch pattern',cm=v=>(v/S.count*2.54).toFixed(1);
+ const d=new J({unit:'mm',format:'a4'}),nm=$('nm').value.trim()||'Cross stitch pattern',cm=v=>(v/S.count*2.54).toFixed(1),inn=v=>(v/S.count).toFixed(1);
  const o=document.createElement('canvas');o.width=1000;o.height=1400;let x=o.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,1000,1400);x.fillStyle='#000';x.textAlign='left';x.textBaseline='top';
- x.font='bold 48px sans-serif';x.fillText(nm,40,40);x.font='28px sans-serif';x.fillText(`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm on ${S.count}-count · ${P.length} colours`,40,110);
+ x.font='bold 48px sans-serif';x.fillText(nm,40,40);x.font='24px sans-serif';x.fillText(`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm (${inn(S.w)}×${inn(S.h)} in) on ${S.count}-count · ${P.length} colours`,40,110);
  const t=document.createElement('canvas');drawChart(t,0,0,S.w,S.h,Math.max(2,Math.floor(900/S.w)),'real',0);const sc=Math.min(920/t.width,1180/t.height);x.drawImage(t,40,180,t.width*sc,t.height*sc);
  d.addImage(o.toDataURL('image/png'),'PNG',10,10,190,266);
  const rh=36,L=document.createElement('canvas');L.width=1000;L.height=80+P.length*rh;x=L.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,L.width,L.height);x.textBaseline='middle';x.fillStyle='#000';x.font='bold 36px sans-serif';x.textAlign='left';x.fillText('Thread legend',20,40);
@@ -324,9 +368,9 @@ $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a phot
 function plist(){const ks=ST.keys();$('pl').innerHTML=ks.length?ks.map(k=>{const n=k.slice(3);let j={};try{j=JSON.parse(ST.get(k))||{}}catch(x){}const dd=j.done||'',dl=j.del||'';let t=0,dn=0;for(let q=0;q<dd.length;q++)if(dl[q]!=='1'){t++;if(dd[q]==='1')dn++}const pc=t?Math.round(dn*100/t):0,en=encodeURIComponent(n);
 return`<div class="pc" data-l="${en}"><img alt="" src="${j.img||''}"><div><b>${n.replace(/</g,'&lt;')}</b><div class="m">${j.w||'?'} stitches wide · ${j.k||'?'} colours · ${pc}% stitched</div></div><button class="s" data-d="${en}">Delete</button></div>`}).join(''):'<p class="m">No projects yet. Tap “New pattern” to start one.</p>'}
 function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;$('part').checked=!!j.part;$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;rd();
- SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('proj')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
+ SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ops&&j.ops.some(o=>o.t==='add')){replay(j.ops);derive()}else if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('proj')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
 $('pl').onclick=e=>{const d=e.target.closest('[data-d]'),l=e.target.closest('[data-l]');
- if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
+ if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));if(window.mediaDelAll)mediaDelAll(decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
  if(l)openP(decodeURIComponent(l.dataset.l))};
 (function(){const c=$('cv');let mk=-1,pn=new Set(),f0=-1,pv=0,mv=0,rq=0;
 const sched=()=>{if(!rq)rq=requestAnimationFrame(()=>{rq=0;redraw()})};
@@ -374,7 +418,7 @@ function undo(){if(!UNDO.length||!IM||!BS)return;const st=UNDO.pop();msg('Workin
   setCtl(st);
   S.sym=Object.assign({},st.sym);rd();build(null,st.del);
   D=rs(oD,ow,S.w,S.h);for(let i=0;i<D.length;i++)if(DEL[i])D[i]=0;
-  OPS=st.ops.slice();applyOv(st.ov);derive();draw();persist();msg('Undone.');unb()},30)}
+  OPS=st.ops.slice();restorePal(st.ops,st.ov);derive();draw();persist();msg('Undone.');unb()},30)}
 function carryBuild(){const pre=state(),ow=BS.w,oD=D,oX=DEL,ops=OPS.slice(),hid=[...HID];
  pushUndo(pre);build();const n=S.w*S.h;
  DEL=rs(oX,ow,S.w,S.h);D=rs(oD,ow,S.w,S.h);for(let i=0;i<n;i++)if(DEL[i])D[i]=0;
@@ -404,7 +448,7 @@ function opFn(o){switch(o.t){
    return c=>sr[Math.min(sr.length-1,Math.max(0,Math.floor((lum(c)-lo)/sp*sr.length)))]}
   const pl=pr.map(c=>lab(...c));return c=>pr[near(lab(...c),pl)]}
  default:return c=>c}}
-function applyOp(o){if(o.t==='th')thOp(o);else rcP(opFn(o))}
+function applyOp(o){if(o.t==='th')thOp(o);else if(o.t==='add')addOp(o);else rcP(opFn(o))}
 function replay(ops){ops.forEach(applyOp)}
 function runOp(o){if(!G||!BS)return;pushUndo();OPS.push(o);HID.clear();applyOp(o);derive();draw();persist()}
 function tint(c){runOp({t:'tint',c:c.slice()})}
@@ -570,15 +614,15 @@ const $=id=>document.getElementById(id),J=(k,d)=>{try{return JSON.parse(ST.get(k
 $('f').addEventListener('change',()=>{S.imp=null;S.imd=null});
 Object.assign(S,{park:-1,last:-1,hl:null,hf:0,mode:'',lock:0,ka:0,rr:-1,rc:-1});
 $('prj').appendChild($('pl'));
-const EX=['prj','imp','inv','bak','set','proj','shop','stats','exp'],v0=view,hold=()=>{$('hold').appendChild($('cp'));$('hold').appendChild($('ce'))};hold();
-view=function(v){EX.forEach(i=>$(i).hidden=true);if(v!=='make')S.mode='';
- if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;hold();if(v==='prj')plist();if(v==='inv')invL();if(v==='proj')projL();if(v==='shop')shopL();if(v==='stats')statL();scrollTo(0,0);return}
+const EX=['prj','imp','inv','bak','set','proj','shop','stats','exp','runs','sess','media','fab'],v0=view,hold=()=>{$('hold').appendChild($('cp'));$('hold').appendChild($('ce'))};hold();
+view=function(v){const pv=cur;EX.forEach(i=>$(i).hidden=true);if(v!=='make')S.mode='';
+ if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;hold();if(v==='prj')plist();if(v==='inv')invL();if(v==='proj')projL();if(v==='shop')shopL();if(v==='stats')statL();if(v==='runs')runsL();if(v==='sess')sessL();if(v==='media')mediaL();if(v==='fab')fabL(pv);scrollTo(0,0);return}
  v0(v);if(v==='home')hold();if(v==='work')tb();$(v==='make'?'cslot':'hold').appendChild($('ce'));
  if(v==='make')$('mk').dataset.go=S.name&&ST.get('xs:'+S.name)?'proj':'home'};
-window.goBack=()=>{if(typeof E!=='undefined'&&E){edClose();return true}if(cur==='home')return false;const o=S.name&&ST.get('xs:'+S.name);view(cur==='proj'?'prj':['work','shop','stats','exp'].includes(cur)?'proj':cur==='make'?(o?'proj':'home'):'home');return true};
-const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+'}'};
-const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.hl=null;S.rr=S.rc=-1};
-$('nw').addEventListener('click',()=>{S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
+window.goBack=()=>{if(typeof E!=='undefined'&&E){edClose();return true}if(window.mvOpen&&mvOpen()){mvClose();return true}if(cur==='home')return false;const o=S.name&&ST.get('xs:'+S.name);view(cur==='fab'?$('fabb').dataset.go:cur==='proj'?'prj':['work','shop','stats','exp','runs','sess','media'].includes(cur)?'proj':cur==='make'?(o?'proj':'home'):'home');return true};
+const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+',"sess":'+JSON.stringify(S.sess||[])+',"tm":'+JSON.stringify(S.tm||null)+'}'};
+const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.sess=q.sess||[];S.tm=q.tm||null;S.hl=null;S.rr=S.rc=-1};
+$('nw').addEventListener('click',()=>{S.sess=[];S.tm=null;S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
 const dc=drawChart;
 drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(!vp||!G)return;
  const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
@@ -597,7 +641,7 @@ stats=function(){s0();if(!G)return;const pc={},iv=INV();let tot=0,dn=0;
   const b=document.createElement('button');b.className='s';b.dataset.h=1;b.textContent=S.hl===p.c?'◎ on':'◎';r.appendChild(b)});
  const h=(tot-dn)/spd(),e=$('ps');if(e)e.textContent=(tot-dn)+' stitches left · ≈ '+(h<1?Math.round(h*60)+' min':h.toFixed(1)+' h')+' at '+spd()+' st/h'};
 $('leg').addEventListener('click',e=>{const b=e.target.closest('[data-h]');if(b){e.stopPropagation();const c=P[+b.closest('.lg').dataset.i].c;S.hl=S.hl===c?null:c;draw()}},true);
-function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_ka','Keep awake'],['t_lk','Lock']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:6px">Highlight a colour with ◎ in the legend.</div>';upd()}
+function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_ka','Keep awake'],['t_lk','Lock']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:6px">Highlight a colour with ◎ in the legend.</div><div class="tmbox" style="margin-top:8px"></div>';renderTm();upd()}
 function upd(){const o={t_hf:S.hf,t_rl:S.mode==='rule',t_pk:S.mode==='park',t_er:S.mode==='erase',t_ka:S.ka,t_lk:S.lock};for(const k in o){const b=$(k);if(b)b.style.outline=o[k]?'2px solid var(--ac)':''}$('wrap').classList.toggle('mk',!!S.mode||!!S.prog)}
 const cellAt=e=>{const b=$('cv').getBoundingClientRect(),w=$('wrap'),px=e.clientX-b.left,py=e.clientY-b.top;if(px<24||py<24)return -1;const x=Math.floor((px+w.scrollLeft-24)/S.z),y=Math.floor((py+w.scrollTop-24)/S.z);return x<0||y<0||x>=S.w||y>=S.h?-1:y*S.w+x};
 const jump=i=>{if(i<0||!G){msg('Nothing there yet.');return}const w=$('wrap');w.scrollLeft=Math.max(0,(i%S.w)*S.z-w.clientWidth/2+24);w.scrollTop=Math.max(0,Math.floor(i/S.w)*S.z-w.clientHeight/2+24);redraw()};
@@ -692,4 +736,193 @@ const v1=view;view=function(v){v1(v);if(v==='make')show(G?last:'img')};
 show('img');
 })();
 </script>
+<script>
+/* ===== v2 features: add colours · session timer · photos & videos · run counts · fabric size ===== */
+(function(){
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fd=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short'}),fdt=t=>new Date(t).toLocaleString(undefined,{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const doneN=()=>{let n=0;if(G&&D)for(let i=0;i<D.length;i++)if(D[i]&&!DEL[i])n++;return n};
+const pctN=()=>{let t=0,d=0;if(G&&D)for(let i=0;i<D.length;i++){if(DEL[i])continue;t++;if(D[i])d++}return t?Math.round(d*100/t):0};
+
+/* ---------- 5. Add more colours (the opposite of Merge) ---------- */
+const MAXC=64;
+function tlabs(d,N){const T=new Float32Array(N*3);for(let i=0;i<N;i++){const l=lab(d[i*4],d[i*4+1],d[i*4+2]);T[i*3]=l[0];T[i*3+1]=l[1];T[i*3+2]=l[2]}return T}
+// op {t:'add',cs:[DMC codes]} – new threads take over every stitch they match the photo clearly better than its current thread
+window.addOp=function(o){
+ if(!G0||!IM||!o.cs)return;const w=S.w,h=S.h,N=w*h;if(G0.length!==N)return;
+ const T=tlabs(prepPix(w,h),N),hp=PQ0&&PQ0.length===N;
+ o.cs.forEach(code=>{const m=DM.find(x=>x.c===code);if(!m)return;
+  const slot=P0.length;P0.push({c:m.c,n:m.n,h:m.h,l:m.l,s:'',q:0});S.o0.push(m.c);
+  const sel=new Uint8Array(N),L=m.l;
+  for(let i=0;i<N;i++){if(DEL[i])continue;const c=P0[G0[i]].l,t=i*3,a=T[t],b=T[t+1],e=T[t+2],
+   cur=(a-c[0])**2+(b-c[1])**2+(e-c[2])**2,nw=(a-L[0])**2+(b-L[1])**2+(e-L[2])**2;
+   if(cur-nw>=25&&nw<cur*.6)sel[i]=1}
+  for(let i=0;i<N;i++){if(!sel[i])continue;
+   if(S.clean){const x=i%w,y=(i-x)/w;let nb=0;for(let dy=-1;dy<=1&&!nb;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=x+dx,Y=y+dy;if(X<0||Y<0||X>=w||Y>=h)continue;if(sel[Y*w+X]){nb=1;break}}if(!nb)continue}
+   G0[i]=slot;if(hp)PQ0[i]=0}})};
+window.restorePal=function(ops,ov){if(ops&&ops.some(o=>o.t==='add'))replay(ops);else applyOv(ov)};
+function pickAdd(n){const w=S.w,h=S.h,N=w*h;derive();
+ const live=new Set(P.map(p=>p.c)),pool=(S.bw&&!S.ig)?(S.bwm==='2'?[IBK,IWH]:NG):DM.map((m,i)=>i),cand=pool.filter(i=>DM[i]&&!live.has(DM[i].c));
+ if(!cand.length)return[];
+ const T=tlabs(prepPix(w,h),N),idx=[],E=new Float32Array(N);
+ for(let i=0;i<N;i++){if(DEL[i])continue;const c=P0[G0[i]].l,t=i*3;E[i]=(T[t]-c[0])**2+(T[t+1]-c[1])**2+(T[t+2]-c[2])**2;idx.push(i)}
+ if(!idx.length)return[];
+ idx.sort((a,b)=>E[b]-E[a]);const sm=idx.slice(0,4000),e=Float32Array.from(sm,i=>E[i]),out=[];
+ for(let k=0;k<n;k++){let best=-1,bg=0;
+  for(const c of cand){if(out.includes(c))continue;const L=DM[c].l;let g=0;
+   for(let j=0;j<sm.length;j++){const t=sm[j]*3,dd=(T[t]-L[0])**2+(T[t+1]-L[1])**2+(T[t+2]-L[2])**2;if(dd<e[j])g+=e[j]-dd}
+   if(g>bg){bg=g;best=c}}
+  if(best<0)break;out.push(best);const L=DM[best].l;
+  for(let j=0;j<sm.length;j++){const t=sm[j]*3,dd=(T[t]-L[0])**2+(T[t+1]-L[1])**2+(T[t+2]-L[2])**2;if(dd<e[j])e[j]=dd}}
+ return out.map(i=>DM[i].c)}
+$('ad2').onclick=()=>{
+ if(!G)return;if(S.imp){msg('Imported charts are exact, so there’s no photo to pull extra colours from.');return}
+ if(!IM){msg('Open this pattern from your projects (or choose a photo) first.');return}
+ derive();const n0=P.length;if(n0>=MAXC){msg('That’s the maximum ('+MAXC+' colours, one symbol each).');return}
+ const k=Math.min(MAXC-n0,Math.max(1,Math.round(n0*.1)));msg('Working…');
+ setTimeout(()=>{const cs=pickAdd(k);if(!cs.length){msg('No other thread would improve the match.');return}
+  const g0=G0.slice(),pn=P0.length,on=S.o0.length,pq=PQ0?PQ0.slice():null;
+  runOp({t:'add',cs});let ch=0;for(let i=0;i<G0.length;i++)if(G0[i]!==g0[i])ch++;
+  if(!ch){G0=g0;P0.length=pn;S.o0.length=on;if(pq)PQ0=pq;OPS.pop();UNDO.pop();derive();draw();persist();unb();msg('No other thread would improve the match.');return}
+  msg(n0+' → '+P.length+' colours. Tap again to add more, Undo to step back.')},30)};
+function rebuildOps(ops){const pre=state(),ow=BS.w,oD=D,oX=DEL,hid=[...HID];pushUndo(pre);build();
+ const n=S.w*S.h;DEL=rs(oX,ow,S.w,S.h);D=rs(oD,ow,S.w,S.h);for(let i=0;i<n;i++)if(DEL[i])D[i]=0;
+ OPS=ops.slice();replay(OPS);hid.forEach(c=>HID.add(c));derive();draw();persist()}
+const cr0=$('cr').onclick;
+$('cr').onclick=()=>{if(!G)return;if(OPS.some(o=>o.t==='add')){rebuildOps([]);msg('Colours reset.');return}cr0()};
+
+/* ---------- 2. Session timer ---------- */
+const fmt=ms=>{const s=Math.floor(ms/1000),p=v=>String(v).padStart(2,'0');return p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60)};
+const dur=ms=>{const m=Math.round(ms/60000);return m<60?m+' min':Math.floor(m/60)+' h '+(m%60)+' min'};
+const tmMs=()=>{const t=S.tm;return t?t.acc+(t.run?Date.now()-t.t0:0):0};
+function tmHtml(){const t=S.tm;
+ return`<div class="tmv" data-tmv>${fmt(tmMs())}</div><div class="m">${!t?'Not started':t.run?'Running':'Paused'}${t?' · <span data-tms>'+Math.max(0,doneN()-t.d0)+'</span> stitches this session':''}</div>`+
+ `<div class="row" style="justify-content:center"><button data-tm="${t&&t.run?'pause':'go'}">${!t?'▶ Start':t.run?'⏸ Pause':'▶ Resume'}</button>${t?'<button class="s" data-tm="save">⏹ Save session</button><button class="s" data-tm="drop">Discard</button>':''}</div>`}
+window.renderTm=()=>{document.querySelectorAll('.tmbox').forEach(e=>{e.innerHTML=tmHtml()})};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tm]');if(!b||!G||!S.name)return;const a=b.dataset.tm,t=S.tm;
+ if(a==='go'){if(!t)S.tm={acc:0,t0:Date.now(),run:1,s0:Date.now(),d0:doneN()};else if(!t.run){t.t0=Date.now();t.run=1}}
+ else if(a==='pause'){if(t&&t.run){t.acc+=Date.now()-t.t0;t.run=0}}
+ else if(a==='save'){if(!t)return;(S.sess=S.sess||[]).push({d:t.s0,ms:tmMs(),st:Math.max(0,doneN()-t.d0)});S.tm=null}
+ else if(a==='drop'){if(!t)return;if(!b.dataset.s){b.dataset.s=1;b.textContent='Tap again to discard';return}S.tm=null}
+ persist();renderTm();if(cur==='sess')sessL()});
+setInterval(()=>{if(!S.tm)return;const els=[...document.querySelectorAll('[data-tmv]')].filter(e=>e.offsetParent!==null);if(!els.length)return;const t=fmt(tmMs());els.forEach(e=>e.textContent=t);
+ const n=doneN()-S.tm.d0;document.querySelectorAll('[data-tms]').forEach(e=>e.textContent=Math.max(0,n))},1000);
+window.sessL=()=>{if(!G)return;renderTm();const L=S.sess||[];let ms=0,st=0,rm=0,rst=0;L.forEach(s=>{ms+=s.ms;st+=s.st;if(s.ms>=60000){rm+=s.ms;rst+=s.st}});
+ const rate=rm>=600000&&rst>0?Math.round(rst/(rm/3600000)):0;
+ $('sts').textContent=L.length?L.length+' session'+(L.length>1?'s':'')+' · '+dur(ms)+' total · '+st+' stitches'+(rate?' · about '+rate+' stitches/hour':''):'No saved sessions yet. Start the timer, then save the session when you finish.';
+ const b=$('sspd');b.hidden=!rate;if(rate){b.dataset.r=rate;b.textContent='Use '+rate+' st/h for time-left estimates'}
+ $('ssl').innerHTML=L.length?L.map((s,i)=>[s,i]).reverse().map(([s,i])=>`<div class="lg"><span style="flex:1"><b>${fd(s.d)}</b> ${new Date(s.d).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}<br><span class="m">${dur(s.ms)} · ${s.st} stitches${s.ms>=60000&&s.st?' · '+Math.round(s.st/(s.ms/3600000))+' st/h':''}</span></span><button class="s" data-sd="${i}">Delete</button></div>`).join(''):'<div class="m">—</div>'};
+$('ssl').onclick=e=>{const b=e.target.closest('[data-sd]');if(!b)return;if(!b.dataset.s){b.dataset.s=1;b.textContent='Tap again';return}S.sess.splice(+b.dataset.sd,1);persist();sessL()};
+$('sspd').onclick=e=>{ST.set('xi:spd',e.target.dataset.r);msg('');e.target.textContent='Saved: '+e.target.dataset.r+' st/h is now used for estimates.'};
+
+/* ---------- 1. Photos & videos (stored in IndexedDB, per project) ---------- */
+const MDB={db:null,
+ open(){return this.db?Promise.resolve(this.db):new Promise((res,rej)=>{let r;try{r=indexedDB.open('xsmedia',1)}catch(x){rej(x);return}
+  r.onupgradeneeded=()=>{const s=r.result.createObjectStore('m',{keyPath:'id',autoIncrement:true});s.createIndex('p','p')};
+  r.onsuccess=()=>{this.db=r.result;res(r.result)};r.onerror=()=>rej(r.error)})},
+ tx(mode,fn){return this.open().then(db=>new Promise((res,rej)=>{const t=db.transaction('m',mode);let out;const q=fn(t.objectStore('m'));if(q)q.onsuccess=()=>{out=q.result};t.oncomplete=()=>res(out);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)}))},
+ add(r){return this.tx('readwrite',s=>s.add(r))},list(p){return this.tx('readonly',s=>s.index('p').getAll(p))},del(id){return this.tx('readwrite',s=>s.delete(id))},
+ delAll(p){return this.open().then(db=>new Promise(res=>{const t=db.transaction('m','readwrite'),c=t.objectStore('m').index('p').openKeyCursor(IDBKeyRange.only(p));
+  c.onsuccess=()=>{const k=c.result;if(k){t.objectStore('m').delete(k.primaryKey);k.continue()}};t.oncomplete=res;t.onerror=res;t.onabort=res}))}};
+window.mediaDelAll=p=>{MDB.delAll(p).catch(()=>{})};
+let ML=[],MV=-1,MU=null;
+window.mediaL=async()=>{if(!S.name)return;$('mgrid').innerHTML='<div class="m">Loading…</div>';
+ try{ML=(await MDB.list(S.name)).sort((a,b)=>b.d-a.d);mediaR()}catch(x){$('mgrid').innerHTML='';$('mcount').textContent='Couldn’t open photo storage on this device.'}};
+function mediaR(){$('mcount').textContent=ML.length?ML.length+' item'+(ML.length>1?'s':'')+' · newest first · tap to open':'Nothing attached yet. Add progress photos or videos of this project.';
+ $('mgrid').innerHTML=ML.map((r,i)=>`<button class="mi" data-mi="${i}" aria-label="Open">${r.th?`<img alt="" src="${r.th}">`:`<span class="mph">${r.t==='v'?'🎬':'🖼️'}</span>`}${r.t==='v'?'<span class="mpl">▶</span>':''}<span class="mdt">${fd(r.d)}${r.pc!=null?' · '+r.pc+'%':''}</span></button>`).join('')}
+const loadImg=b=>new Promise((res,rej)=>{const u=URL.createObjectURL(b),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);res(im)};im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('image'))};im.src=u});
+const toBlob=(c,q)=>new Promise(r=>c.toBlob(r,'image/jpeg',q));
+async function prepImg(f){const im=await loadImg(f),W=im.naturalWidth,H=im.naturalHeight;if(!W||!H)throw new Error('image');
+ const sc=(m)=>{const k=Math.min(1,m/Math.max(W,H)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(W*k));c.height=Math.max(1,Math.round(H*k));const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);return c};
+ return{blob:await toBlob(sc(2048),.88),th:sc(240).toDataURL('image/jpeg',.7)}}
+function prepVid(f){return new Promise(res=>{const blob=f.slice(0,f.size,f.type||'video/mp4'),u=URL.createObjectURL(blob),v=document.createElement('video');let done=0,tm;
+ const fin=th=>{if(done)return;done=1;clearTimeout(tm);URL.revokeObjectURL(u);v.removeAttribute('src');try{v.load()}catch(x){}res({blob,th:th||''})};
+ v.muted=true;v.playsInline=true;v.preload='auto';tm=setTimeout(()=>fin(''),7000);
+ v.onloadeddata=()=>{try{v.currentTime=Math.min(1,(v.duration||2)/10)}catch(x){fin('')}};
+ v.onseeked=()=>{try{const k=Math.min(1,240/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(v.videoWidth*k));c.height=Math.max(1,Math.round(v.videoHeight*k));c.getContext('2d').drawImage(v,0,0,c.width,c.height);fin(c.toDataURL('image/jpeg',.7))}catch(x){fin('')}};
+ v.onerror=()=>fin('');v.src=u})}
+$('mfi').onchange=async e=>{const fs=[...e.target.files];e.target.value='';if(!fs.length||!S.name)return;const M=$('mmsg');let ok=0,bad=0;
+ for(let i=0;i<fs.length;i++){const f=fs[i];M.textContent='Adding '+(i+1)+' of '+fs.length+'…';
+  try{const v=(f.type||'').startsWith('video/'),r=v?await prepVid(f):await prepImg(f);
+   await MDB.add({p:S.name,t:v?'v':'i',n:f.name||'',d:Date.now(),pc:pctN(),blob:r.blob,th:r.th});ok++}catch(x){bad++}}
+ M.textContent=(ok?ok+' added. ':'')+(bad?bad+' couldn’t be added (unsupported file or storage full).':'');mediaL()};
+$('mgrid').onclick=e=>{const b=e.target.closest('[data-mi]');if(b)mvShow(+b.dataset.mi)};
+function mvShow(i){if(i<0||i>=ML.length)return;MV=i;const r=ML[i];if(MU)URL.revokeObjectURL(MU);MU=URL.createObjectURL(r.blob);
+ $('mvb').innerHTML=r.t==='v'?`<video src="${MU}" controls playsinline preload="metadata"></video>`:`<img alt="" src="${MU}">`;
+ const v=$('mvb').querySelector('video');if(v)v.onerror=()=>{$('mvi').textContent+=' · can’t play this video format here'};
+ $('mvi').textContent=(i+1)+' / '+ML.length+' · '+fdt(r.d)+(r.pc!=null?' · '+r.pc+'% stitched':'');
+ const x=$('mvx');x.textContent='Delete';delete x.dataset.s;$('mvp').disabled=i<=0;$('mvn').disabled=i>=ML.length-1;$('mv').hidden=false}
+window.mvOpen=()=>!$('mv').hidden;
+window.mvClose=()=>{$('mv').hidden=true;$('mvb').innerHTML='';if(MU){URL.revokeObjectURL(MU);MU=null}MV=-1};
+$('mvk').onclick=mvClose;$('mvp').onclick=()=>mvShow(MV-1);$('mvn').onclick=()=>mvShow(MV+1);
+$('mvx').onclick=async()=>{const b=$('mvx');if(MV<0)return;if(!b.dataset.s){b.dataset.s=1;b.textContent='Tap again to delete';return}
+ try{await MDB.del(ML[MV].id)}catch(x){return}ML.splice(MV,1);mediaR();if(!ML.length)mvClose();else mvShow(Math.min(MV,ML.length-1))};
+
+/* ---------- 4. Run counts ---------- */
+const RN={a:0,dir:'l',ord:'t',col:'',tab:'r'},RPG=40;
+try{const j=JSON.parse(ST.get('xi:rn'));if(j){RN.dir=j.dir||'l';RN.ord=j.ord||'t'}}catch(x){}
+function rowRuns(r){const w=S.w,o=[];let c=0;
+ while(c<w){const i=r*w+c;if(DEL[i]){let e=c;while(e<w&&DEL[r*w+e])e++;o.push({g:1,n:e-c,c0:c,c1:e-1});c=e;continue}
+  const k=G[i];let e=c+1;while(e<w&&!DEL[r*w+e]&&G[r*w+e]===k)e++;o.push({p:k,n:e-c,c0:c,c1:e-1});c=e}
+ return o}
+const runDone=(r,a,b)=>{for(let c=a;c<=b;c++){const i=r*S.w+c;if(!DEL[i]&&!D[i])return 0}return 1};
+function rowList(){const w=S.w,h=S.h,o=[];for(let r=0;r<h;r++){let any=0,hit=!RN.col;for(let c=0;c<w;c++){const i=r*w+c;if(DEL[i])continue;any=1;if(!RN.col)break;if(P[G[i]].c===RN.col){hit=1;break}}if(any&&hit)o.push(r)}if(RN.ord==='b')o.reverse();return o}
+function rowHtml(r){const w=S.w,runs=rowRuns(r),oi=RN.ord==='t'?r:S.h-1-r,rev=RN.dir==='r'||(RN.dir==='a'&&oi%2===1);
+ let a=0,b=runs.length;while(a<b&&runs[a].g)a++;while(b>a&&runs[b-1].g)b--;const core=runs.slice(a,b);if(!core.length)return'';
+ let st=0,nr=0;core.forEach(u=>{if(!u.g){st+=u.n;nr++}});
+ const disp=rev?core.slice().reverse():core,rd=runDone(r,0,w-1);
+ const chips=disp.map(u=>{if(u.g)return`<span class="rc gp">skip ${u.n}</span>`;const p=P[u.p];
+  if(RN.col&&p.c!==RN.col)return`<span class="rc gp">${u.n}</span>`;
+  return`<button class="rc${runDone(r,u.c0,u.c1)?' dn':''}" data-r="${r}" data-a="${u.c0}" data-b="${u.c1}"><i style="background:${p.h};color:${lum(hx(p.h))>.55?'#000':'#fff'}">${esc(p.s)}</i>${u.n}</button>`}).join('');
+ return`<div class="rw" data-row="${r}"><div class="rh"><b>Row ${r+1}</b><span class="m">cols ${core[0].c0+1}–${core[core.length-1].c1+1} · ${st} st · ${nr} run${nr===1?'':'s'} · ${rev?'← right to left':'left to right →'}</span><button class="s" data-rm="${r}">${rd?'↺ Undo row':'✓ Row done'}</button></div><div class="rcs">${chips}</div></div>`}
+function firstOpen(list){const i=list.findIndex(r=>!runDone(r,0,S.w-1));return i<0?0:i}
+function runsR(){if(!G)return;const list=rowList(),n=list.length;RN.a=Math.max(0,Math.min(RN.a,Math.max(0,n-1)));
+ let tr=0,lg=0,ts=0;list.forEach(r=>rowRuns(r).forEach(u=>{if(u.g||(RN.col&&P[u.p].c!==RN.col))return;tr++;ts+=u.n;if(u.n>lg)lg=u.n}));
+ $('rsum').textContent=n?n+' rows · '+tr+' runs · average '+(tr?(ts/tr).toFixed(1):0)+' stitches per run · longest run '+lg:'No stitches to show.';
+ const pg=list.slice(RN.a,RN.a+RPG);$('rlist').innerHTML=pg.map(rowHtml).join('');
+ $('rpv').disabled=RN.a<=0;$('rnn').disabled=RN.a+RPG>=n;$('rpi').textContent=n?'Showing '+(RN.a+1)+'–'+(RN.a+pg.length)+' of '+n:''}
+function colR(){let o=P.map(()=>({n:0,st:0,mx:0,one:0}));for(let r=0;r<S.h;r++)rowRuns(r).forEach(u=>{if(u.g)return;const q=o[u.p];q.n++;q.st+=u.n;if(u.n>q.mx)q.mx=u.n;if(u.n===1)q.one++});
+ let tr=0;o.forEach(q=>tr+=q.n);$('rcs').textContent=tr+' runs in total across '+P.length+' colours. Lots of single stitches means lots of thread changes.';
+ $('rcl').innerHTML=P.map((p,i)=>{const q=o[i];return`<div class="lg"><span class="sw" style="background:${p.h}">${esc(p.s)}</span><span>DMC ${p.c}</span><span class="m">${q.n} runs · avg ${q.n?(q.st/q.n).toFixed(1):0} · longest ${q.mx} · ${q.one} single${q.one===1?'':'s'}</span></div>`}).join('')}
+function rTab(t){RN.tab=t;$('rtr').classList.toggle('on',t==='r');$('rtc').classList.toggle('on',t==='c');$('rrow').hidden=t!=='r';$('rcol').hidden=t!=='c';if(t==='c')colR();else runsR()}
+window.runsL=()=>{if(!G)return;$('rdr').value=RN.dir;$('rod').value=RN.ord;
+ if(!P.some(p=>p.c===RN.col))RN.col='';$('rcf').innerHTML='<option value="">All colours</option>'+P.map(p=>`<option value="${p.c}"${p.c===RN.col?' selected':''}>${esc(p.s)}  DMC ${p.c}</option>`).join('');
+ RN.a=firstOpen(rowList());rTab(RN.tab)};
+const rsave=()=>ST.set('xi:rn',JSON.stringify({dir:RN.dir,ord:RN.ord}));
+$('rtr').onclick=()=>rTab('r');$('rtc').onclick=()=>rTab('c');
+$('rdr').onchange=()=>{RN.dir=$('rdr').value;rsave();runsR()};
+$('rod').onchange=()=>{RN.ord=$('rod').value;rsave();RN.a=firstOpen(rowList());runsR()};
+$('rcf').onchange=()=>{RN.col=$('rcf').value;RN.a=0;runsR()};
+$('rnx').onclick=()=>{RN.a=firstOpen(rowList());runsR();scrollTo(0,0)};
+$('rgo').onchange=()=>{const v=+$('rgo').value;$('rgo').value='';if(!v)return;const i=rowList().indexOf(v-1);if(i<0){msg('Row '+v+' isn’t in the list.');return}RN.a=i;runsR()};
+$('rpv').onclick=()=>{RN.a=Math.max(0,RN.a-RPG);runsR();scrollTo(0,0)};$('rnn').onclick=()=>{RN.a+=RPG;runsR();scrollTo(0,0)};
+function setRun(r,a,b){const v=runDone(r,a,b)?0:1;for(let c=a;c<=b;c++){const i=r*S.w+c;if(!DEL[i])D[i]=v}}
+$('rlist').onclick=e=>{const c=e.target.closest('[data-a]'),m=e.target.closest('[data-rm]');let r;
+ if(c){r=+c.dataset.r;setRun(r,+c.dataset.a,+c.dataset.b)}else if(m){r=+m.dataset.rm;setRun(r,0,S.w-1)}else return;
+ const el=$('rlist').querySelector('[data-row="'+r+'"]');if(el)el.outerHTML=rowHtml(r);persist()};
+
+/* ---------- 3. Fabric size ---------- */
+const FCN=[10,11,12,14,16,18,20,22,25,28,32,36,40];
+$('fbc').innerHTML=FCN.map(n=>`<option>${n}</option>`).join('');
+window.fabL=pv=>{const fromP=pv==='proj'&&G;
+ $('fbw').value=fromP?S.w:(+ST.get('xi:fbw')||100);$('fbh').value=fromP?S.h:(+ST.get('xi:fbh')||100);
+ $('fbc').value=String(fromP?S.count:(+ST.get('xi:fbc')||14));$('fbo').value=ST.get('xi:fbo')||'1';
+ $('fbu').value=ST.get('xi:fbu')||'cm';$('fbm').value=ST.get('xi:fbm')||($('fbu').value==='cm'?5:2);
+ const b=$('fabb');b.dataset.go=fromP?'proj':'home';b.textContent=fromP?'‹ Project':'‹ Home';fabR()};
+function fabR(){const W=+$('fbw').value,H=+$('fbh').value,cnt=+$('fbc').value,ov=+$('fbo').value,u=$('fbu').value,m=Math.max(0,+$('fbm').value||0);
+ ['fbw','fbh','fbc','fbo','fbu','fbm'].forEach(k=>ST.set('xi:'+k,$(k).value));
+ if(!(W>0&&H>0)){$('fbr').innerHTML='<div class="m">Enter the stitches wide and high.</div>';$('fbt').innerHTML='';return}
+ const mi=u==='cm'?m/2.54:m,f=n=>n.toFixed(1),up=(n,s)=>(Math.ceil(n/s-1e-9)*s),
+  calc=c=>{const spi=c/ov,dw=W/spi,dh=H/spi;return{spi,dw,dh,fw:dw+2*mi,fh:dh+2*mi}},r=calc(cnt);
+ const mtxt=m?(u==='cm'?f(m)+' cm':f(m)+' in')+' margin each side':'no margin';
+ $('fbr').innerHTML=`<div class="m">Finished design</div><div class="big"><b>${f(r.dw*2.54)} × ${f(r.dh*2.54)} cm</b></div><div class="m">${f(r.dw)} × ${f(r.dh)} in · ${f(r.spi)} stitches per inch (${f(r.spi/2.54)} per cm)</div>`+
+  `<div class="m" style="margin-top:12px">Fabric to cut (${mtxt})</div><div class="big"><b>${f(r.fw*2.54)} × ${f(r.fh*2.54)} cm</b></div><div class="m">${f(r.fw)} × ${f(r.fh)} in</div>`+
+  `<div class="m" style="margin-top:8px">Rounded up: ${up(r.fw*2.54,1)} × ${up(r.fh*2.54,1)} cm · ${up(r.fw,.5).toFixed(1)} × ${up(r.fh,.5).toFixed(1)} in</div>`;
+ const L=ov===1?[11,14,16,18,20,22]:[22,25,28,32,36,40];
+ $('fbt').innerHTML=L.map(c=>{const q=calc(c);return`<div class="lg"${c===cnt?' style="font-weight:600"':''}><span style="flex:0 0 78px">${c}-count</span><span class="m" style="flex:1">design ${f(q.dw*2.54)} × ${f(q.dh*2.54)} cm (${f(q.dw)} × ${f(q.dh)} in)<br>fabric ${f(q.fw*2.54)} × ${f(q.fh*2.54)} cm (${f(q.fw)} × ${f(q.fh)} in)</span></div>`}).join('')}
+['fbw','fbh','fbc','fbo','fbm'].forEach(k=>$(k).oninput=fabR);$('fbc').onchange=$('fbo').onchange=fabR;
+$('fbu').onchange=()=>{const was=ST.get('xi:fbu')||'cm',now=$('fbu').value,v=+$('fbm').value||0;if(was!==now)$('fbm').value=now==='in'?(Math.round(v/2.54*4)/4):(Math.round(v*2.54*2)/2);fabR()};
+})();
+</script>
+
 </body></html>

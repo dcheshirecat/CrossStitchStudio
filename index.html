@@ -35,9 +35,16 @@ button:disabled{opacity:.4;cursor:default}
 #ew{display:flex;justify-content:center;margin:8px 0}#ec{touch-action:none;background:#fff;border-radius:4px}#ph .row{justify-content:center}
 </style></head><body>
 <div id="home" class="scr">
-<div class="bar"><b style="text-align:left;font-size:20px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:18px">⚙</button></div>
-<style>#hub{display:grid;grid-template-columns:1fr 1fr;gap:10px}#hub button{padding:26px 8px;font-size:16px;width:100%}#tb .row button{padding:7px 9px}</style>
-<div id="hub"><button data-go="prj">📂 My projects</button><button id="nw">🎨 Pattern creator<br><small>from a photo</small></button><button data-go="imp">📄 Import Stitch Fiddle PDF</button><button data-go="inv">🧵 Thread inventory</button><button data-go="bak">💾 Backup &amp; restore</button></div>
+<div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
+<style>#hub .hc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:12px}#hub .hi{font-size:34px;width:44px;text-align:center}#hub .ht{flex:1}#hub .ht b{font-size:17px;display:block}#hub .ht small{display:block;color:var(--mut);margin-top:3px;font-size:13px}#hub .ar{color:var(--mut);font-size:20px}.hero{text-align:center;margin:18px 0 8px}.hero div{font-size:56px}.hero h1{color:var(--ac);font-size:28px;margin:4px 0}.hero p{color:var(--mut);margin:0}</style>
+<div class="hero"><div>🧵</div><h1>Cross Stitch Studio</h1><p>Turn photos into cross-stitch charts, or import patterns you already have.</p></div>
+<div id="hub">
+<button class="hc" data-go="prj"><span class="hi">📋</span><span class="ht"><b>My Projects</b><small>Open a saved pattern and keep stitching.</small></span><span class="ar">→</span></button>
+<button class="hc" id="nw"><span class="hi">🖼️</span><span class="ht"><b>Pattern Creator</b><small>Turn any photo into a cross-stitch chart.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="imp"><span class="hi">📄</span><span class="ht"><b>Import Stitch Fiddle PDF</b><small>Bring in a pattern you already have.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="inv"><span class="hi">🧶</span><span class="ht"><b>Thread Inventory</b><small>Mark the DMC colours you own.</small></span><span class="ar">→</span></button>
+<button class="hc" data-go="bak"><span class="hi">💾</span><span class="ht"><b>Backup &amp; Restore</b><small>Export or import all projects.</small></span><span class="ar">→</span></button>
+</div>
 </div>
 <div id="make" class="scr" hidden>
 <div class="bar"><button class="s" data-go="home">‹ Back</button><b>New pattern</b></div>
@@ -70,7 +77,7 @@ button:disabled{opacity:.4;cursor:default}
 <div id="wslot"></div>
 <div class="row"><button id="pd">Export PDF</button></div>
 </div>
-<div id="prj" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>My projects</b></div></div>
+<div id="prj" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>My projects</b></div><div id="pl"></div></div>
 <div id="imp" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Import PDF pattern</b></div><div class="card"><label class="btn">Choose Stitch Fiddle PDF<input type="file" id="pf" accept="application/pdf" hidden></label><div class="m" id="pmsg" style="margin-top:8px">Pick a PDF exported from Stitch Fiddle. The chart is read straight from the file, with exact DMC colours.</div></div></div>
 <div id="inv" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Thread inventory</b></div><div class="card"><input type="text" id="iq" placeholder="Search DMC number or name"><div id="il"></div></div></div>
 <div id="bak" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Backup &amp; restore</b></div><div class="card"><div class="row"><button id="bx">Export all projects &amp; inventory</button><label class="btn">Import backup<input type="file" id="bf" accept=".json,application/json" hidden></label></div><div class="m" id="bm" style="margin-top:8px"></div></div></div>
@@ -242,7 +249,7 @@ function view(v){['home','make','work'].forEach(i=>$(i).hidden=i!==v);cur=v;
  if(v==='home')plist();else{const w=v==='work';$(w?'wslot':'mslot').appendChild($('cp'));$('pgl').hidden=!w;if(!w)$('pg').checked=false;$('wt').textContent=S.name;rd();draw()}
  msg('');scrollTo(0,0)}
 window.goBack=()=>{if(cur==='home')return false;view('home');return true};
-document.addEventListener('click',e=>{const g=e.target.dataset&&e.target.dataset.go;if(g)view(g)});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-go]'),g=b&&b.dataset.go;if(g)view(g)});
 $('nw').onclick=()=>{IM=null;G=null;S.name='';S.img='';SRC=null;S.src='';S.ed=null;S.ig=null;$('nm').value='';$('br').value=0;$('co').value=100;$('bw').checked=false;$('bwm').value='g';$('bwa').checked=true;$('bws').value=40;$('bwl').value=0;S.sym={};$('cv').hidden=true;const p=document.querySelector('#wrap p');if(p)p.hidden=false;$('info').textContent='Choose a photo to generate a pattern.';$('leg').innerHTML='';OPS=[];UNDO=[];unb();view('make')};
 $('ed').onclick=()=>{view('make');msg('Your edits are kept when you change settings. Use Undo to step back.')};
 $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a photo first.');return}if(!n){msg('Give your project a name.');return}

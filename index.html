@@ -35,7 +35,7 @@ button:disabled{opacity:.4;cursor:default}
 #ew{display:flex;justify-content:center;margin:8px 0}#ec{touch-action:none;background:#fff;border-radius:4px}#ph .row{justify-content:center}
 </style></head><body>
 <div id="home" class="scr">
-<h1>Cross Stitch Studio</h1>
+<div class="bar"><b style="text-align:left;font-size:20px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:18px">⚙</button></div>
 <style>#hub{display:grid;grid-template-columns:1fr 1fr;gap:10px}#hub button{padding:26px 8px;font-size:16px;width:100%}#tb .row button{padding:7px 9px}</style>
 <div id="hub"><button data-go="prj">📂 My projects</button><button id="nw">🎨 Pattern creator<br><small>from a photo</small></button><button data-go="imp">📄 Import Stitch Fiddle PDF</button><button data-go="inv">🧵 Thread inventory</button><button data-go="bak">💾 Backup &amp; restore</button></div>
 </div>
@@ -71,9 +71,11 @@ button:disabled{opacity:.4;cursor:default}
 <div class="row"><button id="pd">Export PDF</button></div>
 </div>
 <div id="prj" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>My projects</b></div></div>
-<div id="imp" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Import PDF pattern</b></div><div class="card"><label class="btn">Choose PDF<input type="file" id="pf" accept="application/pdf" hidden></label><div class="row"><label>Page<input type="number" id="pp2" value="1" min="1"></label><label>Columns<input type="number" id="pcn"></label><label>Rows<input type="number" id="prn"></label></div><div class="row"><button class="s" id="pgo">Load page</button><button id="pim">Import</button></div><div class="m" id="pmsg" style="margin-top:8px">Choose a Stitch Fiddle PDF with a colour chart page.</div><canvas id="pcv" style="width:100%;margin-top:8px;background:#fff"></canvas></div></div>
+<div id="imp" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Import PDF pattern</b></div><div class="card"><label class="btn">Choose Stitch Fiddle PDF<input type="file" id="pf" accept="application/pdf" hidden></label><div class="m" id="pmsg" style="margin-top:8px">Pick a PDF exported from Stitch Fiddle. The chart is read straight from the file, with exact DMC colours.</div></div></div>
 <div id="inv" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Thread inventory</b></div><div class="card"><input type="text" id="iq" placeholder="Search DMC number or name"><div id="il"></div></div></div>
 <div id="bak" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Backup &amp; restore</b></div><div class="card"><div class="row"><button id="bx">Export all projects &amp; inventory</button><label class="btn">Import backup<input type="file" id="bf" accept=".json,application/json" hidden></label></div><div class="m" id="bm" style="margin-top:8px"></div></div></div>
+<div id="set" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Settings</b></div><div class="card"><b>Appearance</b><div class="row"><label>Theme<select id="th"><option value="system">Match device</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div></div></div>
+<div id="hold" hidden></div>
 <div id="ph" hidden>
 <div class="bar"><button class="s" id="ex">Cancel</button><b>Edit photo</b><button id="ea">Apply</button></div>
 <div id="ew"><canvas id="ec"></canvas></div>
@@ -114,7 +116,6 @@ button:disabled{opacity:.4;cursor:default}
 <div class="chips" id="gs"></div>
 <div class="row"><button class="s" id="ga">+ Add colour</button><button id="gok">Apply gradient</button></div></div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -140,8 +141,8 @@ function build(done,del){
  if(S.bw&&S.bwm==='2')bwLevels(d,n);
  if(S.ig)imgMap(d,n);
  for(let i=0;i<n;i++){f[i*3]=d[i*4];f[i*3+1]=d[i*4+1];f[i*3+2]=d[i*4+2];px.push([d[i*4],d[i*4+1],d[i*4+2]])}
- const k=Math.min(S.bw&&S.bwm==='2'?2:S.k,n),ord=px.map((p,i)=>i).sort((a,b)=>px[a][0]+px[a][1]+px[a][2]-px[b][0]-px[b][1]-px[b][2]);
- let C=[];for(let j=0;j<k;j++)C.push(px[ord[Math.floor((j+.5)*n/k)]].slice());
+ const k=S.imp?S.imp.length:Math.min(S.bw&&S.bwm==='2'?2:S.k,n),ord=px.map((p,i)=>i).sort((a,b)=>px[a][0]+px[a][1]+px[a][2]-px[b][0]-px[b][1]-px[b][2]);
+ let C=S.imp?S.imp.map(x=>hx(x)):[];if(!S.imp)for(let j=0;j<k;j++)C.push(px[ord[Math.floor((j+.5)*n/k)]].slice());
  for(let it=0;it<8;it++){const s=C.map(()=>[0,0,0,0]);
   for(let i=0;i<n;i++){let b=0,bd=1e9;const p=px[i];for(let j=0;j<k;j++){const q=C[j],dd=(p[0]-q[0])**2+(p[1]-q[1])**2+(p[2]-q[2])**2;if(dd<bd){bd=dd;b=j}}const t=s[b];t[0]+=p[0];t[1]+=p[1];t[2]+=p[2];t[3]++}
   C=C.map((q,j)=>s[j][3]?[s[j][0]/s[j][3],s[j][1]/s[j][3],s[j][2]/s[j][3]]:q)}
@@ -490,13 +491,14 @@ addEventListener('resize',()=>{if(E)edShow(0)});
 <script>
 (function(){
 const $=id=>document.getElementById(id),J=(k,d)=>{try{return JSON.parse(ST.get(k))||d}catch(e){return d}},INV=()=>J('xi:inv',{}),spd=()=>+ST.get('xi:spd')||150;
+$('f').addEventListener('change',()=>{S.imp=null;S.imd=null});
 Object.assign(S,{park:-1,last:-1,hl:null,hf:0,mode:'',lock:0,ka:0,rr:-1,rc:-1});
 $('prj').appendChild($('pl'));
-const EX=['prj','imp','inv','bak'],v0=view;
-view=function(v){EX.forEach(i=>$(i).hidden=true);if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;if(v==='prj')plist();if(v==='inv')invL();scrollTo(0,0);return}v0(v);if(v==='work')tb()};
-const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+'}'};
-const op0=openP;openP=function(n){op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.hl=null;S.rr=S.rc=-1};
-$('nw').addEventListener('click',()=>{S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
+const EX=['prj','imp','inv','bak','set'],v0=view,hold=()=>$('hold').appendChild($('cp'));hold();
+view=function(v){EX.forEach(i=>$(i).hidden=true);if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;hold();if(v==='prj')plist();if(v==='inv')invL();scrollTo(0,0);return}v0(v);if(v==='home')hold();if(v==='work')tb()};
+const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+'}'};
+const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.hl=null;S.rr=S.rc=-1};
+$('nw').addEventListener('click',()=>{S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
 const dc=drawChart;
 drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(!vp||!G)return;
  const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
@@ -552,16 +554,35 @@ $('iq').oninput=invL;$('il').onchange=e=>{const c=e.target.dataset.c;if(!c)retur
 // backup
 $('bx').onclick=()=>{const o={};Object.keys(localStorage).filter(k=>k.startsWith('xs:')||k.startsWith('xi:')).forEach(k=>o[k]=localStorage.getItem(k));save(JSON.stringify(o),'cross-stitch-backup.json','application/json',1)};
 $('bf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);let n=0;for(const k in o)if(/^x[si]:/.test(k)&&ST.set(k,o[k]))n++;$('bm').textContent='Restored '+n+' items.'}catch(x){$('bm').textContent='That isn’t a valid backup file.'}};r.readAsText(f)};
-// Stitch Fiddle PDF import (samples cell colours from a colour chart page)
-let PD=null,PC=[],PN='Imported';
-$('pf').onchange=e=>{const f=e.target.files[0];if(!f)return;PN=f.name.replace(/\.pdf$/i,'');const r=new FileReader();r.onload=()=>{if(!window.pdfjsLib){$('pmsg').textContent='PDF reader didn’t load.';return}pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';pdfjsLib.getDocument({data:new Uint8Array(r.result)}).promise.then(d=>{PD=d;$('pmsg').textContent=d.numPages+' pages. Pick the colour chart page and tap Load page.';pgo()}).catch(()=>$('pmsg').textContent='Couldn’t read that PDF.')};r.readAsArrayBuffer(f)};
-function pgo(){if(!PD)return;PD.getPage(+$('pp2').value||1).then(p=>{const s=Math.min(3,1800/p.getViewport({scale:1}).width),v=p.getViewport({scale:s}),c=$('pcv');c.width=v.width;c.height=v.height;PC=[];return p.render({canvasContext:c.getContext('2d'),viewport:v}).promise}).then(()=>$('pmsg').textContent='Tap the grid’s top-left corner, then its bottom-right corner, and enter columns and rows.').catch(()=>$('pmsg').textContent='That page doesn’t exist.')}
-$('pgo').onclick=pgo;
-$('pcv').onclick=e=>{const c=$('pcv'),b=c.getBoundingClientRect(),k=c.width/b.width;if(PC.length>=2)PC=[];const p=[(e.clientX-b.left)*k,(e.clientY-b.top)*k];PC.push(p);const x=c.getContext('2d');x.strokeStyle='#f0f';x.lineWidth=4;x.beginPath();x.arc(p[0],p[1],12,0,7);x.stroke()};
-$('pim').onclick=()=>{const c=$('pcv'),cols=+$('pcn').value,rows=+$('prn').value;if(PC.length<2||!(cols>1)||!(rows>1)){$('pmsg').textContent='Tap both corners and enter columns and rows.';return}if(cols>400){$('pmsg').textContent='Max 400 columns.';return}
- const[a,b]=PC,cw=(b[0]-a[0])/cols,ch=(b[1]-a[1])/rows,x=c.getContext('2d'),o=document.createElement('canvas');o.width=cols;o.height=rows;const ox=o.getContext('2d'),im=ox.createImageData(cols,rows);
- for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const s=[0,0,0];[[.2,.2],[.8,.2],[.2,.8],[.8,.8]].forEach(([u,v])=>{const d=x.getImageData(Math.round(a[0]+(i+u)*cw),Math.round(a[1]+(j+v)*ch),1,1).data;for(let t=0;t<3;t++)s[t]+=d[t]/4});im.data.set([s[0],s[1],s[2],255],(j*cols+i)*4)}
- ox.putImageData(im,0,0);$('nw').click();$('nm').value=PN;$('w').value=cols;$('k').value=60;$('dt').checked=false;$('cl').checked=false;SRC=o;S.src=o.toDataURL('image/png');S.ed=defEd();S.ig=null;NEWPHOTO=1;IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);go()};
+const u8s=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return s};
+async function infl(b){const ds=new DecompressionStream('deflate'),w=ds.writable.getWriter();w.write(b).catch(()=>{});w.close().catch(()=>{});return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer())}
+async function pdfTexts(buf){const b=new Uint8Array(buf),s=u8s(b),re=/stream\r?\n/g,o=[];let m;
+ while(m=re.exec(s)){if(s.substr(m.index-3,3)==='end')continue;const st=m.index+m[0].length,en=s.indexOf('endstream',st);if(en<0)break;let e2=en;while(e2>st&&(b[e2-1]===10||b[e2-1]===13))e2--;
+  let t=null;for(const e of[e2,en]){try{t=await infl(b.subarray(st,e));break}catch(x){}}if(t===null)t=u8s(b.subarray(st,e2));
+  if(t.indexOf(' re')>=0||t.indexOf('DMC')>=0)o.push(t);re.lastIndex=en+9}return o}
+function rects(t){const re=/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) rg|(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re/g;let m,c=null;const o=[];while(m=re.exec(t)){if(m[1]!==undefined)c=[+m[1],+m[2],+m[3]];else o.push([+m[4],+m[5],+m[6],+m[7],c])}return o}
+const h2=c=>'#'+c.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
+async function readSF(buf){const T=await pdfTexts(buf);let best=[];const lg=[];
+ for(const t of T){const rc=rects(t);if(rc.length>best.length)best=rc;const re=/\(DMC (\S+) - ((?:[^)\\]|\\.)*)\) Tj ET Q\s+([\d.]+) ([\d.]+) ([\d.]+) rg/g;let m;while(m=re.exec(t))lg.push([m[1],m[2],h2([+m[3],+m[4],+m[5]])])}
+ const wc={};best.forEach(r=>{const k=Math.abs(r[2]).toFixed(2);wc[k]=(wc[k]||0)+1});const wm=+Object.keys(wc).sort((a,b)=>wc[b]-wc[a])[0];
+ const cells=best.filter(r=>r[4]&&Math.abs(Math.abs(r[2])-wm)<.06&&Math.abs(Math.abs(r[3])-wm)<.06);
+ if(cells.length<4)throw'Couldn’t find a stitch chart in this PDF.';
+ const xs=[...new Set(cells.map(r=>r[0]))].sort((a,b)=>a-b),ys=[...new Set(cells.map(r=>r[1]))].sort((a,b)=>b-a);
+ return{cols:xs.length,rows:ys.length,lg,cells:cells.map(r=>[xs.indexOf(r[0]),ys.indexOf(r[1]),h2(r[4])])}}
+
+function applyLg(lg){(lg||[]).forEach(([c,n,hh])=>{const nl=lab(...hx(hh)),m=DM.find(d=>d.c===c);if(m){m.h=hh;m.l.splice(0,3,...nl)}else{DM.push({c,n,h:hh,l:nl});DML.push(nl)}})}
+$('pf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const M=$('pmsg');
+ try{if(typeof DecompressionStream==='undefined')throw'Your Android System WebView is too old to read this PDF. Update it in Google Play.';
+  M.textContent='Reading PDF…';const r=await readSF(await f.arrayBuffer()),cols=r.cols,rows=r.rows;
+  if(cols>400||rows>400)throw'Pattern is larger than 400 stitches wide.';
+  const o=document.createElement('canvas');o.width=cols;o.height=rows;const ox=o.getContext('2d');ox.fillStyle='#fff';ox.fillRect(0,0,cols,rows);const hs=new Set;
+  r.cells.forEach(c=>{hs.add(c[2]);ox.fillStyle=c[2];ox.fillRect(c[0],c[1],1,1)});if(r.cells.length<cols*rows)hs.add('#ffffff');
+  applyLg(r.lg);$('nw').click();S.imp=[...hs];S.imd=r.lg;$('nm').value=f.name.replace(/\.pdf$/i,'');$('w').value=cols;$('dt').checked=false;$('cl').checked=false;
+  SRC=o;S.src=o.toDataURL('image/png');S.ed=defEd();S.ig=null;NEWPHOTO=1;IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);go();M.textContent=cols+'×'+rows+' stitches, '+hs.size+' colours imported.'}
+ catch(x){M.textContent=typeof x==='string'?x:'Couldn’t read that PDF.'}};
+// theme + editor holder
+const ap=()=>{const t=ST.get('xi:theme')||'system';if(t==='system')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=t;$('th').value=t};
+$('th').onchange=()=>{ST.set('xi:theme',$('th').value);ap()};ap();
 })();
 </script>
 </body></html>

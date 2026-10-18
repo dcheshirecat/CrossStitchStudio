@@ -33,6 +33,7 @@ button:disabled{opacity:.4;cursor:default}
 #sp{position:relative}#cv{position:sticky;top:0;left:0}
 #ph{position:fixed;inset:0;background:var(--bg);z-index:10;overflow:auto;padding:12px}#ph>*{max-width:900px;margin-left:auto;margin-right:auto}
 #ew{display:flex;justify-content:center;margin:8px 0}#ec{touch-action:none;background:#fff;border-radius:4px}#ph .row{justify-content:center}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;padding:9px 4px;background:var(--bd);color:var(--fg);font-size:14px}.tabs button.on{background:var(--ac);color:var(--acf)}
 </style></head><body>
 <div id="home" class="scr">
 <div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
@@ -48,24 +49,58 @@ button:disabled{opacity:.4;cursor:default}
 </div>
 <div id="make" class="scr" hidden>
 <div class="bar"><button class="s" id="mk" data-go="home">‹ Back</button><b>Pattern editor</b></div>
+<div class="tabs" id="tabs"><button data-tab="img">Image</button><button data-tab="pat">Pattern</button><button data-tab="col">Colours</button><button data-tab="pal">Palettes</button></div>
+<div class="tp" data-t="img">
 <div class="card">
 <label class="btn">Choose photo<input type="file" id="f" accept="image/*" hidden></label> <button class="s" id="ep" hidden style="margin-left:8px;padding:9px 14px">✂ Edit photo</button>
-<div class="row">
+<div class="m" style="margin-top:8px">Choose a photo, then use Edit photo to crop, rotate, flip or straighten it.</div>
+</div>
+</div>
+<div class="tp" data-t="pat" hidden>
+<div class="card">
+<div class="m">Size</div>
+<div class="row" style="margin-top:4px">
 <label>Detail: <b id="wv">80</b> stitches wide<input type="range" id="w" min="20" max="400" value="80"></label>
-<label>Max colours: <b id="kv">20</b><input type="range" id="k" min="2" max="60" value="20"></label>
 <label>Fabric count<select id="ct"><option>11</option><option selected>14</option><option>16</option><option>18</option><option>22</option></select></label>
 </div>
-<div class="row">
-<label class="ck"><input type="checkbox" id="dt">Dither</label>
-<label class="ck"><input type="checkbox" id="cl" checked>Clean stray stitches</label>
-<label class="ck"><input type="checkbox" id="ol">Backstitch outline</label>
-</div>
+<div class="m" style="margin-top:14px">Photo adjustments</div>
 <div class="row"><label>Brightness: <b id="bv">0</b><input type="range" id="br" min="-100" max="100" value="0"></label><label>Contrast: <b id="cnv">100</b>%<input type="range" id="co" min="50" max="200" value="100"></label></div>
 <div class="row"><label class="ck"><input type="checkbox" id="bw">Black &amp; white (high contrast)</label></div>
 <div id="bwx" hidden>
 <div class="row"><label>Style<select id="bwm"><option value="g">Greys (smooth)</option><option value="2">Pure black &amp; white</option></select></label><label class="ck"><input type="checkbox" id="bwa" checked>Auto contrast</label></div>
 <div class="row"><label>Sharpen: <b id="bsv">40</b><input type="range" id="bws" min="0" max="100" value="40"></label><label id="bwlw" hidden>Threshold: <b id="blv">0</b><input type="range" id="bwl" min="-50" max="50" value="0"></label></div>
 </div>
+
+<div class="m" style="margin-top:14px">Stitch options</div>
+<div class="row" style="margin-top:4px">
+<label class="ck"><input type="checkbox" id="dt">Dither</label>
+<label class="ck"><input type="checkbox" id="cl" checked>Clean stray stitches</label>
+<label class="ck"><input type="checkbox" id="ol">Backstitch outline</label>
+<label class="ck"><input type="checkbox" id="part">Partial stitches (&frac34; + &frac14; at edges)</label>
+</div>
+</div>
+</div>
+<div class="tp" data-t="col" hidden>
+<div class="card"><b>How many colours</b>
+<div class="row">
+<label>Max colours: <b id="kv">20</b><input type="range" id="k" min="2" max="60" value="20"></label>
+</div>
+<div class="m" style="margin-top:6px">Fewer colours means a simpler, cheaper pattern.</div>
+</div>
+<div id="cslot"></div>
+</div>
+<div class="tp" data-t="pal" hidden>
+<div class="card"><b>Gradients &amp; palettes</b><div class="row" style="margin-top:6px"><label>Apply to<select id="gt"><option value="p">Pattern colours (each thread takes a gradient/palette colour)</option><option value="i">Whole image (recolours the photo, then rebuilds the pattern)</option></select></label></div>
+<div class="m" style="margin-top:6px">Pattern: “Reset colours” above undoes it. Image: use Remove from image, or Undo.</div><div class="row"><button class="s" id="gri" hidden>Remove from image</button></div>
+<div class="m" style="margin-top:10px">Preset gradients (dark → light)</div><div class="chips" id="gp"></div>
+<div class="m" style="margin-top:10px">Preset palettes</div><div class="chips" id="pp"></div>
+<div class="row"><label>Palette matching<select id="pm"><option value="n">Closest colour</option><option value="b">By brightness</option></select></label><label class="ck"><input type="checkbox" id="gr">Reverse gradient</label></div>
+<div class="m" style="margin-top:10px">Custom gradient (dark → light)</div>
+<div id="gb" style="height:26px;border-radius:8px;border:1px solid var(--bd);margin-top:6px"></div>
+<div class="chips" id="gs"></div>
+<div class="row"><button class="s" id="ga">+ Add colour</button><button id="gok">Apply gradient</button></div></div>
+</div>
+<div class="card">
 <div class="row"><label>Project name<input type="text" id="nm" placeholder="e.g. Sunset"></label></div>
 <div class="row"><button id="sv">Save project</button></div>
 </div>
@@ -81,7 +116,7 @@ button:disabled{opacity:.4;cursor:default}
 <div id="imp" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Import PDF pattern</b></div><div class="card"><label class="btn">Choose Stitch Fiddle PDF<input type="file" id="pf" accept="application/pdf" hidden></label><div class="m" id="pmsg" style="margin-top:8px">Pick a PDF exported from Stitch Fiddle. The chart is read straight from the file, with exact DMC colours.</div></div></div>
 <div id="inv" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Thread inventory</b></div><div class="card"><input type="text" id="iq" placeholder="Search DMC number or name"><div id="il"></div></div></div>
 <div id="bak" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Backup &amp; restore</b></div><div class="card"><div class="row"><button id="bx">Export all projects &amp; inventory</button><label class="btn">Import backup<input type="file" id="bf" accept=".json,application/json" hidden></label></div><div class="m" id="bm" style="margin-top:8px"></div></div></div>
-<div id="proj" class="scr" hidden><div class="bar"><button class="s" data-go="prj">‹ Projects</button><b>Project</b></div><div class="hero"><h1 id="pt"></h1><p id="pi"></p></div><div id="pm" class="m" style="text-align:center"></div>
+<div id="proj" class="scr" hidden><div class="bar"><button class="s" data-go="prj">‹ Projects</button><b>Project</b></div><div class="hero"><h1 id="pt"></h1><p id="pi"></p></div><div id="pdm" class="m" style="text-align:center"></div>
 <button class="hc" data-go="work"><span class="hi">📊</span><span class="ht"><b>Chart</b><small>Open the stitch tracker and pattern chart.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="make"><span class="hi">✏️</span><span class="ht"><b>Edit Pattern</b><small>Colours, merging, gradients and background.</small></span><span class="ar">→</span></button>
 <button class="hc" data-go="shop"><span class="hi">🛒</span><span class="ht"><b>Shopping List</b><small>DMC threads needed for this project.</small></span><span class="ar">→</span></button>
@@ -129,15 +164,6 @@ button:disabled{opacity:.4;cursor:default}
 <div id="ce"><div class="card"><b>Colours</b><div class="m">Tap a thread in the legend to change its colour or symbol, or to delete all its stitches. Use Hide to preview the pattern without a colour.</div>
 <div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="mg2">Merge similar colours</button><button class="s" id="t_er2">Eraser (background)</button><button class="s" id="ca">Auto symbols</button></div>
 <div class="row"><label>Hue shift: <b id="hv">0</b>°<input type="range" id="hs" min="-180" max="180" value="0"></label><button class="s" id="hb">Apply</button></div></div>
-<div class="card"><b>Gradients &amp; palettes</b><div class="row" style="margin-top:6px"><label>Apply to<select id="gt"><option value="p">Pattern colours (each thread takes a gradient/palette colour)</option><option value="i">Whole image (recolours the photo, then rebuilds the pattern)</option></select></label></div>
-<div class="m" style="margin-top:6px">Pattern: “Reset colours” above undoes it. Image: use Remove from image, or Undo.</div><div class="row"><button class="s" id="gri" hidden>Remove from image</button></div>
-<div class="m" style="margin-top:10px">Preset gradients (dark → light)</div><div class="chips" id="gp"></div>
-<div class="m" style="margin-top:10px">Preset palettes</div><div class="chips" id="pp"></div>
-<div class="row"><label>Palette matching<select id="pm"><option value="n">Closest colour</option><option value="b">By brightness</option></select></label><label class="ck"><input type="checkbox" id="gr">Reverse gradient</label></div>
-<div class="m" style="margin-top:10px">Custom gradient (dark → light)</div>
-<div id="gb" style="height:26px;border-radius:8px;border:1px solid var(--bd);margin-top:6px"></div>
-<div class="chips" id="gs"></div>
-<div class="row"><button class="s" id="ga">+ Add colour</button><button id="gok">Apply gradient</button></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
@@ -152,6 +178,26 @@ function near(l,L){let b=0,bd=1e9;for(let i=0;i<L.length;i++){const d=ld(l,L[i])
 const DM="310 Black 000000;White White FFFFFF;Ecru Ecru F0EAD6;3865 Winter White F9F7F1;762 Pearl Grey ECECEC;415 Pearl Grey Dark D3D3D6;318 Light Steel Grey ABABAB;414 Dark Steel Grey 8C8C8C;169 Pewter 848484;317 Pewter Grey 6C6C6C;413 Dark Pewter Grey 565656;3799 Very Dark Pewter 424242;150 Ultra Dark Dusty Rose AB0249;304 Medium Red B71234;321 Red C72B3B;666 Bright Red E31D42;817 Coral Red BB051F;815 Medium Garnet 87071F;498 Dark Red A7132B;350 Medium Coral E24D4D;351 Coral E96A67;352 Light Coral FD9C97;353 Peach FED7CC;818 Baby Pink FFDFD9;899 Medium Rose F27688;604 Light Cranberry FFB0BE;602 Medium Cranberry E24874;600 Very Dark Cranberry CD2F63;718 Plum 9C2462;550 Very Dark Violet 5C184E;553 Violet A3638B;208 Very Dark Lavender 835B8B;210 Medium Lavender C39FC8;211 Light Lavender E3CBE3;333 Very Dark Blue-Violet 5C5478;340 Medium Blue-Violet ADA7C7;341 Light Blue-Violet B7BFDD;797 Royal Blue 13477D;798 Dark Delft Blue 466A8E;799 Medium Delft Blue 748EB6;800 Pale Delft Blue C0CCDE;820 Very Dark Royal Blue 0E365C;311 Medium Navy Blue 1B3A5C;336 Navy Blue 253B73;322 Dark Baby Blue 5C7FA3;813 Light Blue A1C2D7;826 Medium Blue 6A8FB0;3325 Light Baby Blue B8D2E6;996 Medium Electric Blue 30C2EC;995 Dark Electric Blue 2696B6;3846 Light Bright Turquoise 06E3E6;3844 Dark Bright Turquoise 12AEBA;3810 Dark Turquoise 3F8F8B;928 Very Light Grey-Green DDE3E3;943 Medium Aquamarine 3D9581;910 Dark Emerald Green 187F51;909 Very Dark Emerald 156F49;701 Light Green 3F8F29;699 Green 055B20;704 Bright Chartreuse 9ECF34;703 Chartreuse 7BB547;471 Very Light Avocado AEBF79;470 Medium Avocado 94AB4A;469 Avocado Green 72843C;895 Very Dark Hunter Green 1B5300;3345 Dark Hunter Green 1B5915;3347 Medium Yellow Green 71A860;3348 Light Yellow Green CCD9B1;368 Light Pistachio A6C298;320 Medium Pistachio 69885A;890 Ultra Dark Pistachio 29542F;726 Light Topaz FDD755;743 Medium Yellow FED376;444 Dark Lemon FFD600;307 Lemon FDED54;445 Light Lemon FFFB8B;727 Very Light Topaz FFF1AF;742 Light Tangerine FFBF57;741 Medium Tangerine FFA32B;740 Tangerine FF8B00;970 Light Pumpkin F78B13;947 Burnt Orange FF7B4D;900 Dark Burnt Orange D15807;608 Bright Orange FD5D35;606 Bright Orange-Red FA3203;3340 Medium Apricot FF836F;754 Light Peach F7CBBF;948 Very Light Peach FFEEE3;945 Tawny FBD5BB;402 Very Light Mahogany F7A777;400 Dark Mahogany 8F430F;922 Light Copper E27323;918 Dark Red-Copper 82340A;3064 Desert Sand C48E70;3371 Black Brown 1E1108;938 Ultra Dark Coffee 361F0E;801 Dark Coffee Brown 653919;898 Very Dark Coffee 492A13;433 Medium Brown 7A450A;434 Light Brown 985E33;435 Very Light Brown B87748;436 Tan CB9051;437 Light Tan E4BB8E;738 Very Light Tan ECCC9E;739 Ultra Very Light Tan F8E4C8;3045 Dark Yellow Beige BC966A;3046 Medium Yellow Beige D8BC9A;3047 Light Yellow Beige E7D6C1;3790 Ultra Dark Beige Grey 7F6A55;3782 Light Mocha Brown D2BCA6;3781 Dark Mocha Brown 6B5748;3072 Very Light Beige Grey E6E8E8;151 Very Light Dusty Rose F0CED4;152 Medium Light Shell Pink E2A099;223 Light Shell Pink CC847C;221 Very Dark Shell Pink 883E43;224 Very Light Shell Pink EBB7AF;225 Ultra Light Shell Pink FFDFD5;315 Medium Dark Antique Mauve 814952;316 Medium Antique Mauve B7737F;3685 Very Dark Mauve 881531;3687 Mauve C96B70;3688 Medium Mauve E7A9AC;3689 Light Mauve FBBFC2;3354 Light Dusty Rose E4A6AC;3731 Very Dark Dusty Rose DA6783;3733 Dusty Rose E8879B;3716 Very Light Dusty Rose FFBDBD;961 Dark Dusty Rose CF7378;962 Medium Dusty Rose E6798B;963 Ultra Light Dusty Rose FFD7D7;335 Rose EE546E;326 Very Dark Rose B33B4B;3831 Dark Raspberry B33A4F;3832 Medium Raspberry DB5A6B;3833 Light Raspberry EA8699;3801 Very Dark Melon E74967;3705 Dark Melon FF7992;3706 Medium Melon FFADB5;3708 Light Melon FFCBD5;3326 Light Rose FBADB4;3328 Dark Salmon E36D6B;347 Very Dark Salmon BF2D2D;349 Dark Coral D21035;760 Salmon F5ADAD;761 Light Salmon FFC9C9;3712 Medium Salmon F18797;3721 Dark Shell Pink A14B51;3722 Medium Shell Pink BC6C64;3727 Light Antique Mauve DBA9B2;3726 Dark Antique Mauve 9B5B66;778 Very Light Antique Mauve DFB3BB;3607 Light Plum C54989;3608 Very Light Plum EA9CC4;3609 Ultra Light Plum F4AED5;915 Dark Plum 820043;917 Medium Plum 9B1359;3834 Dark Grape 72375D;3835 Medium Grape 946083;3836 Light Grape BA91AA;327 Dark Violet 633666;3837 Ultra Dark Lavender 6C3A6E;3041 Medium Antique Violet 956F7C;3042 Light Antique Violet B79DA7;3743 Very Light Antique Violet D7CAD6;3746 Dark Blue-Violet 7763A0;3747 Very Light Blue-Violet D3D7ED;155 Medium Dark Blue-Violet 9891B6;156 Medium Light Blue-Violet A3AED1;3807 Cornflower Blue 60678C;793 Medium Cornflower Blue 707DA2;3839 Medium Lavender Blue 7B85AB;3840 Light Lavender Blue B0C0DA;312 Light Navy Blue 35668B;334 Medium Baby Blue 739FC1;3753 Ultra Light Antique Blue DBE2E9;3752 Very Light Antique Blue C7D1DB;931 Medium Antique Blue 6D8696;930 Dark Antique Blue 455C71;932 Light Antique Blue A2B5C0;3760 Medium Wedgwood 3E85B4;3761 Light Sky Blue ACD8E6;3756 Ultra Light Baby Blue EEFCFC;3755 Baby Blue 93B4CE;827 Very Light Blue BDDDED;519 Sky Blue 7EB1C8;518 Light Wedgwood 4F8FA9;517 Dark Wedgwood 3B768F;3766 Light Peacock Blue 99CFD9;598 Light Turquoise 90C3CC;597 Turquoise 5BA3B3;807 Peacock Blue 3D95A5;505 Jade Green 338362;563 Light Jade 8FC098;564 Very Light Jade A7CDA6;562 Medium Jade 53A67A;955 Light Nile Green A2D6AD;954 Nile Green 88BA91;913 Medium Nile Green 6DAB77;912 Light Emerald Green 1B9D6B;966 Medium Baby Green B9D7C0;964 Light Seagreen A9E2D8;959 Medium Seagreen 59BDA4;958 Dark Seagreen 3EB6A1;3849 Light Teal Green 52B3A4;3848 Medium Teal Green 347F73;3812 Very Dark Seagreen 2F8C84;369 Very Light Pistachio D7EDCC;3364 Pine Green 83975F;3363 Medium Pine Green 728F5A;3362 Dark Pine Green 5E6B47;3053 Green Gray 9CA482;3052 Medium Green Gray 889268;522 Fern Green 969E7E;523 Light Fern Green ABB197;520 Dark Fern Green 666D4B;3011 Dark Khaki Green 898A58;3012 Medium Khaki Green A6A75D;3013 Light Khaki Green B9B982;581 Moss Green A7AE38;580 Dark Moss Green 888D33;937 Medium Avocado Green 627B3A;936 Very Dark Avocado 4C5F2E;935 Dark Avocado Green 424D21;934 Black Avocado Green 313918;3346 Hunter Green 406A3A;166 Medium Light Moss C0C840;165 Very Light Moss Green EFF4A4;3819 Light Moss Green DDE5A1;772 Very Light Yellow Green E4ECD4;472 Ultra Light Avocado D8E498;3078 Very Light Golden Yellow FDF9CD;3822 Light Straw F6DC98;3821 Straw F3CE75;3820 Dark Straw DFB65F;680 Dark Old Gold BC8D0E;676 Light Old Gold E5CE97;677 Very Light Old Gold F5ECCB;729 Medium Old Gold D0A141;728 Topaz E4B468;783 Medium Topaz CE9124;782 Medium Topaz AE7720;781 Very Dark Topaz A26D20;725 Topaz Yellow FFC840;972 Deep Canary FFB515;973 Bright Canary FDE700;3855 Light Autumn Gold FAD3A5;3854 Medium Autumn Gold F2AF68;3853 Dark Autumn Gold F29746;976 Medium Golden Brown E08F42;977 Light Golden Brown DC9C56;975 Dark Golden Brown 944A0B;3826 Golden Brown AD7C59;3776 Light Mahogany BF6B38;301 Medium Mahogany B35F2B;920 Medium Copper AC4A18;921 Copper C66218;356 Medium Terra Cotta CB6B58;355 Dark Terra Cotta 984436;3777 Very Dark Terra Cotta 863021;758 Very Light Terra Cotta EEAA9B;3778 Light Terra Cotta D98978;3779 Ultra Light Terra Cotta F8CAC8;3830 Terra Cotta B95544;3773 Medium Desert Sand B67552;3774 Very Light Desert Sand F3E1D7;3859 Light Rosewood BA8B7C;3857 Dark Rosewood 68251A;3856 Ultra Light Mahogany FFD3B5;3862 Dark Mocha Beige 8A6E4E;3863 Medium Mocha Beige A48B6C;3864 Light Mocha Beige CBB69C;3031 Very Dark Mocha Brown 4B3C2A;3032 Medium Mocha Brown B39F8B;3033 Very Light Mocha Brown E3D8CC;640 Very Dark Beige Gray 857B61;642 Dark Beige Gray A49878;644 Medium Beige Gray DDD8CB;647 Medium Gray B0AA9F;648 Light Gray BCB4AC;645 Very Dark Beaver Gray 6E655E;646 Dark Beaver Gray 877D73;3021 Very Dark Brown Gray 4F4B41;3022 Medium Brown Gray 8E9078;3023 Light Brown Gray B1AA97;451 Dark Shell Gray 917B73;453 Light Shell Gray D7CECB;3787 Dark Brown Gray 625D50;3866 Ultra Light Mocha Brown FAF6F0".split(';').map(s=>{const p=s.trim().split(' '),h=p.pop();return{c:p.shift(),n:p.join(' '),h:'#'+h,l:lab(...hx('#'+h))}});
 const SY=Array.from("●■▲◆★+×○□△◇☆#@%&=?!ABCDEFGHJKLMNPRSTUVWXYZ♥♣♠♦");
 let S={w:80,count:14,k:20,dither:0,clean:1,outline:0,m:'sym',z:14,prog:0,img:'',name:''},IM=null,G=null,D=null,P=[];
+let PQ0=null,PB0=null,PQ=null,PG=null;
+/* ---- Partial stitches: each stitch = 4 quarter squares (TL,TR,BR,BL). A cell is a full cross, or a 3/4 stitch plus a 1/4 stitch in a second colour at one corner. ---- */
+const PCO=[[0,0],[1,0],[1,1],[0,1]];
+function prepPix(w,h){const n=w*h,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.imageSmoothingQuality='high';x.drawImage(IM,0,0,w,h);
+ const d=x.getImageData(0,0,w,h).data;if(S.bw)bwApply(d,w,h);for(let i=0;i<d.length;i+=4)for(let t=0;t<3;t++)d[i+t]=(d[i+t]-128)*S.con+128+S.bri;if(S.bw&&S.bwm==='2')bwLevels(d,n);if(S.ig)imgMap(d,n);return d}
+function calcPartials(g,sub,w,h){const n=w*h,W2=w*2,pq=new Uint8Array(n),pb=new Uint16Array(n),D4=[[-1,-1],[1,-1],[1,1],[-1,1]],at=(X,Y)=>g[Math.min(h-1,Math.max(0,Y))*w+Math.min(w-1,Math.max(0,X))];
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x,a=g[i],s=[sub[2*y*W2+2*x],sub[2*y*W2+2*x+1],sub[(2*y+1)*W2+2*x+1],sub[(2*y+1)*W2+2*x]];
+  for(let k=0;k<4;k++){const b=s[k];if(b===a)continue;let ok=1;for(let j=0;j<4;j++)if(j!==k&&s[j]!==a)ok=0;if(!ok)continue;
+   const dx=D4[k][0],dy=D4[k][1],m=(at(x+dx,y)===b)+(at(x,y+dy)===b)+(at(x+dx,y+dy)===b);if(m>=2){pq[i]=k+1;pb[i]=b}}}
+ return[pq,pb]}
+function segQ(x,x1,y1,x2,y2,h,z){if(z<6){x.strokeStyle=h;x.lineWidth=Math.max(.6,z*.3);x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();return}
+ const a=hx(h),dk='rgb('+a.map(v=>Math.round(v*.6))+')',hl='rgb('+a.map(v=>Math.min(255,v+60))+')';[[dk,.34],[h,.24],[hl,.07]].forEach(([c,k])=>{x.strokeStyle=c;x.lineWidth=z*k;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke()})}
+function drawPR(x,X,Y,z,q,a,b,hb){x.fillStyle='#f2ead8';x.fillRect(X,Y,z,z);x.lineCap='round';const e=z*.17,cx=X+z/2,cy=Y+z/2,C=[[X+e,Y+e],[X+z-e,Y+e],[X+z-e,Y+z-e],[X+e,Y+z-e]];
+ C.forEach((c,k)=>{if(k===q-1){if(!hb)segQ(x,c[0],c[1],cx,cy,b.h,z)}else segQ(x,c[0],c[1],cx,cy,a.h,z)})}
+function drawPO(x,X,Y,z,q,a,b,m,hb){const k=PCO[q-1],h=z/2;
+ if(m==='col'){if(!hb){x.fillStyle=b.h;x.fillRect(X+k[0]*h,Y+k[1]*h,h,h)}return}
+ const sx=k[0]?-1:1,sy=k[1]?-1:1;x.fillStyle='#000';x.font=Math.max(1,Math.round(z*.58*10)/10)+'px sans-serif';x.fillText(a.s,X+z/2+sx*z*.1,Y+z/2+sy*z*.1+1);
+ if(hb)return;const cx=X+k[0]*z,cy=Y+k[1]*z;x.fillStyle=b.h;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx-sx*h,cy);x.lineTo(cx,cy-sy*h);x.closePath();x.fill();
+ if(z>=8){x.strokeStyle='#000';x.lineWidth=.8;x.stroke()}
+ if(z>=18){x.fillStyle=lum(hx(b.h))>.55?'#000':'#fff';x.font=Math.round(z*.26)+'px sans-serif';x.fillText(b.s,cx-sx*h*.36,cy-sy*h*.36+1)}}
 const ST={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v);return 1}catch(e){return 0}},del:k=>{try{localStorage.removeItem(k)}catch(e){}},keys:()=>{try{return Object.keys(localStorage).filter(k=>k.startsWith('xs:'))}catch(e){return[]}}};
 const msg=t=>$('msg').textContent=t||'';
 function rd(){S.w=Math.min(200,Math.max(20,+$('w').value||80));S.count=+$('ct').value;S.k=+$('k').value;S.dither=$('dt').checked;S.clean=$('cl').checked;S.outline=$('ol').checked;S.m=$('vm').value;S.z=+$('z').value;S.prog=$('pg').checked;$('kv').textContent=S.k}
@@ -177,22 +223,26 @@ function build(done,del){
  if(S.clean){const o=g.slice();for(let y=0;y<h;y++)for(let xx=0;xx<w;xx++){const i=y*w+xx,cn={};let same=0;
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=xx+dx,Y=y+dy;if(X<0||Y<0||X>=w||Y>=h)continue;const v=o[Y*w+X];if(v===o[i])same++;cn[v]=(cn[v]||0)+1}
   if(!same){let bv=o[i],bc=0;for(const v in cn)if(cn[v]>bc){bc=cn[v];bv=+v}g[i]=bv}}}
+ let pq=null,pb=null;
+ if(S.part&&!S.imp&&w>=2&&h>=2){const d2=prepPix(w*2,h*2),sub=new Uint16Array(w*h*4);for(let i=0;i<sub.length;i++)sub[i]=near(lab(d2[i*4],d2[i*4+1],d2[i*4+2]),QL);[pq,pb]=calcPartials(g,sub,w,h)}
  const cnt=new Array(Q.length).fill(0);g.forEach(v=>cnt[v]++);
  const order=Q.map((_,i)=>i).filter(i=>cnt[i]>0).sort((a,b)=>cnt[b]-cnt[a]),mp={};order.forEach((o,j)=>mp[o]=j);
- G=g.map(v=>mp[v]);P=order.map((o,j)=>({...Q[o],s:SY[j],q:cnt[o]}));P0=P.map(p=>({...p}));G0=G.slice();S.o0=P0.map(o=>o.c);DEL=new Uint8Array(n);if(del&&del.length===n)for(let i=0;i<n;i++)DEL[i]=del[i]==='1'?1:0;HID.clear();derive();
+ G=g.map(v=>mp[v]);if(pq)for(let i=0;i<n;i++)if(pq[i]){const m=mp[pb[i]];if(m===undefined)pq[i]=0;else pb[i]=m}PQ0=pq;PB0=pb;P=order.map((o,j)=>({...Q[o],s:SY[j],q:cnt[o]}));P0=P.map(p=>({...p}));G0=G.slice();S.o0=P0.map(o=>o.c);DEL=new Uint8Array(n);if(del&&del.length===n)for(let i=0;i<n;i++)DEL[i]=del[i]==='1'?1:0;HID.clear();derive();
  D=new Uint8Array(n);if(done&&done.length===n)for(let i=0;i<n;i++)D[i]=done[i]==='1'?1:0;
  for(let i=0;i<n;i++)if(DEL[i])D[i]=0;
- BS={w:S.w,k:S.k,dither:S.dither,clean:S.clean,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ig:S.ig};
+ BS={w:S.w,k:S.k,dither:S.dither,clean:S.clean,part:S.part,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ig:S.ig};
 }
 const sk=q=>Math.max(1,Math.ceil(q*2.4*(25.4/S.count)*2*1.2/8000));
 function drawChart(cv,c0,r0,c1,r1,z,m,sd,hf,vp){
  const gu=24,W=c1-c0,H=r1-r0,w=S.w,bl=j=>DEL[j]||(hf&&HID.has(P[G[j]].c));const ox=vp?vp.ox:0,oy=vp?vp.oy:0,cw=vp?vp.vw:gu+W*z,ch=vp?vp.vh:gu+H*z,pw=Math.round(cw*K),ph=Math.round(ch*K);if(cv.width!==pw)cv.width=pw;if(cv.height!==ph)cv.height=ph;cv.style.width=cw+'px';cv.style.height=ch+'px';const x=cv.getContext('2d');x.setTransform(K,0,0,K,0,0);
  x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.textAlign='center';x.textBaseline='middle';
- for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const i=r*w+c,p=P[G[i]],X=gu+(c-c0)*z-ox,Y=gu+(r-r0)*z-oy;if(bl(i))continue;
-  if(m==='real'&&z>=6){x.fillStyle='#f2ead8';x.fillRect(X,Y,z,z);x.lineCap='round';const a=hx(p.h),dk='rgb('+a.map(v=>Math.round(v*.6))+')',hl='rgb('+a.map(v=>Math.min(255,v+60))+')',e=z*.17;
+ for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const i=r*w+c,p=P[G[i]],X=gu+(c-c0)*z-ox,Y=gu+(r-r0)*z-oy;if(bl(i))continue;const pq=PQ&&PQ[i]||0,pbp=pq?P[PG[i]]:null,phb=pq&&hf&&HID.has(pbp.c);
+  if(pq&&m==='real'){drawPR(x,X,Y,z,pq,p,pbp,phb)}
+  else if(m==='real'&&z>=6){x.fillStyle='#f2ead8';x.fillRect(X,Y,z,z);x.lineCap='round';const a=hx(p.h),dk='rgb('+a.map(v=>Math.round(v*.6))+')',hl='rgb('+a.map(v=>Math.min(255,v+60))+')',e=z*.17;
   [[X+e,Y+z-e,X+z-e,Y+e],[X+e,Y+e,X+z-e,Y+z-e]].forEach(l=>[[dk,.34],[p.h,.24],[hl,.07]].forEach(([c,k])=>{x.strokeStyle=c;x.lineWidth=z*k;x.beginPath();x.moveTo(l[0],l[1]);x.lineTo(l[2],l[3]);x.stroke()}))}
   else if(m==='real'){x.fillStyle='#f2ead8';x.fillRect(X,Y,z,z);x.strokeStyle=p.h;x.lineWidth=Math.max(.6,z*.3);x.lineCap='round';x.beginPath();x.moveTo(X+z*.15,Y+z*.85);x.lineTo(X+z*.85,Y+z*.15);x.moveTo(X+z*.15,Y+z*.15);x.lineTo(X+z*.85,Y+z*.85);x.stroke()}
-  else if(m==='col'){const sx=Math.round(X*K)/K,sy=Math.round(Y*K)/K;x.fillStyle=p.h;x.fillRect(sx,sy,Math.round((X+z)*K)/K-sx,Math.round((Y+z)*K)/K-sy)}else{x.fillStyle='#000';x.font=Math.max(1,Math.round(z*.7*10)/10)+'px sans-serif';x.fillText(p.s,X+z/2,Y+z/2+1)}
+  else if(m==='col'){const sx=Math.round(X*K)/K,sy=Math.round(Y*K)/K;x.fillStyle=p.h;x.fillRect(sx,sy,Math.round((X+z)*K)/K-sx,Math.round((Y+z)*K)/K-sy)}else if(!pq){x.fillStyle='#000';x.font=Math.max(1,Math.round(z*.7*10)/10)+'px sans-serif';x.fillText(p.s,X+z/2,Y+z/2+1)}
+  if(pq&&m!=='real')drawPO(x,X,Y,z,pq,p,pbp,m,phb);
   if(sd&&D[i]){x.fillStyle='rgba(90,200,110,.4)';x.fillRect(X,Y,z,z)}}
  x.font='bold 12px sans-serif';x.fillStyle='#222';
  if(vp){x.fillStyle='#fff';x.fillRect(0,0,gu,ch);x.fillRect(0,0,cw,gu);x.fillStyle='#222'}
@@ -210,16 +260,16 @@ function drawChart(cv,c0,r0,c1,r1,z,m,sd,hf,vp){
   x.stroke()}
 }
 function draw(){if(!G)return;const cv=$('cv');cv.hidden=false;document.querySelector('#wrap p').hidden=true;drawChart(cv,0,0,S.w,S.h,S.z,S.m,1);stats()}
-function stats(){if(!G)return;const T=S.w*S.h,cm=v=>(v/S.count*2.54).toFixed(1);let n=0,dn=0;for(let i=0;i<T;i++)if(!DEL[i]){n++;if(D[i])dn++}
- $('info').textContent=`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm on ${S.count}-count · ${P.length} colours · ${dn} of ${n} stitched (${n?Math.round(dn/n*100):0}%)`+(HID.size?` · ${HID.size} hidden`:'');
+function stats(){if(!G)return;const T=S.w*S.h,cm=v=>(v/S.count*2.54).toFixed(1);let n=0,dn=0,np=0;for(let i=0;i<T;i++)if(!DEL[i]){n++;if(PQ&&PQ[i])np++;if(D[i])dn++}
+ $('info').textContent=`${S.w}×${S.h} stitches · ${cm(S.w)}×${cm(S.h)} cm on ${S.count}-count · ${P.length} colours${np?' · '+np+' partial':''} · ${dn} of ${n} stitched (${n?Math.round(dn/n*100):0}%)`+(HID.size?` · ${HID.size} hidden`:'');
  $('leg').innerHTML=P.map((p,i)=>{const hd=HID.has(p.c);return`<div class="lg" data-i="${i}" style="cursor:pointer${hd?';opacity:.5':''}"><span class="sw" style="background:${p.h}"></span><span class="sw">${p.s}</span><span>DMC ${p.c} · ${p.n}</span><span>${p.q} st · ~${sk(p.q)} skein${sk(p.q)>1?'s':''}</span><button class="s" data-e="${i}" style="flex:none">${hd?'Show':'Hide'}</button></div>`}).join('')+(HID.size?'<div style="margin-top:6px"><button class="s" data-all="1">Show all colours</button></div>':'')+'<div class="m" style="margin-top:6px">Skein counts are estimates (2 strands, 20% waste). Tap a thread to edit or delete it. Hide only previews the chart without a colour.</div>';unb()}
 function go(){if(!IM)return;rd();build();draw()}
 $('f').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality='high';x.drawImage(im,0,0,c.width,c.height);S.src=c.toDataURL('image/jpeg',.85);SRC=c;S.ed=defEd();S.ig=null;NEWPHOTO=1;IM=renderEd(SRC,S.ed,1400);S.img=thumb(IM);go()};im.src=r.result};r.readAsDataURL(fl)};
-['w','k','dt','cl','bw','bwm','bwa'].forEach(i=>$(i).onchange=go);$('k').oninput=()=>$('kv').textContent=$('k').value;
+['w','k','dt','cl','part','bw','bwm','bwa'].forEach(i=>$(i).onchange=go);$('k').oninput=()=>$('kv').textContent=$('k').value;
 ['ol','vm','pg'].forEach(i=>$(i).onchange=()=>{rd();draw()});$('z').oninput=()=>{rd();draw()};$('ct').onchange=()=>{rd();stats()};
 $('cv').onclick=e=>{if(!S.prog||!G)return;const b=$('cv').getBoundingClientRect(),s=$('cv').width/b.width,c=Math.floor(((e.clientX-b.left)*s-24)/S.z),r=Math.floor(((e.clientY-b.top)*s-24)/S.z);
  if(c<0||r<0||c>=S.w||r>=S.h)return;D[r*S.w+c]^=1;draw();persist()};
-function snap(){return JSON.stringify({w:S.w,count:S.count,k:S.k,dither:S.dither,clean:S.clean,outline:S.outline,m:S.m,img:S.img,src:S.src,ed:S.ed,ig:S.ig,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ov:P0.map(o=>o.c),sym:S.sym,done:G?Array.from(D).join(''):'',del:G&&DEL&&DEL.some(v=>v)?Array.from(DEL).join(''):'',ops:OPS})}
+function snap(){return JSON.stringify({w:S.w,count:S.count,k:S.k,dither:S.dither,clean:S.clean,outline:S.outline,part:S.part,m:S.m,img:S.img,src:S.src,ed:S.ed,ig:S.ig,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ov:P0.map(o=>o.c),sym:S.sym,done:G?Array.from(D).join(''):'',del:G&&DEL&&DEL.some(v=>v)?Array.from(DEL).join(''):'',ops:OPS})}
 function persist(){if(S.name&&ST.get('xs:'+S.name))ST.set('xs:'+S.name,snap())}
 $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Create a pattern first.');return}if(!n){msg('Give your project a name.');return}
  S.name=n;msg(ST.set('xs:'+n,snap())?'Saved on this device.':'Couldn’t save (storage full or unavailable).');plist()};
@@ -246,7 +296,7 @@ plist();
 </script>
 <script>SY.push(...Array.from("0123456789ΩΨΦΣΠΔΛΘ"));
 let cur='home';
-function rd(){S.w=Math.min(400,Math.max(20,+$('w').value||80));S.count=+$('ct').value;S.k=+$('k').value;S.dither=$('dt').checked;S.clean=$('cl').checked;S.outline=$('ol').checked;S.m=$('vm').value;S.z=+$('z').value;S.prog=$('pg').checked;$('kv').textContent=S.k;$('wv').textContent=S.w;S.bri=+$('br').value;S.con=+$('co').value/100;$('bv').textContent=S.bri;$('cnv').textContent=$('co').value;S.bw=$('bw').checked;S.bwm=$('bwm').value;S.bwa=$('bwa').checked;S.bws=+$('bws').value;S.bwl=+$('bwl').value;$('bsv').textContent=S.bws;$('blv').textContent=S.bwl;$('bwx').hidden=!S.bw;$('bwlw').hidden=S.bwm!=='2';$('wrap').classList.toggle('mk',S.prog);if(window.syncNums)syncNums()}
+function rd(){S.w=Math.min(400,Math.max(20,+$('w').value||80));S.count=+$('ct').value;S.k=+$('k').value;S.dither=$('dt').checked;S.clean=$('cl').checked;S.outline=$('ol').checked;S.m=$('vm').value;S.z=+$('z').value;S.prog=$('pg').checked;S.part=$('part').checked;$('kv').textContent=S.k;$('wv').textContent=S.w;S.bri=+$('br').value;S.con=+$('co').value/100;$('bv').textContent=S.bri;$('cnv').textContent=$('co').value;S.bw=$('bw').checked;S.bwm=$('bwm').value;S.bwa=$('bwa').checked;S.bws=+$('bws').value;S.bwl=+$('bwl').value;$('bsv').textContent=S.bws;$('blv').textContent=S.bwl;$('bwx').hidden=!S.bw;$('bwlw').hidden=S.bwm!=='2';$('wrap').classList.toggle('mk',S.prog);if(window.syncNums)syncNums()}
 function zmax(){return 100}
 function zmin(){const w=$('wrap'),cw=w.clientWidth;if(!G||!cw)return .5;return Math.max(.25,Math.floor(Math.min((cw-26)/S.w,(innerHeight*.7-26)/S.h)*4)/4)}
 function redraw(){drawChart($('cv'),0,0,S.w,S.h,S.z,S.m,1,1)}
@@ -254,7 +304,7 @@ function draw(){$('ep').hidden=!SRC;$('gri').hidden=!S.ig;if(!G)return;const z=$
 function go(){if(!IM)return;msg('Working…');setTimeout(()=>{rd();
  if(G&&BS&&!NEWPHOTO){carryBuild();persist()}else{NEWPHOTO=0;OPS=[];UNDO=[];build()}
  draw();msg('');unb()},30)}
-['w','k','dt','cl','bw','bwm','bwa'].forEach(i=>$(i).onchange=go);
+['w','k','dt','cl','part','bw','bwm','bwa'].forEach(i=>$(i).onchange=go);
 $('w').oninput=()=>$('wv').textContent=$('w').value;['br','co','bws','bwl'].forEach(i=>{$(i).onchange=go;$(i).oninput=rd});
 (function(){const w=$('wrap');let d0=0,z0,fx,fy,mx,my;
 const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY),q=v=>v<4?Math.round(v*4)/4:v<10?Math.round(v*2)/2:Math.round(v);
@@ -273,7 +323,7 @@ $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a phot
  S.name=n;if(!ST.set('xs:'+n,snap())){msg('Couldn’t save (storage full or unavailable).');return}$('pg').checked=false;view('proj')};
 function plist(){const ks=ST.keys();$('pl').innerHTML=ks.length?ks.map(k=>{const n=k.slice(3);let j={};try{j=JSON.parse(ST.get(k))||{}}catch(x){}const dd=j.done||'',dl=j.del||'';let t=0,dn=0;for(let q=0;q<dd.length;q++)if(dl[q]!=='1'){t++;if(dd[q]==='1')dn++}const pc=t?Math.round(dn*100/t):0,en=encodeURIComponent(n);
 return`<div class="pc" data-l="${en}"><img alt="" src="${j.img||''}"><div><b>${n.replace(/</g,'&lt;')}</b><div class="m">${j.w||'?'} stitches wide · ${j.k||'?'} colours · ${pc}% stitched</div></div><button class="s" data-d="${en}">Delete</button></div>`}).join(''):'<p class="m">No projects yet. Tap “New pattern” to start one.</p>'}
-function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;rd();
+function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;$('part').checked=!!j.part;$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;rd();
  SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('proj')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
 $('pl').onclick=e=>{const d=e.target.closest('[data-d]'),l=e.target.closest('[data-l]');
  if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
@@ -315,7 +365,7 @@ function bwLevels(d,n){const hs=new Uint32Array(256);for(let i=0;i<n;i++)hs[d[i*
 function rs(a,ow,w,h){const oh=a.length/ow,o=new Uint8Array(w*h);if(ow===w&&oh===h){o.set(a);return o}
  for(let y=0;y<h;y++){const sy=Math.min(oh-1,Math.floor((y+.5)*oh/h));for(let x=0;x<w;x++)o[y*w+x]=a[sy*ow+Math.min(ow-1,Math.floor((x+.5)*ow/w))]}return o}
 function state(){return Object.assign({},BS,{ov:P0.map(o=>o.c),sym:Object.assign({},S.sym),ops:OPS.slice(),del:Array.from(DEL).join('')})}
-function setCtl(j){$('w').value=j.w;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;S.ig=j.ig||null}
+function setCtl(j){$('part').checked=!!j.part;$('w').value=j.w;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;S.ig=j.ig||null}
 function pushUndo(st){if(!BS||!G)return;UNDO.push(st||state());if(UNDO.length>30)UNDO.shift();unb()}
 function unb(){const b=$('un');b.disabled=!UNDO.length;b.textContent='↶ Undo'+(UNDO.length?' ('+UNDO.length+')':'')}
 function applyOv(ov){if(ov&&ov.length===P0.length)P0.forEach((o,i)=>{const m=DM.find(d=>d.c===ov[i]);if(m)Object.assign(o,m)})}
@@ -332,10 +382,12 @@ function carryBuild(){const pre=state(),ow=BS.w,oD=D,oX=DEL,ops=OPS.slice(),hid=
 const DML=DM.map(m=>m.l);
 function h2r(h,s,v){const f=n=>{const k=(n+h/60)%6;return v-v*s*Math.max(0,Math.min(k,4-k,1))};return[f(5),f(3),f(1)].map(x=>Math.round(x*255))}
 function r2h(r,g,b){r/=255;g/=255;b/=255;const m=Math.max(r,g,b),d=m-Math.min(r,g,b);let h=0;if(d){h=m===r?((g-b)/d+6)%6:m===g?(b-r)/d+2:(r-g)/d+4;h*=60}return[h,m?d/m:0,m]}
-function derive(){S.sym=S.sym||{};const m={};G0.forEach((v,i)=>{if(DEL[i])return;const o=P0[v];(m[o.c]=m[o.c]||{c:o.c,n:o.n,h:o.h,l:o.l,q:0}).q++});
+function derive(){S.sym=S.sym||{};const m={},hp=PQ0&&PB0&&PQ0.length===G0.length,live=new Set;G0.forEach((v,i)=>{if(!DEL[i])live.add(P0[v].c)});
+ const pa=i=>hp&&PQ0[i]&&!DEL[i]&&live.has(P0[PB0[i]].c);
+ G0.forEach((v,i)=>{if(DEL[i])return;const o=P0[v],f=pa(i);(m[o.c]=m[o.c]||{c:o.c,n:o.n,h:o.h,l:o.l,q:0}).q+=f?.75:1;if(f){const b=P0[PB0[i]];(m[b.c]=m[b.c]||{c:b.c,n:b.n,h:b.h,l:b.l,q:0}).q+=.25}});
  const L=Object.values(m).sort((a,b)=>b.q-a.q),ix={},u=new Set(L.map(p=>S.sym[p.c]).filter(Boolean));let j=0;
  L.forEach((p,i)=>{ix[p.c]=i;p.s=S.sym[p.c]||(()=>{while(u.has(SY[j]))j++;u.add(SY[j]);return SY[j]})()});
- G=Uint16Array.from(G0,(v,i)=>DEL[i]?0:ix[P0[v].c]);P=L;HID.forEach(c=>{if(!(c in ix))HID.delete(c)})}
+ G=Uint16Array.from(G0,(v,i)=>DEL[i]?0:ix[P0[v].c]);PQ=new Uint8Array(G0.length);PG=new Uint16Array(G0.length);G0.forEach((v,i)=>{if(pa(i)){PQ[i]=PQ0[i];PG[i]=ix[P0[PB0[i]].c]}});L.forEach(p=>p.q=Math.round(p.q));P=L;HID.forEach(c=>{if(!(c in ix))HID.delete(c)})}
 const lum=c=>(c[0]*.299+c[1]*.587+c[2]*.114)/255;
 function rcP(fn){P0.forEach(o=>{const c=fn(hx(o.h)).map(x=>Math.max(0,Math.min(255,x)));Object.assign(o,DM[near(lab(...c),DML)])})}
 function thOp(o){const m=DM.find(d=>d.c===o.n);if(m)P0.forEach(q=>{if(q.c===o.o)Object.assign(q,m)})}
@@ -521,7 +573,7 @@ $('prj').appendChild($('pl'));
 const EX=['prj','imp','inv','bak','set','proj','shop','stats','exp'],v0=view,hold=()=>{$('hold').appendChild($('cp'));$('hold').appendChild($('ce'))};hold();
 view=function(v){EX.forEach(i=>$(i).hidden=true);if(v!=='make')S.mode='';
  if(EX.includes(v)){['home','make','work'].forEach(i=>$(i).hidden=true);$(v).hidden=false;cur=v;hold();if(v==='prj')plist();if(v==='inv')invL();if(v==='proj')projL();if(v==='shop')shopL();if(v==='stats')statL();scrollTo(0,0);return}
- v0(v);if(v==='home')hold();if(v==='work')tb();$(v==='make'?'mslot':'hold').appendChild($('ce'));
+ v0(v);if(v==='home')hold();if(v==='work')tb();$(v==='make'?'cslot':'hold').appendChild($('ce'));
  if(v==='make')$('mk').dataset.go=S.name&&ST.get('xs:'+S.name)?'proj':'home'};
 window.goBack=()=>{if(typeof E!=='undefined'&&E){edClose();return true}if(cur==='home')return false;const o=S.name&&ST.get('xs:'+S.name);view(cur==='proj'?'prj':['work','shop','stats','exp'].includes(cur)?'proj':cur==='make'?(o?'proj':'home'):'home');return true};
 const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+'}'};
@@ -540,8 +592,8 @@ drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);
  x.restore()};
 const s0=stats;
 stats=function(){s0();if(!G)return;const pc={},iv=INV();let tot=0,dn=0;
- for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]);o[1]++;tot++;if(D[i]){o[0]++;dn++}}
- document.querySelectorAll('#leg .lg').forEach(r=>{const p=P[+r.dataset.i],o=pc[p.c]||[0,0],s=document.createElement('span');s.className='m';s.textContent=o[0]+'/'+o[1]+' done · '+(iv[p.c]?'✔ have':'✘ buy');r.insertBefore(s,r.querySelector('button'));
+ for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]),f=PQ&&PQ[i]?.75:1;o[1]+=f;tot++;if(D[i]){o[0]+=f;dn++}if(PQ&&PQ[i]){const bc=P[PG[i]].c,o2=pc[bc]||(pc[bc]=[0,0]);o2[1]+=.25;if(D[i])o2[0]+=.25}}
+ document.querySelectorAll('#leg .lg').forEach(r=>{const p=P[+r.dataset.i],o=pc[p.c]||[0,0],s=document.createElement('span');s.className='m';s.textContent=Math.round(o[0])+'/'+Math.round(o[1])+' done · '+(iv[p.c]?'✔ have':'✘ buy');r.insertBefore(s,r.querySelector('button'));
   const b=document.createElement('button');b.className='s';b.dataset.h=1;b.textContent=S.hl===p.c?'◎ on':'◎';r.appendChild(b)});
  const h=(tot-dn)/spd(),e=$('ps');if(e)e.textContent=(tot-dn)+' stitches left · ≈ '+(h<1?Math.round(h*60)+' min':h.toFixed(1)+' h')+' at '+spd()+' st/h'};
 $('leg').addEventListener('click',e=>{const b=e.target.closest('[data-h]');if(b){e.stopPropagation();const c=P[+b.closest('.lg').dataset.i].c;S.hl=S.hl===c?null:c;draw()}},true);
@@ -581,7 +633,7 @@ $('iq').oninput=invL;$('il').onchange=e=>{const c=e.target.dataset.c;if(!c)retur
 // backup
 $('bx').onclick=()=>{const o={};Object.keys(localStorage).filter(k=>k.startsWith('xs:')||k.startsWith('xi:')).forEach(k=>o[k]=localStorage.getItem(k));save(JSON.stringify(o),'cross-stitch-backup.json','application/json',1)};
 $('bf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);let n=0;for(const k in o)if(/^x[si]:/.test(k)&&ST.set(k,o[k]))n++;$('bm').textContent='Restored '+n+' items.'}catch(x){$('bm').textContent='That isn’t a valid backup file.'}};r.readAsText(f)};
-function tot(){let t=0,d=0;const pc={};for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]);o[1]++;t++;if(D[i]){o[0]++;d++}}return{t,d,pc}}
+function tot(){let t=0,d=0;const pc={};for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]),f=PQ&&PQ[i]?.75:1;o[1]+=f;t++;if(D[i]){o[0]+=f;d++}if(PQ&&PQ[i]){const bc=P[PG[i]].c,o2=pc[bc]||(pc[bc]=[0,0]);o2[1]+=.25;if(D[i])o2[0]+=.25}}Object.values(pc).forEach(o=>{o[0]=Math.round(o[0]);o[1]=Math.round(o[1])});return{t,d,pc}}
 function projL(){if(!G)return;const s=tot();$('pt').textContent=S.name;$('pi').textContent=S.w+'×'+S.h+' stitches · '+P.length+' colours · '+(s.t?Math.round(s.d*100/s.t):0)+'% stitched'}
 let SF='buy';
 function shopL(){if(!G)return;const iv=INV();let n=0,k=0;P.forEach(p=>{if(!iv[p.c]){n++;k+=sk(p.q)}});$('ss').textContent=n+' of '+P.length+' threads to buy · about '+k+' skeins';
@@ -594,7 +646,7 @@ function statL(){if(!G)return;const s=tot(),pct=s.t?Math.round(s.d*100/s.t):0,h=
 $('spd').onchange=()=>{ST.set('xi:spd',String(Math.max(10,+$('spd').value||150)));statL()};
 $('exp').onclick=e=>{if(!G)return;if(e.target.closest('#xpdf')){$('pd').click();return}const b=e.target.closest('[data-x]');if(b)T['t_'+b.dataset.x]()};
 $('pd').parentElement.hidden=true;
-$('pdup').onclick=()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n))return;let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));$('pm').textContent='Duplicated as “'+m+'”.'};
+$('pdup').onclick=()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n))return;let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));$('pdm').textContent='Duplicated as “'+m+'”.'};
 $('mg2').onclick=()=>{if(G)merge()};
 $('t_er2').onclick=e=>{if(!G)return;T.t_er();e.target.style.outline=S.mode==='erase'?'2px solid var(--ac)':''};
 const pe0=persist;persist=function(){if(G)pe0()};window.saveNow=()=>persist();
@@ -629,6 +681,15 @@ $('pf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)ret
 // theme + editor holder
 const ap=()=>{const t=ST.get('xi:theme')||'system';if(t==='system')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=t;$('th').value=t};
 $('th').onchange=()=>{ST.set('xi:theme',$('th').value);ap()};ap();
+})();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);let last='pat';
+function show(t){document.querySelectorAll('#tabs [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));document.querySelectorAll('#make .tp').forEach(p=>p.hidden=p.dataset.t!==t)}
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){last=b.dataset.tab;show(last)}});
+const v1=view;view=function(v){v1(v);if(v==='make')show(G?last:'img')};
+show('img');
 })();
 </script>
 </body></html>

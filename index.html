@@ -36,7 +36,7 @@ button:disabled{opacity:.4;cursor:default}
 </style></head><body>
 <div id="home" class="scr">
 <div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
-<style>.hc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:12px}.hi{font-size:34px;width:44px;text-align:center}.ht{flex:1}.ht b{font-size:17px;display:block}.ht small{display:block;color:var(--mut);margin-top:3px;font-size:13px}.ar{color:var(--mut);font-size:20px}.hero{text-align:center;margin:18px 0 8px}.hero div{font-size:56px}.hero h1{color:var(--ac);font-size:28px;margin:4px 0}.hero p{color:var(--mut);margin:0}</style>
+<style>.hc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:12px}.hi{font-size:34px;width:44px;text-align:center}.ht{flex:1}.ht b{font-size:17px;display:block}.ht small{display:block;color:var(--mut);margin-top:3px;font-size:13px}.ar{color:var(--mut);font-size:20px}.row label.btn{color:var(--acf);flex:none;display:inline-block;font-size:15px}.hero{text-align:center;margin:18px 0 8px}.hero div{font-size:56px}.hero h1{color:var(--ac);font-size:28px;margin:4px 0}.hero p{color:var(--mut);margin:0}</style>
 <div class="hero"><div>🧵</div><h1>Cross Stitch Studio</h1><p>Turn photos into cross-stitch charts, or import patterns you already have.</p></div>
 <div id="hub">
 <button class="hc" data-go="prj"><span class="hi">📋</span><span class="ht"><b>My Projects</b><small>Open a saved pattern and keep stitching.</small></span><span class="ar">→</span></button>
@@ -191,7 +191,8 @@ function drawChart(cv,c0,r0,c1,r1,z,m,sd,hf,vp){
  for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const i=r*w+c,p=P[G[i]],X=gu+(c-c0)*z-ox,Y=gu+(r-r0)*z-oy;if(bl(i))continue;
   if(m==='real'&&z>=6){x.fillStyle='#f2ead8';x.fillRect(X,Y,z,z);x.lineCap='round';const a=hx(p.h),dk='rgb('+a.map(v=>Math.round(v*.6))+')',hl='rgb('+a.map(v=>Math.min(255,v+60))+')',e=z*.17;
   [[X+e,Y+z-e,X+z-e,Y+e],[X+e,Y+e,X+z-e,Y+z-e]].forEach(l=>[[dk,.34],[p.h,.24],[hl,.07]].forEach(([c,k])=>{x.strokeStyle=c;x.lineWidth=z*k;x.beginPath();x.moveTo(l[0],l[1]);x.lineTo(l[2],l[3]);x.stroke()}))}
-  else if(m==='col'||m==='real'||z<6){const sx=Math.round(X*K)/K,sy=Math.round(Y*K)/K;x.fillStyle=p.h;x.fillRect(sx,sy,Math.round((X+z)*K)/K-sx,Math.round((Y+z)*K)/K-sy)}else{x.fillStyle='#000';x.font=Math.round(z*.7)+'px sans-serif';x.fillText(p.s,X+z/2,Y+z/2+1)}
+  else if(m==='real'){x.fillStyle='#f2ead8';x.fillRect(X,Y,z,z);x.strokeStyle=p.h;x.lineWidth=Math.max(.6,z*.3);x.lineCap='round';x.beginPath();x.moveTo(X+z*.15,Y+z*.85);x.lineTo(X+z*.85,Y+z*.15);x.moveTo(X+z*.15,Y+z*.15);x.lineTo(X+z*.85,Y+z*.85);x.stroke()}
+  else if(m==='col'){const sx=Math.round(X*K)/K,sy=Math.round(Y*K)/K;x.fillStyle=p.h;x.fillRect(sx,sy,Math.round((X+z)*K)/K-sx,Math.round((Y+z)*K)/K-sy)}else{x.fillStyle='#000';x.font=Math.max(1,Math.round(z*.7*10)/10)+'px sans-serif';x.fillText(p.s,X+z/2,Y+z/2+1)}
   if(sd&&D[i]){x.fillStyle='rgba(90,200,110,.4)';x.fillRect(X,Y,z,z)}}
  x.font='bold 12px sans-serif';x.fillStyle='#222';
  if(vp){x.fillStyle='#fff';x.fillRect(0,0,gu,ch);x.fillRect(0,0,cw,gu);x.fillStyle='#222'}
@@ -531,7 +532,7 @@ drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);
  const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
  for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const i=r*w+c;if(DEL[i])continue;const X=g+(c-c0)*z-vp.ox,Y=g+(r-r0)*z-vp.oy;
   if(S.hf&&D[i]){x.fillStyle='rgba(255,255,255,.93)';x.fillRect(X,Y,z,z)}
-  else if(S.hl){if(P[G[i]].c!==S.hl){x.fillStyle='rgba(255,255,255,.82)';x.fillRect(X,Y,z,z)}else{x.strokeStyle='#e0f';x.lineWidth=Math.max(1,z*.1);x.strokeRect(X+1,Y+1,z-2,z-2)}}}
+  else if(S.hl){if(P[G[i]].c!==S.hl){x.fillStyle='rgba(255,255,255,.88)';x.fillRect(X,Y,z,z)}else if(z>=10){x.strokeStyle='#000';x.lineWidth=1.5;x.strokeRect(X+1,Y+1,z-2,z-2)}}}
  x.fillStyle='rgba(255,0,0,.2)';x.strokeStyle='#d00';x.lineWidth=2;
  if(S.rr>=0){const Y=g+(S.rr-r0)*z-vp.oy;x.fillRect(g,Y,vp.vw,z);x.strokeRect(g,Y,vp.vw,z)}
  if(S.rc>=0){const X=g+(S.rc-c0)*z-vp.ox;x.fillRect(X,g,z,vp.vh);x.strokeRect(X,g,z,vp.vh)}
@@ -596,6 +597,9 @@ $('pd').parentElement.hidden=true;
 $('pdup').onclick=()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n))return;let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));$('pm').textContent='Duplicated as “'+m+'”.'};
 $('mg2').onclick=()=>{if(G)merge()};
 $('t_er2').onclick=e=>{if(!G)return;T.t_er();e.target.style.outline=S.mode==='erase'?'2px solid var(--ac)':''};
+const pe0=persist;persist=function(){if(G)pe0()};window.saveNow=()=>persist();
+document.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});addEventListener('pagehide',()=>persist());
+const v1=view;view=function(v){persist();v1(v)};
 const u8s=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return s};
 async function infl(b){const ds=new DecompressionStream('deflate'),w=ds.writable.getWriter();w.write(b).catch(()=>{});w.close().catch(()=>{});return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer())}
 async function pdfTexts(buf){const b=new Uint8Array(buf),s=u8s(b),re=/stream\r?\n/g,o=[];let m;

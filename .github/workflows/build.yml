@@ -21,9 +21,7 @@ jobs:
           mkdir -p app/src/main/assets app/src/main/java/com/daniel/crossstitch
           cp index.html app/src/main/assets/index.html
           curl -fsSL -o app/src/main/assets/jspdf.umd.min.js https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js
-          curl -fsSL -o app/src/main/assets/pdf.min.js https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js
-          curl -fsSL -o app/src/main/assets/pdf.worker.min.js https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js
-          sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js#jspdf.umd.min.js#; s#https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js#pdf.min.js#' app/src/main/assets/index.html
+          sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js#jspdf.umd.min.js#' app/src/main/assets/index.html
           cat > settings.gradle <<'EOF'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
           dependencyResolutionManagement { repositories { google(); mavenCentral() } }

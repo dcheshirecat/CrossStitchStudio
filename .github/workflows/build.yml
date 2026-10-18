@@ -170,6 +170,11 @@ jobs:
               wv.loadUrl("file:///android_asset/index.html");
             }
             @Override
+            protected void onPause() {
+              wv.evaluateJavascript("window.saveNow&&window.saveNow()", null);
+              super.onPause();
+            }
+            @Override
             public void onBackPressed() {
               wv.evaluateJavascript("(window.goBack&&window.goBack())?'1':'0'", v -> {
                 if (!"\"1\"".equals(v)) finish();

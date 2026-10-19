@@ -763,10 +763,10 @@ async function pdfTexts(buf){const b=new Uint8Array(buf),s=u8s(b),re=/stream\r?\
  while(m=re.exec(s)){if(s.substr(m.index-3,3)==='end')continue;const st=m.index+m[0].length,en=s.indexOf('endstream',st);if(en<0)break;let e2=en;while(e2>st&&(b[e2-1]===10||b[e2-1]===13))e2--;
   let t=null;for(const e of[e2,en]){try{t=await infl(b.subarray(st,e));break}catch(x){}}if(t===null)t=u8s(b.subarray(st,e2));
   if(t.indexOf(' re')>=0||t.indexOf('DMC')>=0)o.push(t);re.lastIndex=en+9}return o}
-function rects(t){const re=/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) rg|(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re/g;let m,c=null;const o=[];while(m=re.exec(t)){if(m[1]!==undefined)c=[+m[1],+m[2],+m[3]];else o.push([+m[4],+m[5],+m[6],+m[7],c])}return o}
+function rects(t){const re=/(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) rg|(-?[\d.]+) g(?=\s)|(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) re/g;let m,c=null;const o=[];while(m=re.exec(t)){if(m[1]!==undefined)c=[+m[1],+m[2],+m[3]];else if(m[4]!==undefined)c=[+m[4],+m[4],+m[4]];else o.push([+m[5],+m[6],+m[7],+m[8],c])}return o}
 const h2=c=>'#'+c.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
 async function readSF(buf){const T=await pdfTexts(buf);let best=[];const lg=[];
- for(const t of T){const rc=rects(t);if(rc.length>best.length)best=rc;const re=/\(DMC (\S+) - ((?:[^)\\]|\\.)*)\) Tj ET Q\s+([\d.]+) ([\d.]+) ([\d.]+) rg/g;let m;while(m=re.exec(t))lg.push([m[1],m[2],h2([+m[3],+m[4],+m[5]])])}
+ for(const t of T){const rc=rects(t);if(rc.length>best.length)best=rc;const re=/\(DMC (\S+) - ((?:[^)\\]|\\.)*)\) Tj ET Q\s+(?:([\d.]+) ([\d.]+) ([\d.]+) rg|([\d.]+) g(?=\s))/g;let m;while(m=re.exec(t))lg.push([m[1],m[2],h2(m[3]!==undefined?[+m[3],+m[4],+m[5]]:[+m[6],+m[6],+m[6]])])}
  const wc={};best.forEach(r=>{const k=Math.abs(r[2]).toFixed(2);wc[k]=(wc[k]||0)+1});const wm=+Object.keys(wc).sort((a,b)=>wc[b]-wc[a])[0];
  const cells=best.filter(r=>r[4]&&Math.abs(Math.abs(r[2])-wm)<.06&&Math.abs(Math.abs(r[3])-wm)<.06);
  if(cells.length<4)throw'Couldn’t find a stitch chart in this PDF.';

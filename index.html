@@ -51,7 +51,7 @@ button:disabled{opacity:.4;cursor:default}
 #lbd{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9;padding:12px}#lbd>.card{max-height:90vh;overflow:auto;width:100%;max-width:420px;margin:0}
 .lbsw{height:90px;border-radius:10px;border:1px solid var(--bd);margin-bottom:10px}
 .cr{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;margin-top:8px}.cr i{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);flex:none}.cr b{font-size:16px}#conv textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit;margin-top:8px}
-#gf{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9;padding:12px}#gf>.card{max-height:90vh;overflow:auto;width:100%;max-width:420px;margin:0}#gfc button.on{outline:3px solid var(--ac)}
+#gf{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9;padding:12px}#gf>.card{max-height:90vh;overflow:auto;width:100%;max-width:420px;margin:0}#gfc button.on,#gftx button.on{outline:3px solid var(--ac)}
 .tabs{overflow-x:auto}.tabs button{flex:1 0 auto;padding:9px 12px;white-space:nowrap}
 #wrap.tpon{touch-action:none}
 #tpbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--card);border-top:1px solid var(--bd);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center}#tpbar .m{flex:1;font-size:12px;line-height:1.3}
@@ -234,9 +234,12 @@ body.tpb{padding-bottom:84px}
 <div class="m" style="text-align:center;margin-top:8px">Drag inside the box to move it. Drag its corners or edges to resize.</div>
 </div>
 <div id="gf" hidden><div class="card"><b>Gradient fill</b>
-<label class="m">Apply to<select id="gfk"><option value="t">Selected threads</option><option value="b">Background (auto-detect)</option><option value="s">Subject (auto-detect)</option><option value="e">Erased area</option></select></label>
+<label class="m">Apply to<select id="gfk"><option value="t">Selected threads</option><option value="b">Background (auto-detect)</option><option value="s">Subject (auto-detect)</option><option value="o">Single object (tap on map)</option><option value="w">Colour area (tap on map)</option><option value="x">All of one colour (tap on map)</option><option value="tx">Text (added with Text tool)</option><option value="e">Erased area</option></select></label>
 <div id="gfc" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0;max-height:120px;overflow:auto"></div>
 <label class="m" id="gftl">Detection tolerance: <b id="gftv">12</b><input type="range" id="gft" min="3" max="40" value="12"></label>
+<div id="gftx" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0" hidden></div>
+<canvas id="gfmap" hidden style="display:block;width:100%;max-width:340px;margin:8px auto 2px;border:1px solid var(--bd);border-radius:6px;image-rendering:pixelated;touch-action:manipulation"></canvas>
+<div id="gfpk" class="m" style="text-align:center"></div>
 <div class="m" style="margin-top:6px">Gradient colours (tap to change)</div><div class="row" id="gfs" style="margin-top:4px"></div>
 <div class="row"><label>Direction<select id="gfd"><option value="v">Top → bottom</option><option value="h">Left → right</option><option value="d1">Diagonal ↘</option><option value="d2">Diagonal ↗</option><option value="r">Radial (centre → out)</option></select></label><label>Style<select id="gfb"><option value="d">Dithered blend</option><option value="b">Clean bands</option></select></label></div>
 <label class="m">Thread steps: <b id="gfnv">7</b><input type="range" id="gfn" min="2" max="14" value="7"></label>
@@ -1254,4 +1257,69 @@ window.TBX={TX,TC,PRE};bdOpts();fontOpts();ctInit(PRE[0]);$('bdrT').value=CT.T;$
 })();
 </script>
 
+<script>
+/* ===== gradient fill: single object / colour area / text targets, with live preview map ===== */
+(function(){
+const $=id=>document.getElementById(id),esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const NEWK=['o','w','x','tx'],TOLK=['b','s','o','w','x'],gfMask0=gfMask,gfUI0=gfUI;
+let GP={seed:-1,tx:null,cache:null};
+const cnt=m=>{let c=0;for(let i=0;i<m.length;i++)c+=m[i]?1:0;return c};
+function bfs(n,W,H,start,ok){const m=new Uint8Array(n),q=[start];m[start]=1;
+ for(let h=0;h<q.length;h++){const i=q[h],x=i%W,y=(i/W)|0;
+  if(x>0&&!m[i-1]&&ok(i-1)){m[i-1]=1;q.push(i-1)}if(x<W-1&&!m[i+1]&&ok(i+1)){m[i+1]=1;q.push(i+1)}
+  if(y>0&&!m[i-W]&&ok(i-W)){m[i-W]=1;q.push(i-W)}if(y<H-1&&!m[i+W]&&ok(i+W)){m[i+W]=1;q.push(i+W)}}return m}
+// objects = connected groups of subject stitches (everything that is not auto-detected background)
+function objects(tol){if(GP.cache&&GP.cache.g===G&&GP.cache.t===tol)return GP.cache;
+ const n=G.length,W=S.w,sm=gfMask0('s',null,tol),lab=new Int32Array(n).fill(-1),sz=[];
+ for(let i=0;i<n;i++){if(!sm[i]||lab[i]>=0)continue;const id=sz.length,q=[i];lab[i]=id;
+  for(let h=0;h<q.length;h++){const j=q[h],x=j%W,y=(j/W)|0;
+   if(x>0&&sm[j-1]&&lab[j-1]<0){lab[j-1]=id;q.push(j-1)}if(x<W-1&&sm[j+1]&&lab[j+1]<0){lab[j+1]=id;q.push(j+1)}
+   if(y>0&&sm[j-W]&&lab[j-W]<0){lab[j-W]=id;q.push(j-W)}if(y<S.h-1&&sm[j+W]&&lab[j+W]<0){lab[j+W]=id;q.push(j+W)}}
+  sz.push(q.length)}
+ return GP.cache={g:G,t:tol,lab,sz}}
+// footprint of a text item added with the Text tool
+function txMask(o){const N=G0.length,W=S.w,H=S.h;if(o.n===N&&o.W===W&&o.m){const m=gUn(o.m,N);if(m)return m}
+ const r=txRaster(o.s,o.f,o.z*H/o.H);if(!r)return null;const m=new Uint8Array(N),ox=Math.round(o.cx*W-r.w/2),oy=Math.round(o.cy*H-r.h/2);
+ for(let j=0;j<r.h;j++)for(let i=0;i<r.w;i++)if(r.b[j*r.w+i]){const X=ox+i,Y=oy+j;if(X>=0&&X<W&&Y>=0&&Y<H)m[Y*W+X]=1}return m}
+function myMask(kind,tol){const n=G.length,W=S.w,H=S.h;
+ if(kind==='tx'){const m=new Uint8Array(n),items=OPS.filter(o=>o.t==='tx');(GP.tx||items.map((_,i)=>i)).forEach(k=>{const o=items[k];if(!o)return;const t=txMask(o);if(t)for(let i=0;i<n;i++)if(t[i]&&!DEL[i])m[i]=1});return m}
+ if(kind==='o'){const ob=objects(tol);let id=-1;
+  if(GP.seed>=0)id=ob.lab[GP.seed];else{let bs=0;ob.sz.forEach((s,k)=>{if(s>bs){bs=s;id=k}})}
+  const m=new Uint8Array(n);if(id>=0)for(let i=0;i<n;i++)if(ob.lab[i]===id)m[i]=1;return m}
+ if(GP.seed<0||GP.seed>=n||DEL[GP.seed])return new Uint8Array(n);
+ const a=P[G[GP.seed]].l,t2=tol*tol,close=i=>!DEL[i]&&ld(a,P[G[i]].l)<=t2;
+ if(kind==='x'){const m=new Uint8Array(n);for(let i=0;i<n;i++)if(close(i))m[i]=1;return m}
+ return bfs(n,W,H,GP.seed,close)}
+gfMask=function(kind,sel,tol){return NEWK.includes(kind)?myMask(kind,tol):gfMask0(kind,sel,tol)};
+function curMask(){const k=$('gfk').value,tol=+$('gft').value;if(NEWK.includes(k))return myMask(k,tol);
+ return gfMask0(k,new Set([...document.querySelectorAll('#gfc .on')].map(b=>+b.dataset.i)),tol)}
+function drawMap(m){const cv=$('gfmap'),W=S.w,H=S.h,cs=Math.max(1,Math.floor(640/Math.max(W,H)));cv.width=W*cs;cv.height=H*cs;
+ const o=document.createElement('canvas');o.width=W;o.height=H;const ox=o.getContext('2d'),im=ox.createImageData(W,H),pc=P.map(p=>hx(p.h)),has=cnt(m)>0;
+ for(let i=0;i<W*H;i++){let c=DEL[i]?[235,235,235]:pc[G[i]];if(has&&!m[i])c=[c[0]*.38+158,c[1]*.38+158,c[2]*.38+158];im.data.set([c[0],c[1],c[2],255],i*4)}
+ ox.putImageData(im,0,0);const x=cv.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(o,0,0,W*cs,H*cs);
+ if(has&&cs>=2){x.fillStyle='#e0198c';const e=Math.max(1,Math.min(2,Math.floor(cs/3)));
+  for(let i=0;i<W*H;i++){if(!m[i])continue;const px=i%W,py=(i/W)|0;
+   if(px===0||!m[i-1])x.fillRect(px*cs,py*cs,e,cs);if(px===W-1||!m[i+1])x.fillRect((px+1)*cs-e,py*cs,e,cs);
+   if(py===0||!m[i-W])x.fillRect(px*cs,py*cs,cs,e);if(py===H-1||!m[i+W])x.fillRect(px*cs,(py+1)*cs-e,cs,e)}}}
+function buildTx(k){const b=$('gftx');b.hidden=k!=='tx';if(k!=='tx')return;const items=OPS.filter(o=>o.t==='tx'),sel=new Set(GP.tx||items.map((_,i)=>i));
+ b.innerHTML=items.map((o,i)=>`<button class="s${sel.has(i)?' on':''}" data-x="${i}">${esc(String(o.s).slice(0,16))}</button>`).join('')}
+function refresh(){const cv=$('gfmap'),pk=$('gfpk');if(!G||!BS){cv.hidden=true;return}const k=$('gfk').value,m=curMask(),c=cnt(m);cv.hidden=false;drawMap(m);let t='';
+ if(k==='o')t=GP.seed<0?(c?`Largest object selected (${c} stitches). Tap another object on the map to switch.`:'No separate object found. Try a higher tolerance.'):(c?`Object selected (${c} stitches). Tap another to switch.`:'That spot is background. Tap an object on the map.');
+ else if(k==='w'||k==='x')t=GP.seed<0?'Tap the map on the colour you want.':(c?`${c} stitches selected${k==='x'?' (every stitch of that colour)':''}. Tap elsewhere to change.`:'Nothing selected there.');
+ else if(k==='tx')t=OPS.some(o=>o.t==='tx')?`${c} text stitches selected. Tap a name above to include or skip it.`:'No text yet. Add some in the Text & Border tab first.';
+ else if(c)t=`${c} stitches selected.`;
+ pk.textContent=t}
+const hintEmpty=k=>k==='o'?'No object found there. Tap an object on the map.':k==='tx'?'No text to colour. Add some in the Text & Border tab first.':'Tap the map on the area you want first.';
+gfUI=function(){gfUI0();const k=$('gfk').value;$('gftl').hidden=!TOLK.includes(k);$('gfc').hidden=k!=='t';buildTx(k);refresh()};
+$('gfk').onchange=()=>{GP.seed=-1;gfUI()};
+$('gft').addEventListener('input',refresh);
+$('gfc').addEventListener('click',()=>setTimeout(refresh,0));
+$('gftx').onclick=e=>{const b=e.target.closest('[data-x]');if(!b)return;const i=+b.dataset.x,items=OPS.filter(o=>o.t==='tx'),s=new Set(GP.tx||items.map((_,j)=>j));s.has(i)?s.delete(i):s.add(i);GP.tx=[...s];buildTx('tx');refresh()};
+$('gfmap').onclick=e=>{const k=$('gfk').value;if(!['o','w','x'].includes(k)||!G)return;const r=$('gfmap').getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*S.w),y=Math.floor((e.clientY-r.top)/r.height*S.h);
+ if(x<0||y<0||x>=S.w||y>=S.h)return;const i=y*S.w+x;if(DEL[i]){$('gfpk').textContent='That spot is empty (erased). Tap a stitch.';return}GP.seed=i;refresh()};
+const gfo0=$('gfo').onclick;$('gfo').onclick=function(e){GP={seed:-1,tx:null,cache:null};return gfo0.call(this,e)};
+const gok0=$('gfok').onclick;$('gfok').onclick=function(e){const k=$('gfk').value;
+ if(NEWK.includes(k)&&G&&BS&&!cnt(myMask(k,+$('gft').value))){$('gfm').textContent=hintEmpty(k);return}return gok0.call(this,e)};
+})();
+</script>
 </body></html>

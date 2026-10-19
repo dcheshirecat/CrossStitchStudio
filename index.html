@@ -57,7 +57,7 @@ button:disabled{opacity:.4;cursor:default}
 #tpbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--card);border-top:1px solid var(--bd);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center}#tpbar .m{flex:1;font-size:12px;line-height:1.3}
 body.tpb{padding-bottom:84px}
 #bdg{touch-action:none;display:block;max-width:100%}.tbsw{height:36px;border:2px solid var(--fg);width:100%}.brs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.brs button{width:44px;height:36px;border:2px solid var(--bd);padding:0}.brs button.on{border-color:var(--ac);outline:2px solid var(--ac)}
-#spg{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;max-height:210px;overflow:auto;margin-top:6px}.lbt.on{outline:2px solid var(--ac)}#spd>summary{cursor:pointer;padding:6px 0}
+#spg{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;max-height:210px;overflow:auto;margin-top:6px}.lbt.on{outline:2px solid var(--ac)}#spdt>summary{cursor:pointer;padding:6px 0}
 </style></head><body>
 <div id="home" class="scr">
 <div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
@@ -241,14 +241,14 @@ body.tpb{padding-bottom:84px}
 <div id="gftx" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0" hidden></div>
 <canvas id="gfmap" hidden style="display:block;width:100%;max-width:340px;margin:8px auto 2px;border:1px solid var(--bd);border-radius:6px;image-rendering:pixelated;touch-action:manipulation"></canvas>
 <div id="gfpk" class="m" style="text-align:center"></div>
-<div class="m" style="margin-top:6px">Gradient colours (tap to change)</div><div class="row" id="gfs" style="margin-top:4px"></div>
-<div class="row"><label>Direction<select id="gfd"><option value="v">Top → bottom</option><option value="h">Left → right</option><option value="d1">Diagonal ↘</option><option value="d2">Diagonal ↗</option><option value="r">Radial (centre → out)</option></select></label><label>Style<select id="gfb"><option value="d">Dithered blend</option><option value="b">Clean bands</option></select></label></div>
+<div class="m" style="margin-top:6px" id="gfl">Gradient colours (tap to change)</div><div class="row" id="gfs" style="margin-top:4px"></div>
+<div class="row"><label>Direction<select id="gfd"><option value="v">Top → bottom</option><option value="h">Left → right</option><option value="d1">Diagonal ↘</option><option value="d2">Diagonal ↗</option><option value="r">Radial (centre → out)</option></select></label><label>Style<select id="gfb"><option value="d">Dithered blend</option><option value="b">Clean bands</option><option value="s">Solid (first colour only)</option></select></label></div>
 <label class="m">Thread steps: <b id="gfnv">7</b><input type="range" id="gfn" min="2" max="14" value="7"></label>
 <div id="gfm" class="m"></div><div class="row"><button id="gfok">Apply</button><button class="s" id="gfcx">Cancel</button></div></div></div>
 <div id="dlg" hidden><div class="card"><b id="dt2"></b>
 <div class="row" style="align-items:center"><canvas id="wh" width="180" height="180"></canvas><div><div id="pv" class="sw" style="width:60px;height:60px"></div><div id="pn" class="m"></div></div></div>
 <label class="m">Brightness<input type="range" id="vv" min="0" max="100" value="100"></label>
-<details id="spd"><summary class="m">Special threads (metallic, variegated, satin…)</summary><div class="row"><label>Type<select id="spk"></select></label><label>Search<input type="text" id="spq" placeholder="number or name"></label></div><div id="spg"></div></details>
+<details id="spdt"><summary class="m">Special threads (metallic, variegated, satin…)</summary><div class="row"><label>Type<select id="spk"></select></label><label>Search<input type="text" id="spq" placeholder="number or name"></label></div><div id="spg"></div></details>
 <div id="symrow"><div class="m">Symbol: <b id="cur"></b> <button class="s" id="sa">Auto</button></div><div id="sg"></div><input type="text" id="cu" placeholder="Type any emoji or symbol" maxlength="4"></div>
 <div class="row" id="delrow"><button class="s" id="del" style="width:100%"></button></div>
 <div class="row"><button id="ok">Apply</button><button class="s" id="cx">Cancel</button></div></div></div>
@@ -529,8 +529,8 @@ function zoomTo(nz,mx,my){nz=Math.max(zmin(),Math.min(zmax(),nz));const w=$('wra
 function wheel(){const c=$('wh'),x=c.getContext('2d'),R=90,im=x.createImageData(180,180);
  for(let y=0;y<180;y++)for(let xx=0;xx<180;xx++){const dx=xx-R,dy=y-R,r=Math.hypot(dx,dy);if(r>R)continue;im.data.set([...h2r((Math.atan2(dy,dx)*180/Math.PI+360)%360,r/R,wh.v),255],(y*180+xx)*4)}
  x.putImageData(im,0,0);const a=wh.h*Math.PI/180;x.beginPath();x.arc(R+Math.cos(a)*wh.s*R,R+Math.sin(a)*wh.s*R,6,0,7);x.lineWidth=3;x.strokeStyle='#000';x.stroke();x.lineWidth=1.5;x.strokeStyle='#fff';x.stroke();
- const rgb=h2r(wh.h,wh.s,wh.v),cur0=typeof dm==='number'&&!WT&&!SPSEL&&P[dm]?DM.find(d=>d.c===P[dm].c):null,sm=(SPSEL&&DM.find(d=>d.c===SPSEL))||cur0||null,m=sm||DM[near(lab(...rgb),DML)];$('spd').hidden=typeof dm!=='number';$('pv').style.background=sm?swBg(sm):'rgb('+rgb+')';$('pn').textContent=(SPSEL?'Selected thread: DMC ':cur0?'Current thread: DMC ':'Nearest thread: DMC ')+m.c+' '+m.n}
-function openDlg(i){dm=i;const p=P[i];[wh.h,wh.s,wh.v]=r2h(...hx(p.h));$('vv').value=Math.round(wh.v*100);ds=null;SPSEL=null;WT=0;$('spd').open=false;$('cur').textContent=p.s;$('cu').value='';$('dt2').textContent='DMC '+p.c+' · '+p.n;$('symrow').hidden=false;$('delrow').hidden=false;$('del').dataset.s='';$('del').textContent='Delete all '+p.q+' stitches of this colour';$('dlg').hidden=false;wheel()}
+ const rgb=h2r(wh.h,wh.s,wh.v),cur0=typeof dm==='number'&&!WT&&!SPSEL&&P[dm]?DM.find(d=>d.c===P[dm].c):null,sm=(SPSEL&&DM.find(d=>d.c===SPSEL))||cur0||null,m=sm||DM[near(lab(...rgb),DML)];$('spdt').hidden=!(typeof dm==='number'||(typeof dm==='string'&&/^(fl:|gf)/.test(dm)));$('pv').style.background=sm?swBg(sm):'rgb('+rgb+')';$('pn').textContent=(SPSEL?'Selected thread: DMC ':cur0?'Current thread: DMC ':'Nearest thread: DMC ')+m.c+' '+m.n}
+function openDlg(i){dm=i;const p=P[i];[wh.h,wh.s,wh.v]=r2h(...hx(p.h));$('vv').value=Math.round(wh.v*100);ds=null;SPSEL=null;WT=0;$('spdt').open=false;$('cur').textContent=p.s;$('cu').value='';$('dt2').textContent='DMC '+p.c+' · '+p.n;$('symrow').hidden=false;$('delrow').hidden=false;$('del').dataset.s='';$('del').textContent='Delete all '+p.q+' stitches of this colour';$('dlg').hidden=false;wheel()}
 (function(){const c=$('wh');let on=0;const pk=e=>{const b=c.getBoundingClientRect(),dx=e.clientX-b.left-b.width/2,dy=e.clientY-b.top-b.height/2;wh.h=(Math.atan2(dy,dx)*180/Math.PI+360)%360;wh.s=Math.min(1,Math.hypot(dx,dy)/(b.width/2));SPSEL=null;WT=1;wheel()};
 c.addEventListener('pointerdown',e=>{on=1;c.setPointerCapture(e.pointerId);pk(e)});c.addEventListener('pointermove',e=>{if(on)pk(e)});c.addEventListener('pointerup',()=>on=0);c.addEventListener('pointercancel',()=>on=0)})();
 $('vv').oninput=()=>{wh.v=$('vv').value/100;SPSEL=null;WT=1;wheel()};
@@ -1060,8 +1060,8 @@ const gUn=(r,n)=>{const m=new Uint8Array(n);let i=0,v=0;for(const c of r){if(v)m
 function gcol(st,t){const n=st.length-1,u=Math.min(.9999,Math.max(0,t))*n,k=Math.floor(u),f=u-k,a=hx(st[k]),b=hx(st[k+1]);return a.map((x,i)=>x+(b[i]-x)*f)}
 function gfOp(o){if(!G0||!o.m)return;const N=G0.length,m=gUn(o.m,N);if(!m)return;const W=S.w,hp=PQ0&&PQ0.length===N;
  let x0=1e9,x1=-1,y0=1e9,y1=-1;for(let i=0;i<N;i++)if(m[i]){const x=i%W,y=(i/W)|0;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
- if(x1<0)return;const n=o.n,base=P0.length,sw=x1-x0||1,sh=y1-y0||1,cx=(x0+x1)/2,cy=(y0+y1)/2,rr=Math.hypot(sw,sh)/2||1;
- for(let j=0;j<n;j++){const d=DM[near(lab(...gcol(o.st,n>1?j/(n-1):0)),DML)];P0.push({c:d.c,n:d.n,h:d.h,l:d.l,s:'',q:0});if(S.o0)S.o0.push(d.c)}
+ if(x1<0)return;const n=o.b==='s'?1:o.n,base=P0.length,sw=x1-x0||1,sh=y1-y0||1,cx=(x0+x1)/2,cy=(y0+y1)/2,rr=Math.hypot(sw,sh)/2||1;
+ for(let j=0;j<n;j++){const u0=n>1?j/(n-1):0,ps=u0*(o.st.length-1),kk=Math.round(ps),sc=o.sc||[],d=(sc[kk]&&Math.abs(ps-kk)<1e-6&&DM.find(x=>x.c===sc[kk]))||DM[near(lab(...gcol(o.st,u0)),DML)];P0.push({c:d.c,n:d.n,h:d.h,l:d.l,s:'',q:0});if(S.o0)S.o0.push(d.c)}
  for(let i=0;i<N;i++)if(m[i]){const x=i%W,y=(i/W)|0,t=o.d==='v'?(y-y0)/sh:o.d==='h'?(x-x0)/sw:o.d==='d1'?((x-x0)/sw+(y-y0)/sh)/2:o.d==='d2'?((x-x0)/sw+(y1-y)/sh)/2:Math.hypot(x-cx,y-cy)/rr,
   u=Math.min(1,Math.max(0,t))*(n-1);let k;if(o.b==='d'){const f=u-Math.floor(u);k=Math.floor(u)+(f>(GBY[y%4][x%4]+.5)/16?1:0)}else k=Math.round(u);
   G0[i]=base+Math.min(n-1,k);if(hp)PQ0[i]=0;if(o.er)DEL[i]=0}}
@@ -1074,24 +1074,24 @@ function gfMask(kind,sel,tol){const n=G.length,W=S.w,H=S.h,m=new Uint8Array(n);
   for(const j of[x>0?i-1:-1,x<W-1?i+1:-1,y>0?i-W:-1,y<H-1?i+W:-1]){if(j<0||bg[j])continue;if(DEL[j]||!a||ld(a,P[G[j]].l)<=t2){bg[j]=1;q.push(j)}}}
  for(let i=0;i<n;i++)if(!DEL[i]&&(kind==='b'?bg[i]:!bg[i]))m[i]=1;return m}
 
-const GF={st:['#27426b','#f4b6c8']};
-function gfUI(){const mid=GF.st.length===3;$('gfs').innerHTML=GF.st.map((c,i)=>`<button class="s" data-s="${i}" style="background:${c};border:2px solid var(--fg);min-width:54px;height:36px"> </button>`).join('')+`<button class="s" data-a="${mid?0:1}">${mid?'− middle':'+ middle'}</button>`;
- const k=$('gfk').value;$('gfc').hidden=k!=='t';$('gftl').hidden=k!=='b'&&k!=='s';
- $('gfc').innerHTML=P.map((p,i)=>`<button class="s" data-i="${i}"><span class="sw" style="background:${swBg(p)};display:inline-flex;vertical-align:middle;margin-right:4px">${p.s}</span>${p.c}</button>`).join('')}
+const GF={st:['#27426b','#f4b6c8'],sc:[null,null]};
+function gfUI(){const mid=GF.st.length===3;$('gfs').innerHTML=GF.st.map((c,i)=>`<button class="s" data-s="${i}" style="background:${GF.sc[i]?swBg(DM.find(d=>d.c===GF.sc[i])):c};border:2px solid var(--fg);min-width:54px;height:36px"> </button>`).join('')+`<button class="s" data-a="${mid?0:1}">${mid?'− middle':'+ middle'}</button>`;
+ const sol=$('gfb').value==='s';$('gfl').textContent=sol?'Fill colour (tap the first swatch to change)':'Gradient colours (tap to change)';$('gfn').parentElement.hidden=sol;$('gfd').parentElement.hidden=sol;const k=$('gfk').value;$('gfc').hidden=k!=='t';$('gftl').hidden=k!=='b'&&k!=='s';
+ const gon=new Set([...document.querySelectorAll('#gfc .on')].map(b=>+b.dataset.i));$('gfc').innerHTML=P.map((p,i)=>`<button class="s${gon.has(i)?' on':''}" data-i="${i}"><span class="sw" style="background:${swBg(p)};display:inline-flex;vertical-align:middle;margin-right:4px">${p.s}</span>${p.c}</button>`).join('')}
 $('gfo').onclick=()=>{if(!G||!BS)return;$('gfm').textContent='';gfUI();$('gf').hidden=false};
-$('gfk').onchange=gfUI;$('gfcx').onclick=()=>$('gf').hidden=true;
+$('gfk').onchange=gfUI;$('gfb').onchange=gfUI;$('gfcx').onclick=()=>$('gf').hidden=true;
 $('gfc').onclick=e=>{const b=e.target.closest('[data-i]');if(b)b.classList.toggle('on')};
 $('gft').oninput=()=>$('gftv').textContent=$('gft').value;$('gfn').oninput=()=>$('gfnv').textContent=$('gfn').value;
 $('gfs').onclick=e=>{const b=e.target.closest('button');if(!b)return;
- if(b.dataset.a!==undefined){if(b.dataset.a==='1'){const a=hx(GF.st[0]),c=hx(GF.st[1]);GF.st.splice(1,0,'#'+a.map((x,i)=>Math.round((x+c[i])/2).toString(16).padStart(2,'0')).join(''))}else GF.st.splice(1,1);gfUI();return}
- const i=+b.dataset.s;[wh.h,wh.s,wh.v]=r2h(...hx(GF.st[i]));$('vv').value=Math.round(wh.v*100);dm='gf'+i;$('dt2').textContent='Gradient colour '+(i+1);
+ if(b.dataset.a!==undefined){if(b.dataset.a==='1'){const a=hx(GF.st[0]),c=hx(GF.st[1]);GF.sc.splice(1,0,null);GF.st.splice(1,0,'#'+a.map((x,i)=>Math.round((x+c[i])/2).toString(16).padStart(2,'0')).join(''))}else{GF.st.splice(1,1);GF.sc.splice(1,1)}gfUI();return}
+ const i=+b.dataset.s;[wh.h,wh.s,wh.v]=r2h(...hx(GF.st[i]));$('vv').value=Math.round(wh.v*100);dm='gf'+i;SPSEL=GF.sc[i]||null;WT=1;$('spdt').open=false;$('dt2').textContent='Gradient colour '+(i+1);
  $('symrow').hidden=true;if($('delrow'))$('delrow').hidden=true;$('gf').hidden=true;$('dlg').hidden=false;wheel()};
 const gOk=$('ok').onclick,gCx=$('cx').onclick;
-$('ok').onclick=function(e){if(typeof dm==='string'&&dm.startsWith('gf')){const c=h2r(wh.h,wh.s,wh.v);GF.st[+dm.slice(2)]='#'+c.map(x=>x.toString(16).padStart(2,'0')).join('');dm=null;$('dlg').hidden=true;gfUI();$('gf').hidden=false;return}return gOk.call(this,e)};
+$('ok').onclick=function(e){if(typeof dm==='string'&&dm.startsWith('gf')){const c=h2r(wh.h,wh.s,wh.v);const gi=+dm.slice(2),sd=SPSEL&&DM.find(d=>d.c===SPSEL);if(sd){GF.st[gi]=sd.h;GF.sc[gi]=sd.c}else{GF.st[gi]='#'+c.map(x=>x.toString(16).padStart(2,'0')).join('');GF.sc[gi]=null}SPSEL=null;dm=null;$('dlg').hidden=true;gfUI();$('gf').hidden=false;return}return gOk.call(this,e)};
 $('cx').onclick=function(e){const g=typeof dm==='string'&&dm.startsWith('gf');const r=gCx.call(this,e);if(g){dm=null;$('dlg').hidden=true;gfUI();$('gf').hidden=false}return r};
 $('gfok').onclick=()=>{if(!G||!BS)return;const kind=$('gfk').value,sel=new Set([...document.querySelectorAll('#gfc .on')].map(b=>+b.dataset.i)),m=gfMask(kind,sel,+$('gft').value);let c=0;for(let i=0;i<m.length;i++)c+=m[i];
  if(!c){$('gfm').textContent=kind==='t'&&!sel.size?'Tick at least one thread first.':kind==='e'?'There is no erased area.':'Nothing selected with those settings.';return}
- $('gf').hidden=true;runOp({t:'gf',m:gRle(m),st:GF.st.slice(),d:$('gfd').value,n:+$('gfn').value,b:$('gfb').value,er:kind==='e'?1:0})};
+ $('gf').hidden=true;runOp({t:'gf',m:gRle(m),st:GF.st.slice(),sc:GF.sc.slice(),d:$('gfd').value,n:+$('gfn').value,b:$('gfb').value,er:kind==='e'?1:0})};
 </script>
 <script>
 /* ===== text & borders (own tab) ===== */
@@ -1122,7 +1122,8 @@ function bdOp(o){if(!G0)return;const W=S.w,H=S.h,r=bdBuild(W,H,o);if(!r)return;c
  for(let i=0;i<N;i++){const k=r.v[i];if(k&&sl[k]!==undefined){G0[i]=sl[k];DEL[i]=0;if(hp)PQ0[i]=0}}}
 (function(){
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),cl=(v,a,b)=>Math.max(a,Math.min(b,v));
-const TC={tx:'#000000',ba:'#8b1e2d',bb:'#f2d9a0',bc:'#27426b',bg:'#fbf3dc'};
+const TC={tx:'#000000',ba:'#8b1e2d',bb:'#f2d9a0',bc:'#27426b',bg:'#fbf3dc'},TS={};
+function tcd(k){return (TS[k]&&DM.find(d=>d.c===TS[k]))||dmc(TC[k])}
 const dmc=hex=>DM[near(lab(...hx(hex)),DML)],curTab=()=>{const b=document.querySelector('#tabs button.on');return b?b.dataset.tab:''},tbOn=()=>cur==='make'&&curTab()==='tb'&&!!G;
 let sub='tx',BDP=null,CT={T:5,L:8,g:[]},BR='a',SV=[];
 try{SV=JSON.parse(ST.get('xi:bdl'))||[]}catch(e){}
@@ -1156,23 +1157,23 @@ function bdTile(){const id=$('bdp').value;
  const p=PRE.find(q=>q.id===id)||PRE[0];return{T:p.T,L:p.L,rows:p.rows.slice()}}
 function ctInit(t){CT.T=t.T;CT.L=t.L;CT.g=t.rows.map(r=>r.split(''))}
 function ctResize(T,L){T=cl(T|0,1,12);L=cl(L|0,1,32);const g=Array.from({length:T},(_,r)=>Array.from({length:L},(_,c)=>(CT.g[r]&&CT.g[r][c])||'.'));CT.T=T;CT.L=L;CT.g=g}
-const bcol=()=>({a:dmc(TC.ba).h,b:dmc(TC.bb).h,c:dmc(TC.bc).h,'.':null});
+const bcol=()=>({a:tcd('ba').h,b:tcd('bb').h,c:tcd('bc').h,'.':null});
 function bdParams(){const t=bdTile();return{rows:t.rows,T:t.T,L:t.L,ins:+$('bdi').value,ctr:$('bdctr').checked,bg:$('bdbg').checked}}
 function tilePv(cv,t,cols,rep){const cs=Math.max(4,Math.min(12,Math.floor(300/(t.L*rep)))),W=Math.max(300,t.L*rep*cs),H=t.T*cs,dp=Math.min(2,devicePixelRatio||1);cv.width=W*dp;cv.height=(H+0)*dp;cv.style.height=(H*(cv.clientWidth||300)/W)+'px';
  const x=cv.getContext('2d');x.setTransform(dp,0,0,dp,0,0);x.clearRect(0,0,W,H);
- for(let r=0;r<t.T;r++)for(let c=0;c<W/cs;c++){const ch=t.rows[r][c%t.L],col=cols[ch];if(col){x.fillStyle=col;x.fillRect(c*cs,r*cs,cs,cs)}else if($('bdbg').checked){x.fillStyle=dmc(TC.bg).h;x.fillRect(c*cs,r*cs,cs,cs)}}}
+ for(let r=0;r<t.T;r++)for(let c=0;c<W/cs;c++){const ch=t.rows[r][c%t.L],col=cols[ch];if(col){x.fillStyle=col;x.fillRect(c*cs,r*cs,cs,cs)}else if($('bdbg').checked){x.fillStyle=tcd('bg').h;x.fillRect(c*cs,r*cs,cs,cs)}}}
 function ctDraw(){const cv=$('bdg'),cs=Math.max(10,Math.min(34,Math.floor(320/CT.L))),W=CT.L*cs,H=CT.T*cs,dp=Math.min(2,devicePixelRatio||1);cv.width=W*dp;cv.height=H*dp;cv.style.width=W+'px';cv.style.height=H+'px';
  const x=cv.getContext('2d'),cols=bcol();x.setTransform(dp,0,0,dp,0,0);x.fillStyle='#fff';x.fillRect(0,0,W,H);
  for(let r=0;r<CT.T;r++)for(let c=0;c<CT.L;c++){const col=cols[CT.g[r][c]];if(col){x.fillStyle=col;x.fillRect(c*cs,r*cs,cs,cs)}}
  x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=1;x.beginPath();for(let c=0;c<=CT.L;c++){x.moveTo(c*cs+.5,0);x.lineTo(c*cs+.5,H)}for(let r=0;r<=CT.T;r++){x.moveTo(0,r*cs+.5);x.lineTo(W,r*cs+.5)}x.stroke();cv._cs=cs}
 let rfq=0;function tbRefresh(){if(rfq)return;rfq=requestAnimationFrame(()=>{rfq=0;tbRefresh2()})}
-function tbRefresh2(){['txc','bsa','bsb','bsc','bsg'].forEach(k=>{const m={txc:'tx',bsa:'ba',bsb:'bb',bsc:'bc',bsg:'bg'}[k];$(k).style.background=dmc(TC[m]).h});
+function tbRefresh2(){['txc','bsa','bsb','bsc','bsg'].forEach(k=>{const m={txc:'tx',bsa:'ba',bsb:'bb',bsc:'bc',bsg:'bg'}[k];$(k).style.background=swBg(tcd(m))});
  const cols=bcol(),id=$('bdp').value,isLn=id.startsWith('ln_'),t=bdTile(),use=new Set(t.rows.join('').split(''));
  $('bdtw').hidden=!isLn;$('bdwv').textContent=$('bdw').value;$('bdiv').textContent=$('bdi').value;$('bla').hidden=!use.has('a');$('blb').hidden=!use.has('b');$('blc').hidden=!use.has('c');$('blg').hidden=!$('bdbg').checked;
  $('bddl').hidden=id[0]!=='u';$('bdcp').hidden=id==='cu';$('bded').hidden=id!=='cu';
  document.querySelectorAll('#bdbr button').forEach(b=>{b.classList.toggle('on',b.dataset.br===BR);const c=cols[b.dataset.br];b.style.background=c||'var(--bg)'});
  if(!$('tbbd').hidden){tilePv($('bdpv'),t,cols,3);if(id==='cu')ctDraw()}
- BDP=null;if(tbOn()&&sub==='bd'){const o=bdParams(),r=bdBuild(S.w,S.h,o);if(r)BDP={v:r.v,W:S.w,H:S.h,h:[null,cols.a,cols.b,cols.c,dmc(TC.bg).h]}}
+ BDP=null;if(tbOn()&&sub==='bd'){const o=bdParams(),r=bdBuild(S.w,S.h,o);if(r)BDP={v:r.v,W:S.w,H:S.h,h:[null,cols.a,cols.b,cols.c,tcd('bg').h]}}
  tpSync()}
 /* ---------- text ---------- */
 const TX={s:'',f:'bold {s} sans-serif',sz:14,cx:0,cy:0,r:null,placed:0};
@@ -1188,7 +1189,7 @@ function txLock(){const r=TX.r;if(!r||!G||!BS)return;const W=S.w,H=S.h,ox=Math.r
  for(let j=0;j<r.h;j++)for(let i=0;i<r.w;i++)if(r.b[j*r.w+i]){const X=ox+i,Y=oy+j;if(X>=0&&X<W&&Y>=0&&Y<H){m[Y*W+X]=1;c++}}
  if(!c){msg('The text is off the pattern. Drag it onto the pattern first.');return}
  const cut=ox<0||oy<0||ox+r.w>W||oy+r.h>H;
- runOp({t:'tx',s:TX.s,f:TX.f,z:TX.sz,W,H,cx:TX.cx/W,cy:TX.cy/H,c:dmc(TC.tx).c,n:W*H,m:gRle(m)});
+ runOp({t:'tx',s:TX.s,f:TX.f,z:TX.sz,W,H,cx:TX.cx/W,cy:TX.cy/H,c:tcd('tx').c,n:W*H,m:gRle(m)});
  TX.s='';TX.r=null;TX.placed=0;$('txi').value='';tpSync();msg(cut?'Text locked in, but part ran off the edge and was cut. Undo to adjust.':'Text locked in. Undo steps back.')}
 function txCancel(){TX.s='';TX.r=null;TX.placed=0;$('txi').value='';tpSync()}
 /* ---------- fonts (uploaded, kept on the device) ---------- */
@@ -1207,10 +1208,10 @@ $('txfd').onclick=async()=>{const b=$('txfd'),m=/UF_(\d+)/.exec(TX.f);if(!m)retu
  delete b.dataset.s;b.textContent='Remove this font';const id=+m[1];try{await fdb('readwrite',s=>s.delete(id))}catch(x){}if(UFF[id]){document.fonts.delete(UFF[id]);delete UFF[id]}
  const i=UF.findIndex(u=>u.id===id);if(i>=0)UF.splice(i,1);fontOpts(FB[0][1]);txRender()};
 /* ---------- colours ---------- */
-document.querySelectorAll('[data-pc]').forEach(b=>b.onclick=()=>{const k=b.dataset.pc,c=hx(TC[k]);[wh.h,wh.s,wh.v]=r2h(...c);$('vv').value=Math.round(wh.v*100);dm='fl:'+k;
+document.querySelectorAll('[data-pc]').forEach(b=>b.onclick=()=>{const k=b.dataset.pc,c=hx(TC[k]);[wh.h,wh.s,wh.v]=r2h(...c);$('vv').value=Math.round(wh.v*100);dm='fl:'+k;SPSEL=TS[k]||null;WT=1;$('spdt').open=false;
  $('dt2').textContent={tx:'Text colour',ba:'Border colour A',bb:'Border colour B',bc:'Border colour C',bg:'Band colour'}[k];$('symrow').hidden=true;if($('delrow'))$('delrow').hidden=true;$('dlg').hidden=false;wheel()});
 const fOk=$('ok').onclick,fCx=$('cx').onclick;
-$('ok').onclick=function(e){if(typeof dm==='string'&&dm.startsWith('fl:')){const k=dm.slice(3),c=h2r(wh.h,wh.s,wh.v);TC[k]='#'+c.map(x=>x.toString(16).padStart(2,'0')).join('');dm=null;$('dlg').hidden=true;tbRefresh();return}return fOk.call(this,e)};
+$('ok').onclick=function(e){if(typeof dm==='string'&&dm.startsWith('fl:')){const k=dm.slice(3),c=h2r(wh.h,wh.s,wh.v);const sd=SPSEL&&DM.find(d=>d.c===SPSEL);if(sd){TS[k]=sd.c;TC[k]=sd.h}else{delete TS[k];TC[k]='#'+c.map(x=>x.toString(16).padStart(2,'0')).join('')}SPSEL=null;dm=null;$('dlg').hidden=true;tbRefresh();return}return fOk.call(this,e)};
 $('cx').onclick=function(e){const g=typeof dm==='string'&&dm.startsWith('fl:');const r=fCx.call(this,e);if(g){dm=null;$('dlg').hidden=true}return r};
 /* ---------- border controls ---------- */
 $('bdp').onchange=()=>{if($('bdp').value==='cu'&&!CT.g.length)ctInit(PRE[0]);tbRefresh()};
@@ -1228,7 +1229,7 @@ $('bdsv').onclick=()=>{const n=$('bdnm').value.trim()||('Border '+(SV.length+1))
 $('bddl').onclick=()=>{const b=$('bddl'),id=$('bdp').value;if(id[0]!=='u')return;if(!b.dataset.s){b.dataset.s=1;b.textContent='Tap again to delete';return}
  delete b.dataset.s;b.textContent='Delete this border';SV.splice(+id.slice(1),1);ST.set('xi:bdl',JSON.stringify(SV));bdOpts('ln_s');tbRefresh()};
 function bdApply(){if(!G||!BS)return;const o=bdParams();if(!bdBuild(S.w,S.h,o)){msg('The pattern is too small for that border. Make it thinner or reduce the gap.');return}
- const cs=[dmc(TC.ba).c,dmc(TC.bb).c,dmc(TC.bc).c,dmc(TC.bg).c];runOp(Object.assign({t:'bd',cs},o));msg('Border added. Undo steps back, or add another with a gap from the edge.')}
+ const cs=[tcd('ba').c,tcd('bb').c,tcd('bc').c,tcd('bg').c];runOp(Object.assign({t:'bd',cs},o));msg('Border added. Undo steps back, or add another with a gap from the edge.')}
 /* ---------- tab, sub-tabs, action bar ---------- */
 function tpSync(){const on=tbOn(),txA=on&&sub==='tx'&&!!TX.r,bdA=on&&sub==='bd'&&!!BDP;
  $('tbtx').hidden=sub!=='tx';$('tbbd').hidden=sub!=='bd';document.querySelectorAll('#tbs [data-sub]').forEach(b=>b.classList.toggle('on',b.dataset.sub===sub));
@@ -1244,7 +1245,7 @@ const v2=view;view=function(v){v2(v);if(v==='make'||v==='home')tbRefresh();else 
 const dcw=drawChart;
 drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dcw(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(!vp||!G||!tbOn())return;
  const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
- if(sub==='tx'&&TX.r){const r=TX.r,ox=Math.round(TX.cx-r.w/2),oy=Math.round(TX.cy-r.h/2);x.fillStyle=dmc(TC.tx).h;
+ if(sub==='tx'&&TX.r){const r=TX.r,ox=Math.round(TX.cx-r.w/2),oy=Math.round(TX.cy-r.h/2);x.fillStyle=tcd('tx').h;
   for(let j=0;j<r.h;j++){const Y=oy+j;if(Y<r0||Y>=r1)continue;for(let i=0;i<r.w;i++){const X=ox+i;if(X<c0||X>=c1||!r.b[j*r.w+i])continue;x.fillRect(g+(X-c0)*z-vp.ox,g+(Y-r0)*z-vp.oy,z+.5,z+.5)}}
   x.setLineDash([6,4]);x.strokeStyle='#d00';x.lineWidth=2;x.strokeRect(g+(ox-c0)*z-vp.ox,g+(oy-r0)*z-vp.oy,r.w*z,r.h*z);x.setLineDash([])}
  else if(sub==='bd'&&BDP&&BDP.W===S.w&&BDP.H===S.h){for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const k=BDP.v[r*w+c];if(!k)continue;x.fillStyle=BDP.h[k];x.fillRect(g+(c-c0)*z-vp.ox,g+(r-r0)*z-vp.oy,z+.5,z+.5)}}
@@ -1263,7 +1264,7 @@ wrap.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId)||!gs)return;ptr
  e.stopPropagation()},true);
 const pu=e=>{if(!ptr.has(e.pointerId))return;ptr.delete(e.pointerId);gs=null;if(!ptr.size)tpSync()};wrap.addEventListener('pointerup',pu,true);wrap.addEventListener('pointercancel',pu,true);
 ['touchstart','touchmove'].forEach(t=>wrap.addEventListener(t,e=>{if(want()&&e.touches.length>1){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault()}},{capture:true,passive:false}));
-window.TBX={TX,TC,PRE};bdOpts();fontOpts();ctInit(PRE[0]);$('bdrT').value=CT.T;$('bdrL').value=CT.L;fontsLoad();tbRefresh();
+window.TBX={TX,TC,TS,PRE};bdOpts();fontOpts();ctInit(PRE[0]);$('bdrT').value=CT.T;$('bdrL').value=CT.L;fontsLoad();tbRefresh();
 })();
 </script>
 
@@ -1334,7 +1335,7 @@ const gok0=$('gfok').onclick;$('gfok').onclick=function(e){const k=$('gfk').valu
 </script>
 
 <script>
-(function(){const sel=$('spk'),qi=$('spq'),gr=$('spg'),det=$('spd'),E=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+(function(){const sel=$('spk'),qi=$('spq'),gr=$('spg'),det=$('spdt'),E=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 sel.innerHTML='<option value="">All special threads</option>'+SPC.map(c=>`<option>${E(c)}</option>`).join('');
 function render(){const q=qi.value.trim().toLowerCase().replace(/^dmc\s*/,''),k=sel.value,L=lab(...h2r(wh.h,wh.s,wh.v));
  const a=DM.filter(m=>m.sp&&(!k||m.sp===k)&&(!q||(m.c+' '+m.n).toLowerCase().includes(q))).map(m=>[ld(L,m.l),m]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);

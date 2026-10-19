@@ -18,8 +18,10 @@ jobs:
           gradle-version: '8.7'
       - name: Generate Android project
         run: |
+          test -f signing.jks || { echo 'signing.jks is missing from the repo root'; exit 1; }
           mkdir -p app/src/main/assets app/src/main/java/com/daniel/crossstitch
           cp index.html app/src/main/assets/index.html
+          cp signing.jks app/signing.jks
           curl -fsSL -o app/src/main/assets/jspdf.umd.min.js https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js
           sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js#jspdf.umd.min.js#' app/src/main/assets/index.html
           cat > settings.gradle <<'EOF'
@@ -40,8 +42,19 @@ jobs:
               applicationId 'com.daniel.crossstitch'
               minSdk 29
               targetSdk 34
-              versionCode 1
-              versionName '1.0'
+              versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+              versionName "1.${System.getenv('GITHUB_RUN_NUMBER') ?: '0'}"
+            }
+            signingConfigs {
+              stable {
+                storeFile file('signing.jks')
+                storePassword 'stitchstudio'
+                keyAlias 'stitch'
+                keyPassword 'stitchstudio'
+              }
+            }
+            buildTypes {
+              debug { signingConfig signingConfigs.stable }
             }
             compileOptions {
               sourceCompatibility JavaVersion.VERSION_17

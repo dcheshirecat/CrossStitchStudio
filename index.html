@@ -51,7 +51,12 @@ button:disabled{opacity:.4;cursor:default}
 #lbd{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9;padding:12px}#lbd>.card{max-height:90vh;overflow:auto;width:100%;max-width:420px;margin:0}
 .lbsw{height:90px;border-radius:10px;border:1px solid var(--bd);margin-bottom:10px}
 .cr{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;margin-top:8px}.cr i{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);flex:none}.cr b{font-size:16px}#conv textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit;margin-top:8px}
-#gf,#tx,#bd{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9;padding:12px}#gf>.card,#tx>.card,#bd>.card{max-height:90vh;overflow:auto;width:100%;max-width:420px;margin:0}#gfc button.on{outline:3px solid var(--ac)}
+#gf{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9;padding:12px}#gf>.card{max-height:90vh;overflow:auto;width:100%;max-width:420px;margin:0}#gfc button.on{outline:3px solid var(--ac)}
+.tabs{overflow-x:auto}.tabs button{flex:1 0 auto;padding:9px 12px;white-space:nowrap}
+#wrap.tpon{touch-action:none}
+#tpbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--card);border-top:1px solid var(--bd);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center}#tpbar .m{flex:1;font-size:12px;line-height:1.3}
+body.tpb{padding-bottom:84px}
+#bdg{touch-action:none;display:block;max-width:100%}.tbsw{height:36px;border:2px solid var(--fg);width:100%}.brs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.brs button{width:44px;height:36px;border:2px solid var(--bd);padding:0}.brs button.on{border-color:var(--ac);outline:2px solid var(--ac)}
 </style></head><body>
 <div id="home" class="scr">
 <div class="bar"><span style="width:44px"></span><b style="font-size:18px">Cross Stitch Studio</b><button class="s" data-go="set" aria-label="Settings" style="font-size:20px;width:44px">⚙</button></div>
@@ -69,7 +74,7 @@ button:disabled{opacity:.4;cursor:default}
 </div>
 <div id="make" class="scr" hidden>
 <div class="bar"><button class="s" id="mk" data-go="home">‹ Back</button><b>Pattern editor</b></div>
-<div class="tabs" id="tabs"><button data-tab="img">Image</button><button data-tab="pat">Pattern</button><button data-tab="col">Colours</button><button data-tab="pal">Palettes</button></div>
+<div class="tabs" id="tabs"><button data-tab="img">Image</button><button data-tab="pat">Pattern</button><button data-tab="col">Colours</button><button data-tab="pal">Palettes</button><button data-tab="tb">Text &amp; Border</button></div>
 <div class="tp" data-t="img">
 <div class="card">
 <label class="btn">Choose photo<input type="file" id="f" accept="image/*" hidden></label> <button class="s" id="ep" hidden style="margin-left:8px;padding:9px 14px">✂ Edit photo</button>
@@ -119,6 +124,33 @@ button:disabled{opacity:.4;cursor:default}
 <div id="gb" style="height:26px;border-radius:8px;border:1px solid var(--bd);margin-top:6px"></div>
 <div class="chips" id="gs"></div>
 <div class="row"><button class="s" id="ga">+ Add colour</button><button id="gok">Apply gradient</button></div></div>
+</div>
+<div class="tp" data-t="tb" hidden>
+<div class="tabs" id="tbs"><button data-sub="tx" class="on">Text</button><button data-sub="bd">Border</button></div>
+<div class="card" id="tbtx">
+<label class="m">Your text<input type="text" id="txi" maxlength="60" placeholder="e.g. Home Sweet Home"></label>
+<div class="row"><label>Font<select id="txf"></select></label><label>Colour<button class="s tbsw" id="txc" data-pc="tx"> </button></label></div>
+<div class="row"><label class="btn">Upload a font…<input type="file" id="txfu" hidden></label><button class="s" id="txfd" hidden>Remove this font</button></div>
+<label class="m" style="display:block;margin-top:8px">Size: <b id="txsv">14</b> stitches<input type="range" id="txs" min="4" max="200" value="14"></label>
+<div class="row"><button class="s" data-nd="-1,0" aria-label="Left">←</button><button class="s" data-nd="0,-1" aria-label="Up">↑</button><button class="s" data-nd="0,1" aria-label="Down">↓</button><button class="s" data-nd="1,0" aria-label="Right">→</button><button class="s" id="txce">Centre</button></div>
+<div class="m" style="margin-top:8px">Type your text and it appears on the pattern below. Drag it with one finger, pinch with two fingers to resize, then tap “Lock in place”. Arrows nudge it one stitch. Drag outside the text to scroll the chart.</div></div>
+<div class="card" id="tbbd" hidden>
+<div class="row" style="margin-top:0"><label>Border pattern<select id="bdp"></select></label></div>
+<canvas id="bdpv" style="width:100%;margin-top:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)"></canvas>
+<div class="row"><label id="bla">Colour A<button class="s tbsw" id="bsa" data-pc="ba"> </button></label><label id="blb">Colour B<button class="s tbsw" id="bsb" data-pc="bb"> </button></label><label id="blc">Colour C<button class="s tbsw" id="bsc" data-pc="bc"> </button></label></div>
+<label class="m" id="bdtw" style="display:block;margin-top:8px">Thickness: <b id="bdwv">2</b> stitches<input type="range" id="bdw" min="1" max="6" value="2"></label>
+<label class="m" style="display:block;margin-top:8px">Gap from the edge: <b id="bdiv">0</b> stitches<input type="range" id="bdi" min="0" max="20" value="0"></label>
+<div class="row"><label class="ck"><input type="checkbox" id="bdctr">Centre the pattern on each side</label></div>
+<div class="row"><label class="ck"><input type="checkbox" id="bdbg">Solid band behind the pattern</label><label id="blg" hidden>Band colour<button class="s tbsw" id="bsg" data-pc="bg"> </button></label></div>
+<div class="row"><button class="s" id="bdcp">Edit a copy…</button><button class="s" id="bddl" hidden>Delete this border</button></div>
+<div id="bded" hidden style="margin-top:10px"><b>Design your own border</b>
+<div class="m">Tap or drag on the grid to paint. The grid repeats along every side. Top row = outer edge.</div>
+<div class="row"><label>Rows (thickness)<input type="number" id="bdrT" min="1" max="12" inputmode="numeric"></label><label>Columns (repeat)<input type="number" id="bdrL" min="1" max="32" inputmode="numeric"></label></div>
+<div class="brs" id="bdbr"><button data-br="a" aria-label="Colour A"></button><button data-br="b" aria-label="Colour B"></button><button data-br="c" aria-label="Colour C"></button><button data-br="." aria-label="Eraser">⌫</button></div>
+<canvas id="bdg" style="margin-top:8px;border:1px solid var(--bd)"></canvas>
+<div class="row"><button class="s" id="bdclr">Clear</button><button class="s" id="bdmr">Mirror ↔</button><button class="s" id="bdfv">Flip ↕</button></div>
+<div class="row"><label>Name<input type="text" id="bdnm" maxlength="30" placeholder="My border"></label><button id="bdsv" style="flex:none;align-self:flex-end">Save</button></div></div>
+<div class="m" style="margin-top:8px">The border sits on the outer stitches of the pattern, with mitred corners. Crop the photo first if you want to keep its edges. Use “Gap from the edge” to stack a second border inside the first.</div></div>
 </div>
 <div class="card">
 <div class="row"><label>Project name<input type="text" id="nm" placeholder="e.g. Sunset"></label></div>
@@ -191,6 +223,7 @@ button:disabled{opacity:.4;cursor:default}
 <div class="card"><b>Compare fabric counts</b><div id="fbt"></div></div></div>
 <div id="set" class="scr" hidden><div class="bar"><button class="s" data-go="home">‹ Home</button><b>Settings</b></div><div class="card"><b>Appearance</b><div class="row"><label>Theme<select id="th"><option value="system">Match device</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div></div></div>
 <div id="mv" hidden><div class="mvt"><button class="s" id="mvk">✕ Close</button><span class="m" id="mvi"></span></div><div id="mvb"></div><div class="mvt"><button class="s" id="mvp">‹ Prev</button><button class="s" id="mvx">Delete</button><button class="s" id="mvn">Next ›</button></div></div>
+<div id="tpbar" hidden><span class="m" id="tpt"></span><button class="s" id="tpv" aria-label="Show the pattern">↓ Chart</button><button class="s" id="tpc">Cancel</button><button id="tpk">Lock in place</button></div>
 <div id="hold" hidden></div>
 <div id="ph" hidden>
 <div class="bar"><button class="s" id="ex">Cancel</button><b>Edit photo</b><button id="ea">Apply</button></div>
@@ -200,18 +233,6 @@ button:disabled{opacity:.4;cursor:default}
 <div class="row"><button class="s" id="er">Reset all</button></div>
 <div class="m" style="text-align:center;margin-top:8px">Drag inside the box to move it. Drag its corners or edges to resize.</div>
 </div>
-<div id="tx" hidden><div class="card"><b>Add text</b>
-<label class="m">Text<input type="text" id="txi" maxlength="40" placeholder="e.g. Home Sweet Home"></label>
-<div class="row"><label>Font<select id="txf"><option value="bold {s} sans-serif">Bold sans</option><option value="{s} serif">Serif</option><option value="bold {s} monospace">Blocky</option><option value="italic bold {s} cursive">Script</option></select></label><label>Colour<button class="s" id="txc" style="height:36px;border:2px solid var(--fg)"> </button></label></div>
-<label class="m">Height: <b id="txsv">12</b> stitches<input type="range" id="txs" min="6" max="40" value="12"></label>
-<label class="m">Left ↔ right<input type="range" id="txx" min="0" max="100" value="50"></label>
-<label class="m">Top ↕ bottom<input type="range" id="txy" min="0" max="100" value="90"></label>
-<div id="txm" class="m"></div><div class="row"><button id="txok">Add text</button><button class="s" id="txcx">Cancel</button></div></div></div>
-<div id="bd" hidden><div class="card"><b>Add border</b>
-<div class="row"><label>Style<select id="bds"><option value="s">Solid</option><option value="d">Double line</option><option value="h">Dashed</option><option value="c">Checkered</option></select></label><label>Colour<button class="s" id="bdc" style="height:36px;border:2px solid var(--fg)"> </button></label></div>
-<label class="m">Thickness: <b id="bdwv">2</b> stitches<input type="range" id="bdw" min="1" max="6" value="2"></label>
-<div class="m">The border sits on the outer edge stitches of the pattern. Crop the photo first if you want to keep its edges.</div>
-<div id="bdm" class="m"></div><div class="row"><button id="bdok">Add border</button><button class="s" id="bdcx">Cancel</button></div></div></div>
 <div id="gf" hidden><div class="card"><b>Gradient fill</b>
 <label class="m">Apply to<select id="gfk"><option value="t">Selected threads</option><option value="b">Background (auto-detect)</option><option value="s">Subject (auto-detect)</option><option value="e">Erased area</option></select></label>
 <div id="gfc" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0;max-height:120px;overflow:auto"></div>
@@ -241,7 +262,7 @@ button:disabled{opacity:.4;cursor:default}
 <div class="card"><b>Thread legend</b><div id="leg" class="m">—</div></div>
 </div>
 <div id="ce"><div class="card"><b>Colours</b><div class="m">Tap a thread in the legend to change its colour or symbol, or to delete all its stitches. Use Hide to preview the pattern without a colour.</div>
-<div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="mg2">Merge similar colours</button><button class="s" id="ad2">Add more colours</button><button class="s" id="t_er2">Eraser (background)</button><button class="s" id="ca">Auto symbols</button><button class="s" id="gfo">Gradient fill…</button><button class="s" id="txo">Add text…</button><button class="s" id="bdo">Add border…</button></div>
+<div class="row"><button class="s" id="cg">Greyscale</button><button class="s" id="cse">Sepia</button><button class="s" id="cct">Colourize…</button><button class="s" id="crb">Rainbow</button><button class="s" id="ci">Invert</button><button class="s" id="cr">Reset colours</button><button class="s" id="mg2">Merge similar colours</button><button class="s" id="ad2">Add more colours</button><button class="s" id="t_er2">Eraser (background)</button><button class="s" id="ca">Auto symbols</button><button class="s" id="gfo">Gradient fill…</button></div>
 <div class="row"><label>Hue shift: <b id="hv">0</b>°<input type="range" id="hs" min="-180" max="180" value="0"></label><button class="s" id="hb">Apply</button></div></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -403,7 +424,7 @@ $('sv').onclick=()=>{rd();const n=$('nm').value.trim();if(!G){msg('Choose a phot
 function plist(){const ks=ST.keys();$('pl').innerHTML=ks.length?ks.map(k=>{const n=k.slice(3);let j={};try{j=JSON.parse(ST.get(k))||{}}catch(x){}const dd=j.done||'',dl=j.del||'';let t=0,dn=0;for(let q=0;q<dd.length;q++)if(dl[q]!=='1'){t++;if(dd[q]==='1')dn++}const pc=t?Math.round(dn*100/t):0,en=encodeURIComponent(n);
 return`<div class="pc" data-l="${en}"><img alt="" src="${j.img||''}"><div><b>${n.replace(/</g,'&lt;')}</b><div class="m">${j.w||'?'} stitches wide · ${j.k||'?'} colours · ${pc}% stitched</div></div><button class="s" data-d="${en}">Delete</button></div>`}).join(''):'<p class="m">No projects yet. Tap “New pattern” to start one.</p>'}
 function openP(n){try{const j=JSON.parse(ST.get('xs:'+n));$('br').value=j.bri||0;$('co').value=Math.round((j.con||1)*100);S.name=n;$('nm').value=n;$('w').value=j.w;$('ct').value=j.count;$('k').value=j.k;$('dt').checked=!!j.dither;$('cl').checked=!!j.clean;$('ol').checked=!!j.outline;$('vm').value=j.m;S.img=j.img;$('part').checked=!!j.part;$('bw').checked=!!j.bw;$('bwm').value=j.bwm||'g';$('bwa').checked=j.bwa!==false;$('bws').value=j.bws==null?40:j.bws;$('bwl').value=j.bwl||0;rd();
- SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ops&&j.ops.some(o=>o.t==='add'||o.t==='gf'||o.t==='fl')){replay(j.ops);derive()}else if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('proj')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
+ SRC=new Image();SRC.onload=()=>{S.src=j.src||j.img;S.ed=j.ed&&j.ed.c?j.ed:defEd();IM=renderEd(SRC,S.ed,1400);S.sym=j.sym||{};S.ig=j.ig||null;build(j.done,j.del);if(j.ops&&j.ops.some(o=>o.t==='add'||o.t==='gf'||o.t==='fl'||o.t==='tx'||o.t==='bd')){replay(j.ops);derive()}else if(j.ov&&j.ov.length===P0.length){P0.forEach((o,i)=>{const m=DM.find(d=>d.c===j.ov[i]);if(m)Object.assign(o,m)});derive()}OPS=j.ops||[];UNDO=[];NEWPHOTO=0;$('pg').checked=false;view('proj')};SRC.src=j.src||j.img}catch(x){alert('Couldn’t open that project.')}}
 $('pl').onclick=e=>{const d=e.target.closest('[data-d]'),l=e.target.closest('[data-l]');
  if(d){e.stopPropagation();if(d.dataset.s){ST.del('xs:'+decodeURIComponent(d.dataset.d));if(window.mediaDelAll)mediaDelAll(decodeURIComponent(d.dataset.d));plist()}else{d.dataset.s=1;d.textContent='Tap again'}return}
  if(l)openP(decodeURIComponent(l.dataset.l))};
@@ -483,7 +504,7 @@ function opFn(o){switch(o.t){
    return c=>sr[Math.min(sr.length-1,Math.max(0,Math.floor((lum(c)-lo)/sp*sr.length)))]}
   const pl=pr.map(c=>lab(...c));return c=>pr[near(lab(...c),pl)]}
  default:return c=>c}}
-function applyOp(o){if(o.t==='th')thOp(o);else if(o.t==='add')addOp(o);else if(o.t==='gf')gfOp(o);else if(o.t==='fl')flOp(o);else rcP(opFn(o))}
+function applyOp(o){if(o.t==='th')thOp(o);else if(o.t==='add')addOp(o);else if(o.t==='gf')gfOp(o);else if(o.t==='fl')flOp(o);else if(o.t==='tx')txOp(o);else if(o.t==='bd')bdOp(o);else rcP(opFn(o))}
 function replay(ops){ops.forEach(applyOp)}
 function runOp(o){if(!G||!BS)return;pushUndo();OPS.push(o);HID.clear();applyOp(o);derive();draw();persist()}
 function tint(c){runOp({t:'tint',c:c.slice()})}
@@ -821,7 +842,7 @@ window.addOp=function(o){
   for(let i=0;i<N;i++){if(!sel[i])continue;
    if(S.clean){const x=i%w,y=(i-x)/w;let nb=0;for(let dy=-1;dy<=1&&!nb;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=x+dx,Y=y+dy;if(X<0||Y<0||X>=w||Y>=h)continue;if(sel[Y*w+X]){nb=1;break}}if(!nb)continue}
    G0[i]=slot;if(hp)PQ0[i]=0}})};
-window.restorePal=function(ops,ov){if(ops&&ops.some(o=>o.t==='add'||o.t==='gf'||o.t==='fl'))replay(ops);else applyOv(ov)};
+window.restorePal=function(ops,ov){if(ops&&ops.some(o=>o.t==='add'||o.t==='gf'||o.t==='fl'||o.t==='tx'||o.t==='bd'))replay(ops);else applyOv(ov)};
 function pickAdd(n){const w=S.w,h=S.h,N=w*h;derive();
  const live=new Set(P.map(p=>p.c)),pool=(S.bw&&!S.ig)?(S.bwm==='2'?[IBK,IWH]:NG):DM.map((m,i)=>i),cand=pool.filter(i=>DM[i]&&!live.has(DM[i].c));
  if(!cand.length)return[];
@@ -850,7 +871,7 @@ function rebuildOps(ops){const pre=state(),ow=BS.w,oD=D,oX=DEL,hid=[...HID];push
  const n=S.w*S.h;DEL=rs(oX,ow,S.w,S.h);D=rs(oD,ow,S.w,S.h);for(let i=0;i<n;i++)if(DEL[i])D[i]=0;
  OPS=ops.slice();replay(OPS);hid.forEach(c=>HID.add(c));derive();draw();persist()}
 const cr0=$('cr').onclick;
-$('cr').onclick=()=>{if(!G)return;if(OPS.some(o=>o.t==='add'||o.t==='gf'||o.t==='fl')){rebuildOps([]);msg('Colours reset.');return}cr0()};
+$('cr').onclick=()=>{if(!G)return;if(OPS.some(o=>o.t==='add'||o.t==='gf'||o.t==='fl'||o.t==='tx'||o.t==='bd')){rebuildOps([]);msg('Colours reset.');return}cr0()};
 
 /* ---------- 2. Session timer ---------- */
 const fmt=ms=>{const s=Math.floor(ms/1000),p=v=>String(v).padStart(2,'0');return p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60)};
@@ -1060,37 +1081,177 @@ $('gfok').onclick=()=>{if(!G||!BS)return;const kind=$('gfk').value,sel=new Set([
  $('gf').hidden=true;runOp({t:'gf',m:gRle(m),st:GF.st.slice(),d:$('gfd').value,n:+$('gfn').value,b:$('gfb').value,er:kind==='e'?1:0})};
 </script>
 <script>
-/* ===== text and borders ===== */
-
-function flOp(o){if(!G0||!o.m)return;const N=G0.length,m=gUn(o.m,N),d=DM.find(x=>x.c===o.c);if(!m||!d)return;const hp=PQ0&&PQ0.length===N,base=P0.length;
+/* ===== text & borders (own tab) ===== */
+function flOp(o){if(!G0||!o.m)return;const N=G0.length,m=gUn(o.m,N),d=DM.find(x=>x.c===o.c);if(!m||!d)return;tbPaint(m,d)}
+function tbPaint(m,d){const N=G0.length,hp=PQ0&&PQ0.length===N,base=P0.length;
  P0.push({c:d.c,n:d.n,h:d.h,l:d.l,s:'',q:0});if(S.o0)S.o0.push(d.c);for(let i=0;i<N;i++)if(m[i]){G0[i]=base;DEL[i]=0;if(hp)PQ0[i]=0}}
-function bdMaskF(W,H,st,n){const m=new Uint8Array(W*H);for(let y=0;y<H;y++)for(let x=0;x<W;x++){const d=Math.min(x,y,W-1-x,H-1-y),a=(d===y||d===H-1-y)?x:y;
- m[y*W+x]=st==='s'?d<n:st==='d'?(d<n||(d>n&&d<2*n+1)):st==='h'?(d<n&&a%4<3):(d<n&&(x+y)%2===0)?1:0}return m}
-
-const FL={tx:'#000000',bd:'#8b1e2d'};
-function flUI(){$('txc').style.background=FL.tx;$('bdc').style.background=FL.bd}
-function pickFL(k){const c=hx(FL[k]);[wh.h,wh.s,wh.v]=r2h(...c);$('vv').value=Math.round(wh.v*100);dm='fl:'+k;$('dt2').textContent=k==='tx'?'Text colour':'Border colour';
- $('symrow').hidden=true;if($('delrow'))$('delrow').hidden=true;$(k).hidden=true;$('dlg').hidden=false;wheel()}
-const fOk=$('ok').onclick,fCx=$('cx').onclick;
-$('ok').onclick=function(e){if(typeof dm==='string'&&dm.startsWith('fl:')){const k=dm.slice(3),c=h2r(wh.h,wh.s,wh.v);FL[k]='#'+c.map(x=>x.toString(16).padStart(2,'0')).join('');dm=null;$('dlg').hidden=true;flUI();$(k).hidden=false;return}return fOk.call(this,e)};
-$('cx').onclick=function(e){const g=typeof dm==='string'&&dm.startsWith('fl:'),k=g&&dm.slice(3);const r=fCx.call(this,e);if(g){dm=null;$('dlg').hidden=true;flUI();$(k).hidden=false}return r};
-$('txo').onclick=()=>{if(!G||!BS)return;$('txm').textContent='';flUI();$('tx').hidden=false};
-$('bdo').onclick=()=>{if(!G||!BS)return;$('bdm').textContent='';flUI();$('bd').hidden=false};
-$('txc').onclick=()=>pickFL('tx');$('bdc').onclick=()=>pickFL('bd');
-$('txcx').onclick=()=>$('tx').hidden=true;$('bdcx').onclick=()=>$('bd').hidden=true;
-$('txs').oninput=()=>$('txsv').textContent=$('txs').value;$('bdw').oninput=()=>$('bdwv').textContent=$('bdw').value;
-const flRun=(m,hex)=>runOp({t:'fl',m:gRle(m),c:DM[near(lab(...hx(hex)),DML)].c});
-$('bdok').onclick=()=>{if(!G||!BS)return;const n=+$('bdw').value;if(2*n+1>=Math.min(S.w,S.h)){$('bdm').textContent='The pattern is too small for that thickness.';return}
- $('bd').hidden=true;flRun(bdMaskF(S.w,S.h,$('bds').value,n),FL.bd)};
-$('txok').onclick=()=>{if(!G||!BS)return;const t=$('txi').value.trim();if(!t){$('txm').textContent='Type some text first.';return}
- const W=S.w,H=S.h,sz=+$('txs').value,f=$('txf').value.replace('{s}',sz+'px'),cv=document.createElement('canvas'),x=cv.getContext('2d');
- x.font=f;const tw=Math.ceil(x.measureText(t).width)+4,th=Math.ceil(sz*1.5);cv.width=tw;cv.height=th;x.font=f;x.fillStyle='#000';x.textBaseline='middle';x.fillText(t,2,th/2);
+function txRaster(t,f,sz){sz=Math.max(3,Math.min(300,sz));const cv=document.createElement('canvas'),x=cv.getContext('2d'),fs=f.replace('{s}',sz.toFixed(1)+'px');
+ x.font=fs;const tw=Math.ceil(x.measureText(t).width)+8,th=Math.ceil(sz*1.8)+6;if(tw>3000||tw<9)return null;cv.width=tw;cv.height=th;
+ x.font=fs;x.fillStyle='#000';x.textBaseline='middle';x.fillText(t,4,th/2);
  const d=x.getImageData(0,0,tw,th).data;let x0=tw,x1=-1,y0=th,y1=-1;
  for(let y=0;y<th;y++)for(let i=0;i<tw;i++)if(d[(y*tw+i)*4+3]>110){if(i<x0)x0=i;if(i>x1)x1=i;if(y<y0)y0=y;if(y>y1)y1=y}
- if(x1<0){$('txm').textContent='Nothing to draw. Try a bigger height.';return}
- const bw=x1-x0+1,bh=y1-y0+1,ox=Math.round((W-bw)*$('txx').value/100),oy=Math.round((H-bh)*$('txy').value/100),m=new Uint8Array(W*H);let c=0;
- for(let y=0;y<bh;y++)for(let i=0;i<bw;i++)if(d[((y+y0)*tw+i+x0)*4+3]>110){const X=ox+i,Y=oy+y;if(X>=0&&X<W&&Y>=0&&Y<H){m[Y*W+X]=1;c++}}
- if(!c){$('txm').textContent='The text is outside the pattern. Move it or lower the height.';return}
- $('tx').hidden=true;flRun(m,FL.tx);if(bw>W||bh>H)msg('Part of the text is cut off. Undo and lower the height.')};
+ if(x1<0)return null;const w=x1-x0+1,h=y1-y0+1,b=new Uint8Array(w*h);
+ for(let y=0;y<h;y++)for(let i=0;i<w;i++)if(d[((y+y0)*tw+i+x0)*4+3]>110)b[y*w+i]=1;return{w,h,b}}
+// resolution-independent text: uses the locked mask when the pattern size is unchanged, otherwise redraws it
+function txOp(o){if(!G0)return;const N=G0.length,W=S.w,H=S.h,d=DM.find(x=>x.c===o.c);if(!d)return;let m=null;
+ if(o.n===N&&o.W===W&&o.m)m=gUn(o.m,N);
+ if(!m){const r=txRaster(o.s,o.f,o.z*H/o.H);if(!r)return;m=new Uint8Array(N);const ox=Math.round(o.cx*W-r.w/2),oy=Math.round(o.cy*H-r.h/2);
+  for(let j=0;j<r.h;j++)for(let i=0;i<r.w;i++)if(r.b[j*r.w+i]){const X=ox+i,Y=oy+j;if(X>=0&&X<W&&Y>=0&&Y<H)m[Y*W+X]=1}}
+ tbPaint(m,d)}
+// border: tile rows (outer edge first), letters a/b/c = colours, '.' = leave as is (or band colour)
+function bdBuild(W,H,o){const T=o.T,L=o.L,ins=o.ins||0;if(!T||!L||!o.rows||2*(ins+T)>=Math.min(W,H))return null;
+ const v=new Uint8Array(W*H),used=[0,0,0,0,0],lw=W-2*ins,lh=H-2*ins,sx=o.ctr?((lw-1)>>1):0,sy=o.ctr?((lh-1)>>1):0,K={a:1,b:2,c:3};
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const dx=Math.min(x,W-1-x),dy=Math.min(y,H-1-y),r=Math.min(dx,dy)-ins;if(r<0||r>=T)continue;
+  const a=dy<=dx?(y<=H-1-y?x:W-1-x)-ins-sx:(x>=W-1-x?y:H-1-y)-ins-sy,ch=o.rows[r][((a%L)+L)%L];let k=K[ch]||0;if(!k&&o.bg)k=4;if(k){v[y*W+x]=k;used[k]=1}}
+ return{v,used}}
+function bdOp(o){if(!G0)return;const W=S.w,H=S.h,r=bdBuild(W,H,o);if(!r)return;const N=W*H,hp=PQ0&&PQ0.length===N,sl={};
+ for(let k=1;k<=4;k++)if(r.used[k]){const d=DM.find(x=>x.c===o.cs[k-1]);if(d){sl[k]=P0.length;P0.push({c:d.c,n:d.n,h:d.h,l:d.l,s:'',q:0});if(S.o0)S.o0.push(d.c)}}
+ for(let i=0;i<N;i++){const k=r.v[i];if(k&&sl[k]!==undefined){G0[i]=sl[k];DEL[i]=0;if(hp)PQ0[i]=0}}}
+(function(){
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TC={tx:'#000000',ba:'#8b1e2d',bb:'#f2d9a0',bc:'#27426b',bg:'#fbf3dc'};
+const dmc=hex=>DM[near(lab(...hx(hex)),DML)],curTab=()=>{const b=document.querySelector('#tabs button.on');return b?b.dataset.tab:''},tbOn=()=>cur==='make'&&curTab()==='tb'&&!!G;
+let sub='tx',BDP=null,CT={T:5,L:8,g:[]},BR='a',SV=[];
+try{SV=JSON.parse(ST.get('xi:bdl'))||[]}catch(e){}
+/* ---------- border patterns ---------- */
+const mkT=(T,L,f)=>Array.from({length:T},(_,r)=>Array.from({length:L},(_,c)=>f(r,c)||'.').join(''));
+const PRE=[
+ {id:'zig',n:'Zigzag',T:4,L:6,rows:mkT(4,6,(r,c)=>r===[0,1,2,3,2,1][c]&&'a')},
+ {id:'wav',n:'Waves',T:5,L:12,rows:mkT(5,12,(r,c)=>r===Math.round(2+2*Math.sin(2*Math.PI*c/12))&&'a')},
+ {id:'sca',n:'Scallops',T:4,L:8,rows:mkT(4,8,(r,c)=>{const x=(c-3.5)/3.5;return r>=3-Math.round(3*Math.sqrt(Math.max(0,1-x*x)))&&'a'})},
+ {id:'dia',n:'Diamonds',T:5,L:4,rows:mkT(5,4,(r,c)=>Math.abs(r-2)+Math.abs(c-2)===2&&'a')},
+ {id:'lat',n:'Lattice',T:4,L:4,rows:mkT(4,4,(r,c)=>(r===c||r+c===3)&&'a')},
+ {id:'squ',n:'Squares',T:5,L:6,rows:['aaaaa.','a...a.','a...a.','a...a.','aaaaa.']},
+ {id:'mea',n:'Meander (key)',T:4,L:8,rows:['aaaa...a','...a...a','...a...a','...aaaaa']},
+ {id:'saw',n:'Sawtooth',T:4,L:8,rows:mkT(4,8,(r,c)=>r>=(c>>1)&&'a')},
+ {id:'rop',n:'Rope (2 colours)',T:3,L:4,rows:mkT(3,4,(r,c)=>(((c-r)%4+4)%4)<2?'a':'b')},
+ {id:'plu',n:'Plus signs',T:3,L:4,rows:['.a..','aaa.','.a..']},
+ {id:'hea',n:'Hearts',T:6,L:8,rows:['.aa.aa..','aaaaaaa.','aaaaaaa.','.aaaaa..','..aaa...','...a....']}];
+function lineTile(s,n){if(s==='s')return{T:n,L:1,rows:Array(n).fill('a')};
+ if(s==='d'){const T=2*n+1;return{T,L:1,rows:Array.from({length:T},(_,r)=>r===n?'.':'a')}}
+ if(s==='h')return{T:n,L:4,rows:Array(n).fill('aaa.')};
+ return{T:n,L:2,rows:Array.from({length:n},(_,r)=>r%2?'.a':'a.')}}
+function bdOpts(keep){const s=$('bdp'),v=keep||s.value||'ln_s';s.innerHTML='';
+ const grp=(l,items)=>{const g=document.createElement('optgroup');g.label=l;items.forEach(([val,n])=>g.appendChild(new Option(n,val)));s.appendChild(g)};
+ grp('Lines',[['ln_s','Solid line'],['ln_d','Double line'],['ln_h','Dashed'],['ln_c','Checkered']]);
+ grp('Patterns',PRE.map(p=>[p.id,p.n]));if(SV.length)grp('My borders',SV.map((u,i)=>['u'+i,u.n]));grp('Draw your own',[['cu','Custom (design below)']]);
+ s.value=[...s.options].some(o=>o.value===v)?v:'ln_s'}
+function bdTile(){const id=$('bdp').value;
+ if(id.startsWith('ln_'))return lineTile(id.slice(3),+$('bdw').value);
+ if(id==='cu')return{T:CT.T,L:CT.L,rows:CT.g.map(r=>r.join(''))};
+ if(id[0]==='u'){const u=SV[+id.slice(1)];return u?{T:u.T,L:u.L,rows:u.rows.slice()}:lineTile('s',2)}
+ const p=PRE.find(q=>q.id===id)||PRE[0];return{T:p.T,L:p.L,rows:p.rows.slice()}}
+function ctInit(t){CT.T=t.T;CT.L=t.L;CT.g=t.rows.map(r=>r.split(''))}
+function ctResize(T,L){T=cl(T|0,1,12);L=cl(L|0,1,32);const g=Array.from({length:T},(_,r)=>Array.from({length:L},(_,c)=>(CT.g[r]&&CT.g[r][c])||'.'));CT.T=T;CT.L=L;CT.g=g}
+const bcol=()=>({a:dmc(TC.ba).h,b:dmc(TC.bb).h,c:dmc(TC.bc).h,'.':null});
+function bdParams(){const t=bdTile();return{rows:t.rows,T:t.T,L:t.L,ins:+$('bdi').value,ctr:$('bdctr').checked,bg:$('bdbg').checked}}
+function tilePv(cv,t,cols,rep){const cs=Math.max(4,Math.min(12,Math.floor(300/(t.L*rep)))),W=Math.max(300,t.L*rep*cs),H=t.T*cs,dp=Math.min(2,devicePixelRatio||1);cv.width=W*dp;cv.height=(H+0)*dp;cv.style.height=(H*(cv.clientWidth||300)/W)+'px';
+ const x=cv.getContext('2d');x.setTransform(dp,0,0,dp,0,0);x.clearRect(0,0,W,H);
+ for(let r=0;r<t.T;r++)for(let c=0;c<W/cs;c++){const ch=t.rows[r][c%t.L],col=cols[ch];if(col){x.fillStyle=col;x.fillRect(c*cs,r*cs,cs,cs)}else if($('bdbg').checked){x.fillStyle=dmc(TC.bg).h;x.fillRect(c*cs,r*cs,cs,cs)}}}
+function ctDraw(){const cv=$('bdg'),cs=Math.max(10,Math.min(34,Math.floor(320/CT.L))),W=CT.L*cs,H=CT.T*cs,dp=Math.min(2,devicePixelRatio||1);cv.width=W*dp;cv.height=H*dp;cv.style.width=W+'px';cv.style.height=H+'px';
+ const x=cv.getContext('2d'),cols=bcol();x.setTransform(dp,0,0,dp,0,0);x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ for(let r=0;r<CT.T;r++)for(let c=0;c<CT.L;c++){const col=cols[CT.g[r][c]];if(col){x.fillStyle=col;x.fillRect(c*cs,r*cs,cs,cs)}}
+ x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=1;x.beginPath();for(let c=0;c<=CT.L;c++){x.moveTo(c*cs+.5,0);x.lineTo(c*cs+.5,H)}for(let r=0;r<=CT.T;r++){x.moveTo(0,r*cs+.5);x.lineTo(W,r*cs+.5)}x.stroke();cv._cs=cs}
+let rfq=0;function tbRefresh(){if(rfq)return;rfq=requestAnimationFrame(()=>{rfq=0;tbRefresh2()})}
+function tbRefresh2(){['txc','bsa','bsb','bsc','bsg'].forEach(k=>{const m={txc:'tx',bsa:'ba',bsb:'bb',bsc:'bc',bsg:'bg'}[k];$(k).style.background=dmc(TC[m]).h});
+ const cols=bcol(),id=$('bdp').value,isLn=id.startsWith('ln_'),t=bdTile(),use=new Set(t.rows.join('').split(''));
+ $('bdtw').hidden=!isLn;$('bdwv').textContent=$('bdw').value;$('bdiv').textContent=$('bdi').value;$('bla').hidden=!use.has('a');$('blb').hidden=!use.has('b');$('blc').hidden=!use.has('c');$('blg').hidden=!$('bdbg').checked;
+ $('bddl').hidden=id[0]!=='u';$('bdcp').hidden=id==='cu';$('bded').hidden=id!=='cu';
+ document.querySelectorAll('#bdbr button').forEach(b=>{b.classList.toggle('on',b.dataset.br===BR);const c=cols[b.dataset.br];b.style.background=c||'var(--bg)'});
+ if(!$('tbbd').hidden){tilePv($('bdpv'),t,cols,3);if(id==='cu')ctDraw()}
+ BDP=null;if(tbOn()&&sub==='bd'){const o=bdParams(),r=bdBuild(S.w,S.h,o);if(r)BDP={v:r.v,W:S.w,H:S.h,h:[null,cols.a,cols.b,cols.c,dmc(TC.bg).h]}}
+ tpSync()}
+/* ---------- text ---------- */
+const TX={s:'',f:'bold {s} sans-serif',sz:14,cx:0,cy:0,r:null,placed:0};
+function txRender(){TX.r=TX.s&&G?txRaster(TX.s,TX.f,TX.sz):null;tpSync()}
+function txFirst(){const w=$('wrap');TX.cx=cl((w.scrollLeft+w.clientWidth/2-24)/S.z,0,S.w);TX.cy=cl((w.scrollTop+Math.min(w.clientHeight,S.h*S.z+24)/2-24)/S.z,0,S.h);
+ TX.sz=cl(Math.round(.8*S.w/(Math.max(4,TX.s.length)*.62)),6,60);$('txs').value=TX.sz;$('txsv').textContent=TX.sz;TX.placed=1}
+$('txi').oninput=()=>{TX.s=$('txi').value.trim();if(TX.s&&!TX.placed&&G)txFirst();if(!TX.s)TX.placed=0;txRender()};
+$('txf').onchange=()=>{TX.f=$('txf').value;$('txfd').hidden=!/UF_/.test(TX.f);txRender()};
+$('txs').oninput=()=>{TX.sz=+$('txs').value;$('txsv').textContent=TX.sz;txRender()};
+document.querySelectorAll('[data-nd]').forEach(b=>b.onclick=()=>{const[a,c]=b.dataset.nd.split(',').map(Number);TX.cx+=a;TX.cy+=c;tpSync()});
+$('txce').onclick=()=>{TX.cx=S.w/2;TX.cy=S.h/2;tpSync()};
+function txLock(){const r=TX.r;if(!r||!G||!BS)return;const W=S.w,H=S.h,ox=Math.round(TX.cx-r.w/2),oy=Math.round(TX.cy-r.h/2),m=new Uint8Array(W*H);let c=0;
+ for(let j=0;j<r.h;j++)for(let i=0;i<r.w;i++)if(r.b[j*r.w+i]){const X=ox+i,Y=oy+j;if(X>=0&&X<W&&Y>=0&&Y<H){m[Y*W+X]=1;c++}}
+ if(!c){msg('The text is off the pattern. Drag it onto the pattern first.');return}
+ const cut=ox<0||oy<0||ox+r.w>W||oy+r.h>H;
+ runOp({t:'tx',s:TX.s,f:TX.f,z:TX.sz,W,H,cx:TX.cx/W,cy:TX.cy/H,c:dmc(TC.tx).c,n:W*H,m:gRle(m)});
+ TX.s='';TX.r=null;TX.placed=0;$('txi').value='';tpSync();msg(cut?'Text locked in, but part ran off the edge and was cut. Undo to adjust.':'Text locked in. Undo steps back.')}
+function txCancel(){TX.s='';TX.r=null;TX.placed=0;$('txi').value='';tpSync()}
+/* ---------- fonts (uploaded, kept on the device) ---------- */
+const UF=[],UFF={},FB=[['Bold sans','bold {s} sans-serif'],['Serif','{s} serif'],['Blocky','bold {s} monospace'],['Script','italic bold {s} cursive']];
+const FDB=()=>new Promise((res,rej)=>{let r;try{r=indexedDB.open('xsfonts',1)}catch(e){rej(e);return}r.onupgradeneeded=()=>r.result.createObjectStore('f',{keyPath:'id',autoIncrement:true});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const fdb=(mode,fn)=>FDB().then(db=>new Promise((res,rej)=>{const t=db.transaction('f',mode);let o;const q=fn(t.objectStore('f'));if(q)q.onsuccess=()=>{o=q.result};t.oncomplete=()=>res(o);t.onerror=()=>rej(t.error)}));
+function fontOpts(sel){const s=$('txf'),v=sel||s.value||FB[0][1];s.innerHTML='';FB.forEach(([n,val])=>s.appendChild(new Option(n,val)));
+ if(UF.length){const g=document.createElement('optgroup');g.label='My fonts';UF.forEach(u=>g.appendChild(new Option(u.n,'{s} "UF_'+u.id+'"')));s.appendChild(g)}
+ s.value=[...s.options].some(o=>o.value===v)?v:FB[0][1];TX.f=s.value;$('txfd').hidden=!/UF_/.test(TX.f)}
+async function fontsLoad(){try{const all=await fdb('readonly',s=>s.getAll());for(const r of all){try{const ff=new FontFace('UF_'+r.id,r.data);await ff.load();document.fonts.add(ff);UFF[r.id]=ff;UF.push({id:r.id,n:r.n})}catch(e){}}fontOpts();if(TX.s)txRender()}catch(e){}}
+$('txfu').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+ try{const buf=await f.arrayBuffer(),n=f.name.replace(/\.[^.]+$/,'').slice(0,40)||'Font';await new FontFace('UF_probe',buf.slice(0)).load();
+  const id=await fdb('readwrite',s=>s.add({n,data:buf})),ff=new FontFace('UF_'+id,buf);await ff.load();document.fonts.add(ff);UFF[id]=ff;UF.push({id,n});fontOpts('{s} "UF_'+id+'"');txRender();msg('Font “'+n+'” added.')}
+ catch(x){msg('That doesn’t look like a font file. Pick a .ttf, .otf or .woff file.')}};
+$('txfd').onclick=async()=>{const b=$('txfd'),m=/UF_(\d+)/.exec(TX.f);if(!m)return;if(!b.dataset.s){b.dataset.s=1;b.textContent='Tap again to remove';return}
+ delete b.dataset.s;b.textContent='Remove this font';const id=+m[1];try{await fdb('readwrite',s=>s.delete(id))}catch(x){}if(UFF[id]){document.fonts.delete(UFF[id]);delete UFF[id]}
+ const i=UF.findIndex(u=>u.id===id);if(i>=0)UF.splice(i,1);fontOpts(FB[0][1]);txRender()};
+/* ---------- colours ---------- */
+document.querySelectorAll('[data-pc]').forEach(b=>b.onclick=()=>{const k=b.dataset.pc,c=hx(TC[k]);[wh.h,wh.s,wh.v]=r2h(...c);$('vv').value=Math.round(wh.v*100);dm='fl:'+k;
+ $('dt2').textContent={tx:'Text colour',ba:'Border colour A',bb:'Border colour B',bc:'Border colour C',bg:'Band colour'}[k];$('symrow').hidden=true;if($('delrow'))$('delrow').hidden=true;$('dlg').hidden=false;wheel()});
+const fOk=$('ok').onclick,fCx=$('cx').onclick;
+$('ok').onclick=function(e){if(typeof dm==='string'&&dm.startsWith('fl:')){const k=dm.slice(3),c=h2r(wh.h,wh.s,wh.v);TC[k]='#'+c.map(x=>x.toString(16).padStart(2,'0')).join('');dm=null;$('dlg').hidden=true;tbRefresh();return}return fOk.call(this,e)};
+$('cx').onclick=function(e){const g=typeof dm==='string'&&dm.startsWith('fl:');const r=fCx.call(this,e);if(g){dm=null;$('dlg').hidden=true}return r};
+/* ---------- border controls ---------- */
+$('bdp').onchange=()=>{if($('bdp').value==='cu'&&!CT.g.length)ctInit(PRE[0]);tbRefresh()};
+['bdw','bdi'].forEach(k=>$(k).oninput=tbRefresh);['bdctr','bdbg'].forEach(k=>$(k).onchange=tbRefresh);
+$('bdcp').onclick=()=>{ctInit(bdTile());$('bdp').value='cu';$('bdrT').value=CT.T;$('bdrL').value=CT.L;tbRefresh()};
+$('bdrT').onchange=$('bdrL').onchange=()=>{ctResize(+$('bdrT').value,+$('bdrL').value);$('bdrT').value=CT.T;$('bdrL').value=CT.L;tbRefresh()};
+$('bdbr').onclick=e=>{const b=e.target.closest('[data-br]');if(b){BR=b.dataset.br;tbRefresh()}};
+$('bdclr').onclick=()=>{CT.g=CT.g.map(r=>r.map(()=>'.'));tbRefresh()};
+$('bdmr').onclick=()=>{CT.g.forEach(r=>{for(let c=0;c<(CT.L>>1);c++)r[CT.L-1-c]=r[c]});tbRefresh()};
+$('bdfv').onclick=()=>{CT.g.reverse();tbRefresh()};
+(function(){const cv=$('bdg');let on=0;const at=e=>{const b=cv.getBoundingClientRect(),cs=cv._cs||20,c=Math.floor((e.clientX-b.left)/(b.width/CT.L)),r=Math.floor((e.clientY-b.top)/(b.height/CT.T));if(r>=0&&c>=0&&r<CT.T&&c<CT.L&&CT.g[r][c]!==BR){CT.g[r][c]=BR;tbRefresh()}};
+ cv.addEventListener('pointerdown',e=>{on=1;cv.setPointerCapture(e.pointerId);at(e);e.preventDefault()});cv.addEventListener('pointermove',e=>{if(on)at(e)});cv.addEventListener('pointerup',()=>on=0);cv.addEventListener('pointercancel',()=>on=0)})();
+$('bdsv').onclick=()=>{const n=$('bdnm').value.trim()||('Border '+(SV.length+1));if(!CT.g.some(r=>r.some(c=>c!=='.'))){msg('Paint something on the grid first.');return}
+ SV.push({n,T:CT.T,L:CT.L,rows:CT.g.map(r=>r.join(''))});ST.set('xi:bdl',JSON.stringify(SV));$('bdnm').value='';bdOpts('u'+(SV.length-1));tbRefresh();msg('Saved “'+n+'” to My borders.')};
+$('bddl').onclick=()=>{const b=$('bddl'),id=$('bdp').value;if(id[0]!=='u')return;if(!b.dataset.s){b.dataset.s=1;b.textContent='Tap again to delete';return}
+ delete b.dataset.s;b.textContent='Delete this border';SV.splice(+id.slice(1),1);ST.set('xi:bdl',JSON.stringify(SV));bdOpts('ln_s');tbRefresh()};
+function bdApply(){if(!G||!BS)return;const o=bdParams();if(!bdBuild(S.w,S.h,o)){msg('The pattern is too small for that border. Make it thinner or reduce the gap.');return}
+ const cs=[dmc(TC.ba).c,dmc(TC.bb).c,dmc(TC.bc).c,dmc(TC.bg).c];runOp(Object.assign({t:'bd',cs},o));msg('Border added. Undo steps back, or add another with a gap from the edge.')}
+/* ---------- tab, sub-tabs, action bar ---------- */
+function tpSync(){const on=tbOn(),txA=on&&sub==='tx'&&!!TX.r,bdA=on&&sub==='bd'&&!!BDP;
+ $('tbtx').hidden=sub!=='tx';$('tbbd').hidden=sub!=='bd';document.querySelectorAll('#tbs [data-sub]').forEach(b=>b.classList.toggle('on',b.dataset.sub===sub));
+ const bar=$('tpbar');bar.hidden=!(txA||bdA);document.body.classList.toggle('tpb',!bar.hidden);
+ $('tpt').textContent=txA?'Drag the text to move it · pinch with two fingers to resize':'Previewing the border on the chart';$('tpc').hidden=!txA;$('tpk').textContent=txA?'Lock in place':'Add border';
+ $('wrap').classList.toggle('tpon',txA);if(G&&cur==='make'&&on&&!$('cv').hidden)redraw()}
+$('tbs').onclick=e=>{const b=e.target.closest('[data-sub]');if(b){sub=b.dataset.sub;if(sub==='bd'){bdOpts();}tbRefresh()}};
+const showChart=()=>$('wrap').scrollIntoView({behavior:'smooth',block:'center'});$('tpv').onclick=showChart;$('txi').onchange=()=>{if(TX.r)showChart()};
+$('tpk').onclick=()=>{if(sub==='tx')txLock();else bdApply()};$('tpc').onclick=txCancel;
+$('tabs').addEventListener('click',()=>setTimeout(tbRefresh,0));
+const v2=view;view=function(v){v2(v);if(v==='make'||v==='home')tbRefresh();else tpSync()};
+/* ---------- overlay on the chart ---------- */
+const dcw=drawChart;
+drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dcw(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(!vp||!G||!tbOn())return;
+ const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
+ if(sub==='tx'&&TX.r){const r=TX.r,ox=Math.round(TX.cx-r.w/2),oy=Math.round(TX.cy-r.h/2);x.fillStyle=dmc(TC.tx).h;
+  for(let j=0;j<r.h;j++){const Y=oy+j;if(Y<r0||Y>=r1)continue;for(let i=0;i<r.w;i++){const X=ox+i;if(X<c0||X>=c1||!r.b[j*r.w+i])continue;x.fillRect(g+(X-c0)*z-vp.ox,g+(Y-r0)*z-vp.oy,z+.5,z+.5)}}
+  x.setLineDash([6,4]);x.strokeStyle='#d00';x.lineWidth=2;x.strokeRect(g+(ox-c0)*z-vp.ox,g+(oy-r0)*z-vp.oy,r.w*z,r.h*z);x.setLineDash([])}
+ else if(sub==='bd'&&BDP&&BDP.W===S.w&&BDP.H===S.h){for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const k=BDP.v[r*w+c];if(!k)continue;x.fillStyle=BDP.h[k];x.fillRect(g+(c-c0)*z-vp.ox,g+(r-r0)*z-vp.oy,z+.5,z+.5)}}
+ x.restore()};
+/* ---------- drag to move, pinch to resize ---------- */
+const wrap=$('wrap'),ptr=new Map();let gs=null;const want=()=>tbOn()&&sub==='tx'&&!!TX.r;
+const toCell=e=>{const b=$('cv').getBoundingClientRect();return{x:(e.clientX-b.left+wrap.scrollLeft-24)/S.z,y:(e.clientY-b.top+wrap.scrollTop-24)/S.z}};
+let fq=0;const sched=()=>{if(!fq)fq=requestAnimationFrame(()=>{fq=0;redraw()})};
+wrap.addEventListener('pointerdown',e=>{if(e.target.id!=='cv'||!want())return;e.stopPropagation();try{e.target.setPointerCapture(e.pointerId)}catch(x){}
+ ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(ptr.size===1){const p=toCell(e),r=TX.r,mg=Math.max(1,24/S.z),inside=Math.abs(p.x-TX.cx)<=r.w/2+mg&&Math.abs(p.y-TX.cy)<=r.h/2+mg;gs={m:inside?'mv':'pan',x:e.clientX,y:e.clientY,cx:TX.cx,cy:TX.cy,sl:wrap.scrollLeft,st:wrap.scrollTop}}
+ else if(ptr.size===2){const[a,b]=[...ptr.values()];gs={m:'sc',d:Math.hypot(a.x-b.x,a.y-b.y)||1,sz:TX.sz}}else gs=null},true);
+wrap.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId)||!gs)return;ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(gs.m==='sc'&&ptr.size>=2){const[a,b]=[...ptr.values()],d=Math.hypot(a.x-b.x,a.y-b.y);TX.sz=cl(gs.sz*d/gs.d,4,200);$('txs').value=Math.min(200,Math.round(TX.sz));$('txsv').textContent=Math.round(TX.sz);TX.r=txRaster(TX.s,TX.f,TX.sz);sched()}
+ else if(ptr.size===1){const dx=e.clientX-gs.x,dy=e.clientY-gs.y;if(gs.m==='mv'){TX.cx=gs.cx+dx/S.z;TX.cy=gs.cy+dy/S.z;sched()}else{wrap.scrollLeft=gs.sl-dx;wrap.scrollTop=gs.st-dy}}
+ e.stopPropagation()},true);
+const pu=e=>{if(!ptr.has(e.pointerId))return;ptr.delete(e.pointerId);gs=null;if(!ptr.size)tpSync()};wrap.addEventListener('pointerup',pu,true);wrap.addEventListener('pointercancel',pu,true);
+['touchstart','touchmove'].forEach(t=>wrap.addEventListener(t,e=>{if(want()&&e.touches.length>1){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault()}},{capture:true,passive:false}));
+window.TBX={TX,TC,PRE};bdOpts();fontOpts();ctInit(PRE[0]);$('bdrT').value=CT.T;$('bdrL').value=CT.L;fontsLoad();tbRefresh();
+})();
 </script>
+
 </body></html>

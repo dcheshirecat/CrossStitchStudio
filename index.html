@@ -701,6 +701,7 @@ drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);
  if(S.rr>=0){const Y=g+(S.rr-r0)*z-vp.oy;x.fillRect(g,Y,vp.vw,z);x.strokeRect(g,Y,vp.vw,z)}
  if(S.rc>=0){const X=g+(S.rc-c0)*z-vp.ox;x.fillRect(X,g,z,vp.vh);x.strokeRect(X,g,z,vp.vh)}
  if(S.park>=0){const X=g+(S.park%w-c0)*z-vp.ox,Y=g+(Math.floor(S.park/w)-r0)*z-vp.oy;x.strokeStyle='#00f';x.lineWidth=3;x.strokeRect(X,Y,z,z);x.fillStyle='#00f';x.font='bold '+Math.max(10,z)+'px sans-serif';x.fillText('⚑',X+z/2,Y+z/2)}
+if(S.ctr){const cx=g+(w/2-c0)*z-vp.ox,cy=g+(S.h/2-r0)*z-vp.oy;x.strokeStyle='#0a0';x.lineWidth=2;x.setLineDash([6,4]);x.beginPath();x.moveTo(cx,g);x.lineTo(cx,vp.vh);x.moveTo(g,cy);x.lineTo(vp.vw,cy);x.stroke();x.setLineDash([]);x.fillStyle='#0a0';x.beginPath();x.arc(cx,cy,Math.max(4,z*.4),0,7);x.fill()}
  x.restore()};
 const s0=stats;
 stats=function(){s0();if(!G)return;const pc={},iv=INV();let tot=0,dn=0;
@@ -709,8 +710,8 @@ stats=function(){s0();if(!G)return;const pc={},iv=INV();let tot=0,dn=0;
   const b=document.createElement('button');b.className='s';b.dataset.h=1;b.textContent=S.hl===p.c?'◎ on':'◎';r.appendChild(b)});
  const h=(tot-dn)/spd(),e=$('ps');if(e)e.textContent=(tot-dn)+' stitches left · ≈ '+(h<1?Math.round(h*60)+' min':h.toFixed(1)+' h')+' at '+spd()+' st/h'};
 $('leg').addEventListener('click',e=>{const b=e.target.closest('[data-h]');if(b){e.stopPropagation();const c=P[+b.closest('.lg').dataset.i].c;S.hl=S.hl===c?null:c;draw()}},true);
-function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_ka','Keep awake'],['t_lk','Lock']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:6px">Highlight a colour with ◎ in the legend.</div><div class="tmbox" style="margin-top:8px"></div>';renderTm();upd()}
-function upd(){const o={t_hf:S.hf,t_rl:S.mode==='rule',t_pk:S.mode==='park',t_er:S.mode==='erase',t_ka:S.ka,t_lk:S.lock};for(const k in o){const b=$(k);if(b)b.style.outline=o[k]?'2px solid var(--ac)':''}$('wrap').classList.toggle('mk',!!S.mode||!!S.prog)}
+function tb(){$('tb').innerHTML='<div class="row" style="margin:0">'+[['t_hf','Hide done'],['t_rl','Ruler'],['t_rc','Clear ruler'],['t_pk','Park here'],['t_jp','Jump: parked'],['t_jl','Jump: last'],['t_ct','Find centre'],['t_ka','Keep awake'],['t_lk','Lock']].map(a=>`<button class="s" id="${a[0]}">${a[1]}</button>`).join(' ')+'</div><div class="m" style="margin-top:6px">Highlight a colour with ◎ in the legend.</div><div class="tmbox" style="margin-top:8px"></div>';renderTm();upd()}
+function upd(){const o={t_hf:S.hf,t_rl:S.mode==='rule',t_pk:S.mode==='park',t_er:S.mode==='erase',t_ka:S.ka,t_lk:S.lock,t_ct:S.ctr};for(const k in o){const b=$(k);if(b)b.style.outline=o[k]?'2px solid var(--ac)':''}$('wrap').classList.toggle('mk',!!S.mode||!!S.prog)}
 const cellAt=e=>{const b=$('cv').getBoundingClientRect(),w=$('wrap'),px=e.clientX-b.left,py=e.clientY-b.top;if(px<24||py<24)return -1;const x=Math.floor((px+w.scrollLeft-24)/S.z),y=Math.floor((py+w.scrollTop-24)/S.z);return x<0||y<0||x>=S.w||y>=S.h?-1:y*S.w+x};
 const jump=i=>{if(i<0||!G){msg('Nothing there yet.');return}const w=$('wrap');w.scrollLeft=Math.max(0,(i%S.w)*S.z-w.clientWidth/2+24);w.scrollTop=Math.max(0,Math.floor(i/S.w)*S.z-w.clientHeight/2+24);redraw()};
 function er(i){if(i>=0&&!DEL[i]){DEL[i]=1;D[i]=0;derive();redraw()}}
@@ -730,6 +731,7 @@ function merge(){derive();if(P.length<3){msg('Already very few colours.');return
   const s=A.q<B.q?A:B,t=s===A?B:A,o={t:'th',o:s.c,n:t.c};OPS.push(o);thOp(o);derive()}
  HID.clear();draw();persist();msg(n0+' → '+P.length+' colours. Tap again to merge more, Undo to step back.')}
 const T={t_hf:()=>{S.hf^=1;draw()},t_rl:()=>{S.mode=S.mode==='rule'?'':'rule'},t_rc:()=>{S.rr=S.rc=-1;redraw()},t_pk:()=>{S.mode=S.mode==='park'?'':'park';if(S.mode)msg('Tap the cell where you stopped.')},
+t_ct:()=>{S.ctr=!S.ctr;if(!S.ctr){msg('');draw();return}const w=S.w,h=S.h,f=(n,u)=>n%2?u+' '+(n+1)/2:u+'s '+n/2+' and '+(n/2+1);msg('Centre of the pattern: '+f(w,'column')+', '+f(h,'row')+'. Shown with green dashed lines.');jump(Math.floor(h/2)*w+Math.floor(w/2))},
  t_jp:()=>jump(S.park),t_jl:()=>{let i=S.last;if(i<0)for(let q=D.length-1;q>=0;q--)if(D[q]){i=q;break}jump(i)},
  t_er:()=>{S.mode=S.mode==='erase'?'':'erase';if(S.mode)msg('Drag over stitches to remove them (background stays bare). Undo to restore.')},
  t_mg:merge,t_ka:()=>{S.ka^=1;if(window.Android&&Android.keepOn)Android.keepOn(!!S.ka);msg(S.ka?'Screen will stay on.':'')},

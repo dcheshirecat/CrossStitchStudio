@@ -188,7 +188,7 @@ body.tpb{padding-bottom:84px}
 <button class="hc" data-go="exp"><span class="hi">🖨️</span><span class="ht"><b>Export</b><small>PDF, PNG, CSV or shopping list.</small></span><span class="ar">→</span></button>
 <button class="hc" id="pdup"><span class="hi">📑</span><span class="ht"><b>Duplicate Project</b><small>Try a variation without losing this one.</small></span><span class="ar">→</span></button>
 </div>
-<div id="shop" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Shopping list</b></div><div class="card"><div class="m" id="ss"></div><div class="row"><button class="s" id="sf1">To buy</button><button class="s" id="sf2">All threads</button><button class="s" id="ssv">Save as text</button></div><div class="row"><label>Also show numbers for<select id="ssb"><option value="0">DMC only</option></select></label></div><div class="m" style="margin-top:6px">Tick the threads you already own. Skeins are estimates (2 strands, 20% waste).</div><div id="sl"></div></div></div>
+<div id="shop" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Shopping list</b></div><div class="card"><div class="m" id="ss"></div><div class="row"><button class="s" id="sf1">To buy</button><button class="s" id="sf2">All threads</button><button class="s" id="ssv">Save as text</button></div><div class="row"><label>Also show numbers for<select id="ssb"><option value="0">DMC only</option></select></label></div><div class="row"><label>Strands of floss in this project<select id="sst"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label></div><div class="m" id="sn" style="margin-top:6px"></div><div id="sl"></div></div></div>
 <div id="stats" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Progress</b></div><div class="card"><b id="st1"></b><div style="height:10px;background:var(--bd);border-radius:5px;margin:8px 0"><div id="sbar" style="height:10px;width:0;background:var(--ac);border-radius:5px"></div></div><div class="m" id="ps"></div><div class="row"><label>Your speed (stitches per hour)<input type="number" id="spd"></label></div></div><div class="card"><b>By colour</b><div id="sc"></div></div></div>
 <div id="exp" class="scr" hidden><div class="bar"><button class="s" data-go="proj">‹ Project</button><b>Export</b></div><button class="hc" id="xpdf"><span class="hi">📄</span><span class="ht"><b>PDF pattern</b><small>Chart pages, legend and thread list.</small></span><span class="ar">→</span></button>
 <button class="hc" data-x="png"><span class="hi">🖼️</span><span class="ht"><b>Chart image (PNG)</b><small>Save the whole chart as a picture.</small></span><span class="ar">→</span></button>
@@ -344,7 +344,7 @@ function build(done,del){
  for(let i=0;i<n;i++)if(DEL[i])D[i]=0;
  BS={w:S.w,k:S.k,dither:S.dither,clean:S.clean,part:S.part,bri:S.bri,con:S.con,bw:S.bw,bwm:S.bwm,bwa:S.bwa,bws:S.bws,bwl:S.bwl,ig:S.ig};
 }
-const sk=q=>Math.max(1,Math.ceil(q*2.4*(25.4/S.count)*2*1.2/8000));
+const sk=q=>Math.max(1,Math.ceil(q*4.8*(25.4/S.count)*(S.str||2)*1.2/48000));
 function drawChart(cv,c0,r0,c1,r1,z,m,sd,hf,vp){
  const gu=24,W=c1-c0,H=r1-r0,w=S.w,bl=j=>DEL[j]||(hf&&HID.has(P[G[j]].c));const ox=vp?vp.ox:0,oy=vp?vp.oy:0,cw=vp?vp.vw:gu+W*z,ch=vp?vp.vh:gu+H*z,pw=Math.round(cw*K),ph=Math.round(ch*K);if(cv.width!==pw)cv.width=pw;if(cv.height!==ph)cv.height=ph;cv.style.width=cw+'px';cv.style.height=ch+'px';const x=cv.getContext('2d');x.setTransform(K,0,0,K,0,0);
  x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.textAlign='center';x.textBaseline='middle';
@@ -688,9 +688,9 @@ view=function(v){const pv=cur;EX.forEach(i=>$(i).hidden=true);if(v!=='make')S.mo
  v0(v);if(v==='home')hold();if(v==='work')tb();$(v==='make'?'cslot':'hold').appendChild($('ce'));
  if(v==='make')$('mk').dataset.go=S.name&&ST.get('xs:'+S.name)?'proj':'home'};
 window.goBack=()=>{if($('lbd')&&!$('lbd').hidden){$('lbd').hidden=true;return true}if(typeof E!=='undefined'&&E){edClose();return true}if(window.mvOpen&&mvOpen()){mvClose();return true}if(cur==='home')return false;const o=S.name&&ST.get('xs:'+S.name);view(cur==='fab'?$('fabb').dataset.go:cur==='proj'?'prj':['work','shop','stats','exp','runs','sess','media'].includes(cur)?'proj':cur==='make'?(o?'proj':'home'):'home');return true};
-const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+',"sess":'+JSON.stringify(S.sess||[])+',"tm":'+JSON.stringify(S.tm||null)+'}'};
-const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.sess=q.sess||[];S.tm=q.tm||null;S.hl=null;S.rr=S.rc=-1};
-$('nw').addEventListener('click',()=>{S.sess=[];S.tm=null;S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
+const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"str":'+(S.str||2)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+',"sess":'+JSON.stringify(S.sess||[])+',"tm":'+JSON.stringify(S.tm||null)+'}'};
+const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.str=q.str||2;S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.sess=q.sess||[];S.tm=q.tm||null;S.hl=null;S.rr=S.rc=-1};
+$('nw').addEventListener('click',()=>{S.sess=[];S.tm=null;S.str=2;S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
 function gf(cv,c0,r0,c1,r1,z,m,hf,vp){const gu=24,w=S.w,W=c1-c0,H=r1-r0,ox=vp?vp.ox:0,oy=vp?vp.oy:0,cw=vp?vp.vw:gu+W*z,ch=vp?vp.vh:gu+H*z,x=cv.getContext('2d');
  const LM=P.map(p=>{const a=hx(p.h),l=(.299*a[0]+.587*a[1]+.114*a[2])/255;return m==='real'?(l+.92)/2:l});
  const lum=(r,c)=>{if(r<0||c<0||r>=S.h||c>=w)return null;const i=r*w+c;return DEL[i]||(hf&&HID.has(P[G[i]].c))?1:LM[G[i]]};
@@ -747,7 +747,7 @@ t_ct:()=>{S.ctr=!S.ctr;if(!S.ctr){msg('');draw();return}const w=S.w,h=S.h,f=(n,u
  t_mg:merge,t_ka:()=>{S.ka^=1;if(window.Android&&Android.keepOn)Android.keepOn(!!S.ka);msg(S.ka?'Screen will stay on.':'')},
  t_lk:()=>{S.lock^=1;$('z').disabled=$('zf').disabled=!!S.lock;if(S.lock)S.mode='';msg(S.lock?'Locked: no zoom or edits.':'')},
  t_png:()=>{const t=document.createElement('canvas');K=1;drawChart(t,0,0,S.w,S.h,Math.max(8,Math.floor(2000/S.w)),'sym',0);save(t.toDataURL('image/png').split(',')[1],fn()+'.png','image/png');redraw()},
- t_shop:()=>{const iv=INV();save((S.name||'Pattern')+' – shopping list\n'+P.map(p=>(iv[p.c]?'[have] ':'[BUY]  ')+'DMC '+p.c+' '+p.n+(window.cvTag?window.cvTag(p.c,' | '):'')+' – '+p.q+' st – ~'+sk(p.q)+' skein(s)').join('\n'),fn()+'-shopping.txt','text/plain',1)},
+ t_shop:()=>{const iv=INV();save((S.name||'Pattern')+' – shopping list ('+(S.str||2)+' strands)\n'+P.map(p=>(iv[p.c]?'[have] ':'[BUY]  ')+'DMC '+p.c+' '+p.n+(window.cvTag?window.cvTag(p.c,' | '):'')+' – '+p.q+' st – ~'+sk(p.q)+' skein(s)').join('\n'),fn()+'-shopping.txt','text/plain',1)},
  t_csv:()=>{const o=[];for(let r=0;r<S.h;r++){const a=[];for(let c=0;c<S.w;c++){const i=r*S.w+c;a.push(DEL[i]?'':P[G[i]].c)}o.push(a.join(','))}save(o.join('\n'),fn()+'.csv','text/csv',1)},
  t_dp:()=>{persist();const n=S.name;if(!n||!ST.get('xs:'+n)){msg('Save the project first.');return}let m=n+' copy',k=2;while(ST.get('xs:'+m))m=n+' copy '+k++;ST.set('xs:'+m,ST.get('xs:'+n));msg('Duplicated as “'+m+'”.')}};
 $('tb').onclick=e=>{const f=T[e.target.id];if(f&&G){f();upd()}};
@@ -788,8 +788,9 @@ $('bf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileRead
 function tot(){let t=0,d=0;const pc={};for(let i=0;i<G.length;i++){if(DEL[i])continue;const c=P[G[i]].c,o=pc[c]||(pc[c]=[0,0]),f=PQ&&PQ[i]?.75:1;o[1]+=f;t++;if(D[i]){o[0]+=f;d++}if(PQ&&PQ[i]){const bc=P[PG[i]].c,o2=pc[bc]||(pc[bc]=[0,0]);o2[1]+=.25;if(D[i])o2[0]+=.25}}Object.values(pc).forEach(o=>{o[0]=Math.round(o[0]);o[1]=Math.round(o[1])});return{t,d,pc}}
 function projL(){if(!G)return;const s=tot();$('pt').textContent=S.name;$('pi').textContent=S.w+'×'+S.h+' stitches · '+P.length+' colours · '+(s.t?Math.round(s.d*100/s.t):0)+'% stitched'}
 let SF='buy';
-function shopL(){if(!G)return;const iv=INV();let n=0,k=0;P.forEach(p=>{if(!iv[p.c]){n++;k+=sk(p.q)}});$('ss').textContent=n+' of '+P.length+' threads to buy · about '+k+' skeins';
+function shopL(){if(!G)return;$('sst').value=S.str||2;$('sn').textContent='Tick the threads you already own. Estimate: '+(S.str||2)+' strand'+((S.str||2)>1?'s':'')+', 20% waste, 8 m skeins of 6 strands.';const iv=INV();let n=0,k=0;P.forEach(p=>{if(!iv[p.c]){n++;k+=sk(p.q)}});$('ss').textContent=n+' of '+P.length+' threads to buy · about '+k+' skeins';
  $('sl').innerHTML=P.filter(p=>SF==='all'||!iv[p.c]).map(p=>`<label class="lg"><input type="checkbox" data-c="${p.c}" ${iv[p.c]?'checked':''}><span class="sw" style="background:${swBg(p)}">${p.s}</span><span>DMC ${p.c} · ${p.n}${window.cvTag?window.cvTag(p.c):''}</span><span class="m">${p.q} st · ~${sk(p.q)} skein${sk(p.q)>1?'s':''}</span></label>`).join('')||'<div class="m">You already have every thread.</div>'}
+$('sst').onchange=()=>{S.str=+$('sst').value;persist();shopL();stats()};
 $('sf1').onclick=()=>{SF='buy';shopL()};$('sf2').onclick=()=>{SF='all';shopL()};$('ssv').onclick=()=>T.t_shop();
 $('sl').onchange=e=>{const c=e.target.dataset.c;if(!c)return;const iv=INV();if(e.target.checked)iv[c]=1;else delete iv[c];ST.set('xi:inv',JSON.stringify(iv));shopL()};
 function statL(){if(!G)return;const s=tot(),pct=s.t?Math.round(s.d*100/s.t):0,h=(s.t-s.d)/spd();$('st1').textContent=s.d+' of '+s.t+' stitched ('+pct+'%)';$('sbar').style.width=pct+'%';

@@ -691,8 +691,18 @@ window.goBack=()=>{if($('lbd')&&!$('lbd').hidden){$('lbd').hidden=true;return tr
 const sn0=snap;snap=function(){return sn0().slice(0,-1)+',"park":'+S.park+',"imp":'+JSON.stringify(S.imp||null)+',"imd":'+JSON.stringify(S.imd||null)+',"sess":'+JSON.stringify(S.sess||[])+',"tm":'+JSON.stringify(S.tm||null)+'}'};
 const op0=openP;openP=function(n){const q=J('xs:'+n,{});S.imp=q.imp||null;S.imd=q.imd||null;applyLg(S.imd);op0(n);S.park=J('xs:'+n,{}).park;if(S.park==null)S.park=-1;S.sess=q.sess||[];S.tm=q.tm||null;S.hl=null;S.rr=S.rc=-1};
 $('nw').addEventListener('click',()=>{S.sess=[];S.tm=null;S.imp=null;S.imd=null;S.park=-1;S.last=-1;S.hl=null;S.rr=S.rc=-1});
+function gf(cv,c0,r0,c1,r1,z,m,hf,vp){const gu=24,w=S.w,W=c1-c0,H=r1-r0,ox=vp?vp.ox:0,oy=vp?vp.oy:0,cw=vp?vp.vw:gu+W*z,ch=vp?vp.vh:gu+H*z,x=cv.getContext('2d');
+ const LM=P.map(p=>{const a=hx(p.h),l=(.299*a[0]+.587*a[1]+.114*a[2])/255;return m==='real'?(l+.92)/2:l});
+ const lum=(r,c)=>{if(r<0||c<0||r>=S.h||c>=w)return null;const i=r*w+c;return DEL[i]||(hf&&HID.has(P[G[i]].c))?1:LM[G[i]]};
+ const B={},add=(k,a,b,c2,d)=>{(B[k]=B[k]||[]).push(a,b,c2,d)},pk=(a,b,t)=>{const v=a==null?b:b==null?a:(a+b)/2;return(v>.55?'d':'l')+(t?'M':'m')};
+ for(let c=c0;c<=c1;c++){const t=c%10===0;if(!t&&(z<8||m==='real'))continue;const X=gu+(c-c0)*z-ox;if(X<gu||X>cw)continue;for(let r=r0;r<r1;r++){const Y=gu+(r-r0)*z-oy;add(pk(lum(r,c-1),lum(r,c),t),X,Y,X,Y+z)}}
+ for(let r=r0;r<=r1;r++){const t=r%10===0;if(!t&&(z<8||m==='real'))continue;const Y=gu+(r-r0)*z-oy;if(Y<gu||Y>ch)continue;for(let c=c0;c<c1;c++){const X=gu+(c-c0)*z-ox;add(pk(lum(r-1,c),lum(r,c),t),X,Y,X+z,Y)}}
+ x.save();x.setTransform(K,0,0,K,0,0);x.beginPath();x.rect(gu,gu,cw-gu,ch-gu);x.clip();
+ const SY={dM:['#222',1.5],dm:['#777',.8],lM:['#fff',1.5],lm:['#ddd',.8]};
+ for(const k in B){const a=B[k];x.strokeStyle=SY[k][0];x.lineWidth=SY[k][1];x.beginPath();for(let i=0;i<a.length;i+=4){x.moveTo(a[i],a[i+1]);x.lineTo(a[i+2],a[i+3])}x.stroke()}
+ x.restore()}
 const dc=drawChart;
-drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(!vp||!G)return;
+drawChart=function(cv,c0,r0,c1,r1,z,m,sd,hf,vp){dc(cv,c0,r0,c1,r1,z,m,sd,hf,vp);if(G&&z>=2&&(m==='col'||m==='real'))gf(cv,c0,r0,c1,r1,z,m,hf,vp);if(!vp||!G)return;
  const x=cv.getContext('2d'),g=24,w=S.w;x.setTransform(K,0,0,K,0,0);x.save();x.beginPath();x.rect(g,g,vp.vw-g,vp.vh-g);x.clip();
  for(let r=r0;r<r1;r++)for(let c=c0;c<c1;c++){const i=r*w+c;if(DEL[i])continue;const X=g+(c-c0)*z-vp.ox,Y=g+(r-r0)*z-vp.oy;
   if(S.hf&&D[i]){x.fillStyle='rgba(255,255,255,.93)';x.fillRect(X,Y,z,z)}

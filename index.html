@@ -239,7 +239,7 @@ body.tpb{padding-bottom:84px}
 <div id="gfc" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0;max-height:120px;overflow:auto"></div>
 <label class="m" id="gftl">Detection tolerance: <b id="gftv">12</b><input type="range" id="gft" min="3" max="40" value="12"></label>
 <div id="gftx" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0" hidden></div>
-<canvas id="gfmap" hidden style="display:block;width:100%;max-width:340px;margin:8px auto 2px;border:1px solid var(--bd);border-radius:6px;image-rendering:pixelated;touch-action:manipulation"></canvas>
+<div id="gfmw" hidden style="max-width:340px;margin:8px auto 2px"><div id="gfvp" style="max-height:52vh;overflow:hidden;border:1px solid var(--bd);border-radius:6px;touch-action:none;background:#fff"><canvas id="gfmap" hidden style="display:block;width:100%;image-rendering:pixelated"></canvas></div><div class="m" style="text-align:center;font-size:12px;margin-top:4px">Pinch to zoom · drag to move · tap to pick <button class="s" id="gfzf" style="padding:2px 10px;margin-left:6px">Fit</button></div></div>
 <div id="gfpk" class="m" style="text-align:center"></div>
 <div class="m" style="margin-top:6px" id="gfl">Gradient colours (tap to change)</div><div class="row" id="gfs" style="margin-top:4px"></div>
 <div class="row"><label>Direction<select id="gfd"><option value="v">Top → bottom</option><option value="h">Left → right</option><option value="d1">Diagonal ↘</option><option value="d2">Diagonal ↗</option><option value="r">Radial (centre → out)</option></select></label><label>Style<select id="gfb"><option value="d">Dithered blend</option><option value="b">Clean bands</option><option value="s">Solid (first colour only)</option></select></label></div>
@@ -1332,7 +1332,7 @@ function drawMap(m){const cv=$('gfmap'),W=S.w,H=S.h,cs=Math.max(1,Math.floor(640
    if(py===0||!m[i-W])x.fillRect(px*cs,py*cs,cs,e);if(py===H-1||!m[i+W])x.fillRect(px*cs,(py+1)*cs-e,cs,e)}}}
 function buildTx(k){const b=$('gftx');b.hidden=k!=='tx';if(k!=='tx')return;const items=OPS.filter(o=>o.t==='tx'),sel=new Set(GP.tx||items.map((_,i)=>i));
  b.innerHTML=items.map((o,i)=>`<button class="s${sel.has(i)?' on':''}" data-x="${i}">${esc(String(o.s).slice(0,16))}</button>`).join('')}
-function refresh(){const cv=$('gfmap'),pk=$('gfpk');if(!G||!BS){cv.hidden=true;return}const k=$('gfk').value,m=curMask(),c=cnt(m);cv.hidden=false;drawMap(m);let t='';
+function refresh(){const cv=$('gfmap'),pk=$('gfpk');if(!G||!BS){cv.hidden=true;$('gfmw').hidden=true;return}const k=$('gfk').value,m=curMask(),c=cnt(m);cv.hidden=false;$('gfmw').hidden=false;drawMap(m);let t='';
  if(k==='o')t=GP.seed<0?(c?`Largest object selected (${c} stitches). Tap another object on the map to switch.`:'No separate object found. Try a higher tolerance.'):(c?`Object selected (${c} stitches). Tap another to switch.`:'That spot is background. Tap an object on the map.');
  else if(k==='w'||k==='x')t=GP.seed<0?'Tap the map on the colour you want.':(c?`${c} stitches selected${k==='x'?' (every stitch of that colour)':''}. Tap elsewhere to change.`:'Nothing selected there.');
  else if(k==='tx')t=OPS.some(o=>o.t==='tx')?`${c} text stitches selected. Tap a name above to include or skip it.`:'No text yet. Add some in the Text & Border tab first.';
@@ -1346,7 +1346,24 @@ $('gfc').addEventListener('click',()=>setTimeout(refresh,0));
 $('gftx').onclick=e=>{const b=e.target.closest('[data-x]');if(!b)return;const i=+b.dataset.x,items=OPS.filter(o=>o.t==='tx'),s=new Set(GP.tx||items.map((_,j)=>j));s.has(i)?s.delete(i):s.add(i);GP.tx=[...s];buildTx('tx');refresh()};
 $('gfmap').onclick=e=>{const k=$('gfk').value;if(!['o','w','x'].includes(k)||!G)return;const r=$('gfmap').getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*S.w),y=Math.floor((e.clientY-r.top)/r.height*S.h);
  if(x<0||y<0||x>=S.w||y>=S.h)return;const i=y*S.w+x;if(DEL[i]){$('gfpk').textContent='That spot is empty (erased). Tap a stitch.';return}GP.seed=i;refresh()};
-const gfo0=$('gfo').onclick;$('gfo').onclick=function(e){GP={seed:-1,tx:null,cache:null};return gfo0.call(this,e)};
+/* ---- gradient fill map: pinch to zoom, drag to move ---- */
+(function(){const vp=$('gfvp'),cv=$('gfmap'),ptr=new Map();let z=1,d0=1,z0=1,moved=0,pm=null;
+ const mid=()=>{const a=[...ptr.values()];return a.length>1?{x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2}:{x:a[0].x,y:a[0].y}};
+ const dist=()=>{const a=[...ptr.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1};
+ function setZ(nz,cx,cy){nz=Math.max(1,Math.min(10,nz));const r=cv.getBoundingClientRect(),fx=(cx-r.left)/r.width,fy=(cy-r.top)/r.height;z=nz;cv.style.width=(nz*100)+'%';
+  const r2=cv.getBoundingClientRect();vp.scrollLeft+=r2.left+fx*r2.width-cx;vp.scrollTop+=r2.top+fy*r2.height-cy}
+ window.gfZoomReset=()=>{z=1;cv.style.width='100%';vp.scrollLeft=0;vp.scrollTop=0;ptr.clear();moved=0};
+ vp.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});if(ptr.size===1)moved=0;else if(ptr.size===2){d0=dist();z0=z;moved=1}pm=mid()});
+ vp.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const ox=p.x,oy=p.y;p.x=e.clientX;p.y=e.clientY;
+  if(ptr.size>=2){const m=mid();if(pm){vp.scrollLeft+=pm.x-m.x;vp.scrollTop+=pm.y-m.y}setZ(z0*dist()/d0,m.x,m.y);pm=m;moved=1}
+  else{if(!moved&&Math.hypot(p.x-ox,p.y-oy)<1)return;const t=vp._t||(vp._t={x:e.clientX,y:e.clientY});if(!moved&&Math.hypot(e.clientX-t.x,e.clientY-t.y)<8)return;moved=1;vp.scrollLeft-=p.x-ox;vp.scrollTop-=p.y-oy}});
+ const up=e=>{ptr.delete(e.pointerId);vp._t=null;pm=ptr.size?mid():null;if(ptr.size===1){z0=z}};
+ vp.addEventListener('pointerup',up);vp.addEventListener('pointercancel',up);vp.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')up(e)});
+ vp.addEventListener('pointerdown',e=>{vp._t={x:e.clientX,y:e.clientY}},true);
+ vp.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=0}},true);
+ vp.addEventListener('wheel',e=>{e.preventDefault();setZ(z*(e.deltaY<0?1.2:1/1.2),e.clientX,e.clientY)},{passive:false});
+ $('gfzf').onclick=()=>window.gfZoomReset()})();
+const gfo0=$('gfo').onclick;$('gfo').onclick=function(e){GP={seed:-1,tx:null,cache:null};if(window.gfZoomReset)window.gfZoomReset();return gfo0.call(this,e)};
 const gok0=$('gfok').onclick;$('gfok').onclick=function(e){const k=$('gfk').value;
  if(NEWK.includes(k)&&G&&BS&&!cnt(myMask(k,+$('gft').value))){$('gfm').textContent=hintEmpty(k);return}return gok0.call(this,e)};
 })();
